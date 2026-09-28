@@ -1,8 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
 require_once __DIR__ . '/common/config.php';
 require_once __DIR__ . '/common/helpers.php';
 require_once __DIR__ . '/common/language.php';
-require_once __DIR__ . '/data/services.php';
+require_once __DIR__ . '/data/services-db.php';
 require_once __DIR__ . '/data/news.php';
 
 $path = request_path();

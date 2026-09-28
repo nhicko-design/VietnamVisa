@@ -1,78 +1,125 @@
 <?php
-$SERVICES = [
-    [
-        'slug' => 'vietnam-evisa', 'icon' => '01', 'category' => 'Visa', 'featured' => true,
-        'title_en' => 'Vietnam E-Visa', 'title_vn' => 'E-Visa Việt Nam',
-        'short_en' => 'A simple, guided application journey for travelers entering Vietnam.',
-        'short_vn' => 'Hỗ trợ quy trình đăng ký E-Visa Việt Nam rõ ràng và thuận tiện.',
-        'description_en' => 'From checking your information to preparing the application, our team helps make the Vietnam E-Visa process easier to understand.',
-        'description_vn' => 'Từ kiểm tra thông tin đến chuẩn bị hồ sơ, đội ngũ của chúng tôi giúp quy trình E-Visa Việt Nam trở nên dễ hiểu và thuận tiện hơn.',
-        'image' => 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1400&q=85',
-        'features_en' => ['Application guidance', 'Document checklist', 'Entry information review', 'Progress support'],
-        'features_vn' => ['Hướng dẫn hồ sơ', 'Checklist giấy tờ', 'Kiểm tra thông tin nhập cảnh', 'Hỗ trợ theo dõi tiến trình'],
-        'steps_en' => ['Tell us your trip details', 'Review your information', 'Prepare the application', 'Receive the result'],
-        'steps_vn' => ['Cung cấp thông tin chuyến đi', 'Kiểm tra thông tin', 'Chuẩn bị hồ sơ', 'Nhận kết quả'],
-        'faq_en' => [['q'=>'How early should I apply?','a'=>'We recommend preparing your application before your planned travel date.']],
-        'faq_vn' => [['q'=>'Nên đăng ký trước bao lâu?','a'=>'Bạn nên chuẩn bị hồ sơ trước ngày dự kiến nhập cảnh để có thời gian xử lý phù hợp.']],
-    ],
-    [
-        'slug' => 'business-visa', 'icon' => '02', 'category' => 'Visa', 'featured' => true,
-        'title_en' => 'Business Visa', 'title_vn' => 'Visa Công Tác',
-        'short_en' => 'Visa support for professionals, meetings, projects and business trips in Vietnam.',
-        'short_vn' => 'Hỗ trợ visa cho chuyên gia, cuộc họp, dự án và chuyến công tác tại Việt Nam.',
-        'description_en' => 'A structured service for business travelers who need clear document guidance and a predictable application journey.',
-        'description_vn' => 'Dịch vụ dành cho khách công tác cần hướng dẫn hồ sơ rõ ràng và quy trình đăng ký thuận tiện.',
-        'image' => 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=85',
-        'features_en' => ['Business-purpose guidance', 'Document review', 'Application preparation', 'Dedicated support'],
-        'features_vn' => ['Tư vấn mục đích công tác', 'Kiểm tra hồ sơ', 'Chuẩn bị hồ sơ', 'Hỗ trợ riêng'],
-        'steps_en' => ['Share your business trip details', 'Check required documents', 'Prepare the application', 'Receive your result'],
-        'steps_vn' => ['Cung cấp thông tin chuyến công tác', 'Kiểm tra giấy tờ cần thiết', 'Chuẩn bị hồ sơ', 'Nhận kết quả'],
-        'faq_en' => [['q'=>'Can you support company travelers?','a'=>'Yes. The frontend is structured to support individual and business service flows.']],
-        'faq_vn' => [['q'=>'Có hỗ trợ khách công tác của doanh nghiệp không?','a'=>'Có. Giao diện được thiết kế để hỗ trợ cả khách cá nhân và khách doanh nghiệp.']],
-    ],
-    [
-        'slug' => 'work-permit', 'icon' => '03', 'category' => 'Immigration', 'featured' => true,
-        'title_en' => 'Work Permit', 'title_vn' => 'Giấy Phép Lao Động',
-        'short_en' => 'A clear presentation of the work permit process for foreign employees in Vietnam.',
-        'short_vn' => 'Trình bày rõ ràng quy trình giấy phép lao động cho người nước ngoài tại Việt Nam.',
-        'description_en' => 'Organize requirements, documents and process information in one clear place for employees and companies.',
-        'description_vn' => 'Tổng hợp yêu cầu, giấy tờ và quy trình tại một nơi rõ ràng cho người lao động và doanh nghiệp.',
-        'image' => 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=85',
-        'features_en' => ['Requirement overview', 'Document checklist', 'Company support flow', 'Process guidance'],
-        'features_vn' => ['Tổng quan yêu cầu', 'Checklist giấy tờ', 'Quy trình cho doanh nghiệp', 'Hướng dẫn xử lý'],
-        'steps_en' => ['Review profile', 'Prepare documents', 'Submit application', 'Track the result'],
-        'steps_vn' => ['Kiểm tra hồ sơ', 'Chuẩn bị giấy tờ', 'Nộp hồ sơ', 'Theo dõi kết quả'],
-        'faq_en' => [['q'=>'Who can use this service?','a'=>'Foreign employees and companies can use the service information as a starting point.']],
-        'faq_vn' => [['q'=>'Ai có thể sử dụng dịch vụ này?','a'=>'Người lao động nước ngoài và doanh nghiệp có thể sử dụng thông tin dịch vụ làm điểm bắt đầu.']],
-    ],
-    [
-        'slug' => 'temporary-residence-card', 'icon' => '04', 'category' => 'Immigration', 'featured' => true,
-        'title_en' => 'Temporary Residence Card', 'title_vn' => 'Thẻ Tạm Trú',
-        'short_en' => 'Present your temporary residence card service clearly from requirements to result.',
-        'short_vn' => 'Trình bày dịch vụ thẻ tạm trú rõ ràng từ yêu cầu đến kết quả.',
-        'description_en' => 'A structured information page for foreign residents and companies preparing temporary residence card applications.',
-        'description_vn' => 'Trang thông tin có cấu trúc dành cho người nước ngoài và doanh nghiệp chuẩn bị hồ sơ thẻ tạm trú.',
-        'image' => 'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1400&q=85',
-        'features_en' => ['Eligibility overview', 'Document checklist', 'Application steps', 'Support information'],
-        'features_vn' => ['Tổng quan điều kiện', 'Checklist giấy tờ', 'Các bước đăng ký', 'Thông tin hỗ trợ'],
-        'steps_en' => ['Check your case', 'Prepare documents', 'Submit the application', 'Receive the card'],
-        'steps_vn' => ['Kiểm tra trường hợp', 'Chuẩn bị giấy tờ', 'Nộp hồ sơ', 'Nhận thẻ'],
-        'faq_en' => [['q'=>'Can the detail page be managed from an admin system later?','a'=>'Yes. This page is intentionally separated from the data layer so the backend can replace the mock content later.']],
-        'faq_vn' => [['q'=>'Sau này trang chi tiết có thể lấy dữ liệu từ admin không?','a'=>'Có. Trang được tách khỏi lớp dữ liệu để backend có thể thay thế dữ liệu mẫu bằng database/API.']],
-    ],
-    [
-        'slug' => 'airport-fast-track', 'icon' => '05', 'category' => 'Support', 'featured' => false,
-        'title_en' => 'Airport Fast Track', 'title_vn' => 'Hỗ Trợ Fast Track Sân Bay',
-        'short_en' => 'Arrival assistance designed to make your airport experience smoother.',
-        'short_vn' => 'Hỗ trợ khi đến sân bay giúp hành trình nhập cảnh thuận tiện hơn.',
-        'description_en' => 'Present airport assistance options in a simple service format with clear benefits and a direct contact CTA.',
-        'description_vn' => 'Trình bày các lựa chọn hỗ trợ sân bay theo dạng dịch vụ rõ ràng với lợi ích và CTA liên hệ trực tiếp.',
-        'image' => 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1400&q=85',
-        'features_en' => ['Arrival assistance', 'Clear meeting instructions', 'Support information', 'Flexible service options'],
-        'features_vn' => ['Hỗ trợ khi đến', 'Hướng dẫn điểm gặp', 'Thông tin hỗ trợ', 'Tùy chọn dịch vụ linh hoạt'],
-        'steps_en' => ['Choose the service', 'Share arrival details', 'Receive instructions', 'Meet the support team'],
-        'steps_vn' => ['Chọn dịch vụ', 'Cung cấp thông tin chuyến bay', 'Nhận hướng dẫn', 'Gặp đội ngũ hỗ trợ'],
-        'faq_en' => [['q'=>'Where will I see the final service price?','a'=>'The backend/admin team can connect the final pricing rules to this view later.']],
-        'faq_vn' => [['q'=>'Giá dịch vụ cuối cùng sẽ lấy ở đâu?','a'=>'Backend/admin có thể kết nối bảng giá thực tế với giao diện này sau.']],
-    ],
-];
+
+/**
+ * Load services from database
+ *
+ * This file keeps the same $SERVICES structure
+ * that the existing frontend already expects.
+ */
+
+require_once __DIR__ . '/../common/database.php';
+
+$pdo = db();
+
+$stmt = $pdo->query("
+    SELECT
+        id,
+        category,
+        slug,
+        title,
+        short_description,
+        description,
+        price,
+        currency,
+        image,
+        icon,
+        is_featured,
+        is_active,
+        sort_order
+    FROM services
+    WHERE is_active = 1
+    ORDER BY sort_order ASC, id DESC
+");
+
+$dbServices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+/*
+|--------------------------------------------------------------------------
+| Convert database structure to existing frontend structure
+|--------------------------------------------------------------------------
+|
+| Existing frontend expects:
+|
+| $service['title_en']
+| $service['title_vn']
+| $service['short_en']
+| $service['short_vn']
+| $service['description_en']
+| $service['description_vn']
+| $service['featured']
+| etc.
+|
+| The database currently stores one title/description.
+| Therefore we map the same value to both languages temporarily.
+|
+*/
+
+$SERVICES = [];
+
+foreach ($dbServices as $service) {
+
+    $title = (string) ($service['title'] ?? '');
+    $short = (string) ($service['short_description'] ?? '');
+    $description = (string) ($service['description'] ?? '');
+
+    $SERVICES[] = [
+        'id' => (int) $service['id'],
+
+        'slug' => (string) $service['slug'],
+
+        'icon' => (string) ($service['icon'] ?? ''),
+
+        'category' => (string) ($service['category'] ?? ''),
+
+        'featured' => (int) ($service['is_featured'] ?? 0) === 1,
+
+        /*
+         * Existing frontend language structure
+         */
+        'title_en' => $title,
+        'title_vn' => $title,
+
+        'short_en' => $short,
+        'short_vn' => $short,
+
+        'description_en' => $description,
+        'description_vn' => $description,
+
+        /*
+         * Database fields
+         */
+        'title' => $title,
+        'short_description' => $short,
+        'description' => $description,
+
+        'price' => $service['price'] !== null
+            ? (float) $service['price']
+            : null,
+
+        'currency' => (string) ($service['currency'] ?? 'USD'),
+
+        'image' => (string) ($service['image'] ?? ''),
+
+        'is_featured' => (int) ($service['is_featured'] ?? 0),
+
+        'is_active' => (int) ($service['is_active'] ?? 0),
+
+        'sort_order' => (int) ($service['sort_order'] ?? 0),
+
+        /*
+         * Keep these keys so the current detail page
+         * does not immediately break if it expects them.
+         *
+         * They will be migrated properly later.
+         */
+        'features_en' => [],
+        'features_vn' => [],
+
+        'steps_en' => [],
+        'steps_vn' => [],
+
+        'faq_en' => [],
+        'faq_vn' => [],
+    ];
+}

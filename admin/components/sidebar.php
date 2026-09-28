@@ -269,7 +269,7 @@
 
 
         <a
-            href="login.php"
+            href="/immigra/admin/logout.php"
             class="sidebar-footer-link logout"
         >
 

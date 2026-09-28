@@ -1,17 +1,254 @@
 <?php
 
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../common/auth.php';
+require_once __DIR__ . '/../common/database.php';
+
+require_admin_login();
+
+$admin = current_admin();
+
 $page_title = 'Dashboard';
+
+
+/*
+|--------------------------------------------------------------------------
+| DATABASE
+|--------------------------------------------------------------------------
+*/
+
+$pdo = db();
+
+
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD STATISTICS
+|--------------------------------------------------------------------------
+*/
+
+$stats = [
+    'services' => 0,
+    'news' => 0,
+    'published_news' => 0,
+    'home_media' => 0,
+];
+
+
+/*
+|--------------------------------------------------------------------------
+| SERVICES COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM services
+        WHERE active = 1
+    ");
+
+    $stats['services'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['services'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| NEWS COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM news
+    ");
+
+    $stats['news'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['news'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| PUBLISHED NEWS COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM news
+        WHERE status = 'published'
+    ");
+
+    $stats['published_news'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['published_news'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| HOME MEDIA COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM home_media
+        WHERE active = 1
+    ");
+
+    $stats['home_media'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['home_media'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| RECENT NEWS
+|--------------------------------------------------------------------------
+*/
+
+$recent_news = [];
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT
+            id,
+            title,
+            excerpt,
+            image,
+            author,
+            status,
+            published_at,
+            featured
+        FROM news
+        ORDER BY created_at DESC
+        LIMIT 5
+    ");
+
+    $recent_news = $stmt->fetchAll();
+
+} catch (Throwable $e) {
+
+    $recent_news = [];
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| FEATURED / ACTIVE SERVICES
+|--------------------------------------------------------------------------
+*/
+
+$featured_services = [];
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT
+            id,
+            title,
+            category,
+            image,
+            featured,
+            active
+        FROM services
+        WHERE active = 1
+        ORDER BY featured DESC, id DESC
+        LIMIT 5
+    ");
+
+    $featured_services = $stmt->fetchAll();
+
+} catch (Throwable $e) {
+
+    $featured_services = [];
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| DATABASE STATUS
+|--------------------------------------------------------------------------
+*/
+
+$database_connected = false;
+
+try {
+
+    $pdo->query("SELECT 1");
+
+    $database_connected = true;
+
+} catch (Throwable $e) {
+
+    $database_connected = false;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| STORAGE STATUS
+|--------------------------------------------------------------------------
+|
+| The upload directory will be used later by the CMS.
+| We only check it here. We do not create files automatically.
+|
+*/
+
+$storage_path = dirname(__DIR__) . '/uploads';
+
+$storage_operational =
+    is_dir($storage_path)
+    && is_writable($storage_path);
+
+
+/*
+|--------------------------------------------------------------------------
+| PAGE
+|--------------------------------------------------------------------------
+*/
 
 require __DIR__ . '/components/header.php';
 
 ?>
 
+
 <div class="admin-layout">
+
 
     <?php require __DIR__ . '/components/sidebar.php'; ?>
 
 
     <div class="admin-main">
+
 
         <?php require __DIR__ . '/components/topbar.php'; ?>
 
@@ -19,7 +256,9 @@ require __DIR__ . '/components/header.php';
         <main class="admin-content">
 
 
-            <!-- PAGE HEADER -->
+            <!-- =========================================================
+                 PAGE HEADER
+            ========================================================== -->
 
             <section class="dashboard-header">
 
@@ -29,9 +268,11 @@ require __DIR__ . '/components/header.php';
                         OVERVIEW
                     </span>
 
+
                     <h1>
                         Good morning 👋
                     </h1>
+
 
                     <p>
                         Manage your website content from one place.
@@ -41,7 +282,7 @@ require __DIR__ . '/components/header.php';
 
 
                 <a
-                    href="#"
+                    href="/immigra/admin/services/create.php"
                     class="admin-btn admin-btn-primary"
                 >
                     + Create Content
@@ -50,10 +291,15 @@ require __DIR__ . '/components/header.php';
             </section>
 
 
-            <!-- STAT CARDS -->
+
+            <!-- =========================================================
+                 STAT CARDS
+            ========================================================== -->
 
             <section class="dashboard-stats">
 
+
+                <!-- SERVICES -->
 
                 <article class="stat-card">
 
@@ -63,26 +309,33 @@ require __DIR__ . '/components/header.php';
                             ◈
                         </div>
 
+
                         <span class="stat-status">
                             Active
                         </span>
 
                     </div>
 
+
                     <strong>
-                        12
+                        <?= $stats['services'] ?>
                     </strong>
+
 
                     <h3>
                         Services
                     </h3>
 
+
                     <p>
-                        Published services
+                        Active services
                     </p>
 
                 </article>
 
+
+
+                <!-- NEWS -->
 
                 <article class="stat-card">
 
@@ -92,26 +345,33 @@ require __DIR__ . '/components/header.php';
                             ◫
                         </div>
 
+
                         <span class="stat-status">
-                            Published
+                            Content
                         </span>
 
                     </div>
 
+
                     <strong>
-                        24
+                        <?= $stats['news'] ?>
                     </strong>
+
 
                     <h3>
                         Articles
                     </h3>
 
+
                     <p>
-                        Published articles
+                        Total news articles
                     </p>
 
                 </article>
 
+
+
+                <!-- HOME MEDIA -->
 
                 <article class="stat-card">
 
@@ -121,51 +381,62 @@ require __DIR__ . '/components/header.php';
                             ◉
                         </div>
 
+
                         <span class="stat-status">
                             Live
                         </span>
 
                     </div>
 
+
                     <strong>
-                        8
+                        <?= $stats['home_media'] ?>
                     </strong>
 
+
                     <h3>
-                        Pages
+                        Home Media
                     </h3>
 
+
                     <p>
-                        Website pages
+                        Active homepage media
                     </p>
 
                 </article>
 
+
+
+                <!-- PUBLISHED NEWS -->
 
                 <article class="stat-card">
 
                     <div class="stat-card-top">
 
                         <div class="stat-icon orange">
-                            ?
+                            ✓
                         </div>
 
+
                         <span class="stat-status">
-                            Active
+                            Published
                         </span>
 
                     </div>
 
+
                     <strong>
-                        18
+                        <?= $stats['published_news'] ?>
                     </strong>
 
+
                     <h3>
-                        FAQs
+                        Published
                     </h3>
 
+
                     <p>
-                        Questions and answers
+                        Published articles
                     </p>
 
                 </article>
@@ -174,14 +445,20 @@ require __DIR__ . '/components/header.php';
             </section>
 
 
-            <!-- MAIN DASHBOARD GRID -->
+
+            <!-- =========================================================
+                 MAIN DASHBOARD GRID
+            ========================================================== -->
 
             <section class="dashboard-grid">
 
 
-                <!-- RECENT ARTICLES -->
+                <!-- =====================================================
+                     RECENT ARTICLES
+                ====================================================== -->
 
                 <div class="dashboard-panel panel-large">
+
 
                     <div class="panel-header">
 
@@ -191,14 +468,16 @@ require __DIR__ . '/components/header.php';
                                 CONTENT
                             </span>
 
+
                             <h2>
                                 Recent articles
                             </h2>
 
                         </div>
 
+
                         <a
-                            href="#"
+                            href="/immigra/admin/news/index.php"
                             class="panel-link"
                         >
                             View all →
@@ -207,158 +486,172 @@ require __DIR__ . '/components/header.php';
                     </div>
 
 
+
                     <div class="article-list">
 
 
-                        <article class="article-row">
+                        <?php if (!empty($recent_news)): ?>
 
-                            <div class="article-thumbnail">
-                                <img
-                                    src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=300&q=80"
-                                    alt="Vietnam"
+
+                            <?php foreach ($recent_news as $article): ?>
+
+
+                                <article class="article-row">
+
+
+                                    <!-- THUMBNAIL -->
+
+                                    <div class="article-thumbnail">
+
+
+                                        <?php if (!empty($article['image'])): ?>
+
+                                            <img
+                                                src="<?= htmlspecialchars($article['image']) ?>"
+                                                alt="<?= htmlspecialchars($article['title']) ?>"
+                                            >
+
+                                        <?php else: ?>
+
+                                            <div class="article-placeholder">
+                                                NEWS
+                                            </div>
+
+                                        <?php endif; ?>
+
+
+                                    </div>
+
+
+
+                                    <!-- ARTICLE INFO -->
+
+                                    <div class="article-info">
+
+
+                                        <h3>
+                                            <?= htmlspecialchars($article['title']) ?>
+                                        </h3>
+
+
+                                        <div class="article-meta">
+
+
+                                            <?php if (!empty($article['author'])): ?>
+
+                                                <span>
+                                                    <?= htmlspecialchars($article['author']) ?>
+                                                </span>
+
+                                            <?php else: ?>
+
+                                                <span>
+                                                    SunViet
+                                                </span>
+
+                                            <?php endif; ?>
+
+
+                                            <span>
+                                                •
+                                            </span>
+
+
+                                            <?php if (!empty($article['published_at'])): ?>
+
+                                                <span>
+                                                    <?= date(
+                                                        'd M Y',
+                                                        strtotime($article['published_at'])
+                                                    ) ?>
+                                                </span>
+
+                                            <?php else: ?>
+
+                                                <span>
+                                                    Not published
+                                                </span>
+
+                                            <?php endif; ?>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <!-- STATUS -->
+
+                                    <?php if ($article['status'] === 'published'): ?>
+
+                                        <span class="status-badge published">
+                                            Published
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="status-badge draft">
+                                            Draft
+                                        </span>
+
+                                    <?php endif; ?>
+
+
+
+                                    <!-- ACTION -->
+
+                                    <a
+                                        href="/immigra/admin/news/edit.php?id=<?= (int) $article['id'] ?>"
+                                        class="row-action"
+                                    >
+                                        Edit
+                                    </a>
+
+
+                                </article>
+
+
+                            <?php endforeach; ?>
+
+
+                        <?php else: ?>
+
+
+                            <div class="empty-state">
+
+                                <p>
+                                    No articles found.
+                                </p>
+
+
+                                <a
+                                    href="/immigra/admin/news/create.php"
+                                    class="admin-btn admin-btn-secondary"
                                 >
-                            </div>
-
-                            <div class="article-info">
-
-                                <h3>
-                                    Vietnam Visa Guide for First-Time Travelers
-                                </h3>
-
-                                <div class="article-meta">
-
-                                    <span>
-                                        Visa Guide
-                                    </span>
-
-                                    <span>
-                                        •
-                                    </span>
-
-                                    <span>
-                                        Sep 18, 2026
-                                    </span>
-
-                                </div>
+                                    Create first article
+                                </a>
 
                             </div>
 
-                            <span class="status-badge published">
-                                Published
-                            </span>
 
-                            <button
-                                type="button"
-                                class="row-action"
-                            >
-                                Edit
-                            </button>
-
-                        </article>
-
-
-                        <article class="article-row">
-
-                            <div class="article-thumbnail">
-                                <img
-                                    src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=300&q=80"
-                                    alt="Vietnam travel"
-                                >
-                            </div>
-
-                            <div class="article-info">
-
-                                <h3>
-                                    New Immigration Website Experience
-                                </h3>
-
-                                <div class="article-meta">
-
-                                    <span>
-                                        News
-                                    </span>
-
-                                    <span>
-                                        •
-                                    </span>
-
-                                    <span>
-                                        Sep 12, 2026
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            <span class="status-badge draft">
-                                Draft
-                            </span>
-
-                            <button
-                                type="button"
-                                class="row-action"
-                            >
-                                Edit
-                            </button>
-
-                        </article>
-
-
-                        <article class="article-row">
-
-                            <div class="article-thumbnail">
-                                <img
-                                    src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=300&q=80"
-                                    alt="Vietnam travel"
-                                >
-                            </div>
-
-                            <div class="article-info">
-
-                                <h3>
-                                    Vietnam Business Visa Updates
-                                </h3>
-
-                                <div class="article-meta">
-
-                                    <span>
-                                        Business Visa
-                                    </span>
-
-                                    <span>
-                                        •
-                                    </span>
-
-                                    <span>
-                                        Sep 08, 2026
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            <span class="status-badge published">
-                                Published
-                            </span>
-
-                            <button
-                                type="button"
-                                class="row-action"
-                            >
-                                Edit
-                            </button>
-
-                        </article>
+                        <?php endif; ?>
 
 
                     </div>
 
+
                 </div>
 
 
-                <!-- QUICK ACTIONS -->
+
+                <!-- =====================================================
+                     QUICK ACTIONS
+                ====================================================== -->
 
                 <div class="dashboard-panel">
+
 
                     <div class="panel-header">
 
@@ -367,6 +660,7 @@ require __DIR__ . '/components/header.php';
                             <span class="panel-eyebrow">
                                 SHORTCUTS
                             </span>
+
 
                             <h2>
                                 Quick actions
@@ -377,11 +671,14 @@ require __DIR__ . '/components/header.php';
                     </div>
 
 
+
                     <div class="quick-actions">
 
 
+                        <!-- ADD SERVICE -->
+
                         <a
-                            href="#"
+                            href="/immigra/admin/services/create.php"
                             class="quick-action"
                         >
 
@@ -389,11 +686,13 @@ require __DIR__ . '/components/header.php';
                                 +
                             </span>
 
+
                             <span>
 
                                 <strong>
                                     Add Service
                                 </strong>
+
 
                                 <small>
                                     Create a new service
@@ -401,6 +700,7 @@ require __DIR__ . '/components/header.php';
 
                             </span>
 
+
                             <span class="quick-arrow">
                                 →
                             </span>
@@ -408,8 +708,11 @@ require __DIR__ . '/components/header.php';
                         </a>
 
 
+
+                        <!-- WRITE ARTICLE -->
+
                         <a
-                            href="#"
+                            href="/immigra/admin/news/create.php"
                             class="quick-action"
                         >
 
@@ -417,17 +720,20 @@ require __DIR__ . '/components/header.php';
                                 +
                             </span>
 
+
                             <span>
 
                                 <strong>
                                     Write Article
                                 </strong>
 
+
                                 <small>
                                     Publish a new article
                                 </small>
 
                             </span>
+
 
                             <span class="quick-arrow">
                                 →
@@ -436,8 +742,11 @@ require __DIR__ . '/components/header.php';
                         </a>
 
 
+
+                        <!-- MANAGE HOME -->
+
                         <a
-                            href="#"
+                            href="/immigra/admin/home/index.php"
                             class="quick-action"
                         >
 
@@ -445,17 +754,20 @@ require __DIR__ . '/components/header.php';
                                 +
                             </span>
 
+
                             <span>
 
                                 <strong>
-                                    Edit Page
+                                    Manage Home
                                 </strong>
 
+
                                 <small>
-                                    Update website content
+                                    Update homepage media
                                 </small>
 
                             </span>
+
 
                             <span class="quick-arrow">
                                 →
@@ -466,20 +778,27 @@ require __DIR__ . '/components/header.php';
 
                     </div>
 
+
                 </div>
 
 
             </section>
 
 
-            <!-- BOTTOM GRID -->
+
+            <!-- =========================================================
+                 BOTTOM GRID
+            ========================================================== -->
 
             <section class="dashboard-bottom">
 
 
-                <!-- SERVICES -->
+                <!-- =====================================================
+                     SERVICES
+                ====================================================== -->
 
                 <div class="dashboard-panel">
+
 
                     <div class="panel-header">
 
@@ -489,14 +808,16 @@ require __DIR__ . '/components/header.php';
                                 SERVICES
                             </span>
 
+
                             <h2>
                                 Popular services
                             </h2>
 
                         </div>
 
+
                         <a
-                            href="#"
+                            href="/immigra/admin/services/index.php"
                             class="panel-link"
                         >
                             Manage →
@@ -505,92 +826,128 @@ require __DIR__ . '/components/header.php';
                     </div>
 
 
+
                     <div class="simple-list">
 
 
-                        <div class="simple-list-row">
+                        <?php if (!empty($featured_services)): ?>
 
-                            <div class="simple-list-icon">
-                                V
+
+                            <?php foreach ($featured_services as $service): ?>
+
+
+                                <div class="simple-list-row">
+
+
+                                    <!-- SERVICE ICON / IMAGE -->
+
+                                    <div class="simple-list-icon">
+
+
+                                        <?php if (!empty($service['image'])): ?>
+
+                                            <img
+                                                src="<?= htmlspecialchars($service['image']) ?>"
+                                                alt="<?= htmlspecialchars($service['title']) ?>"
+                                            >
+
+                                        <?php else: ?>
+
+                                            <?= htmlspecialchars(
+                                                strtoupper(
+                                                    substr(
+                                                        $service['title'],
+                                                        0,
+                                                        1
+                                                    )
+                                                )
+                                            ) ?>
+
+                                        <?php endif; ?>
+
+
+                                    </div>
+
+
+
+                                    <!-- SERVICE INFO -->
+
+                                    <div>
+
+
+                                        <strong>
+                                            <?= htmlspecialchars($service['title']) ?>
+                                        </strong>
+
+
+                                        <small>
+                                            <?= htmlspecialchars($service['category']) ?>
+                                        </small>
+
+
+                                    </div>
+
+
+
+                                    <!-- STATUS -->
+
+                                    <?php if (!empty($service['featured'])): ?>
+
+                                        <span class="status-dot active">
+                                            Featured
+                                        </span>
+
+                                    <?php else: ?>
+
+                                        <span class="status-dot active">
+                                            Active
+                                        </span>
+
+                                    <?php endif; ?>
+
+
+                                </div>
+
+
+                            <?php endforeach; ?>
+
+
+                        <?php else: ?>
+
+
+                            <div class="empty-state">
+
+                                <p>
+                                    No active services found.
+                                </p>
+
+
+                                <a
+                                    href="/immigra/admin/services/create.php"
+                                    class="admin-btn admin-btn-secondary"
+                                >
+                                    Add Service
+                                </a>
+
                             </div>
 
-                            <div>
 
-                                <strong>
-                                    Vietnam E-Visa
-                                </strong>
-
-                                <small>
-                                    Visa
-                                </small>
-
-                            </div>
-
-                            <span class="status-dot active">
-                                Published
-                            </span>
-
-                        </div>
-
-
-                        <div class="simple-list-row">
-
-                            <div class="simple-list-icon">
-                                B
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Business Visa
-                                </strong>
-
-                                <small>
-                                    Visa
-                                </small>
-
-                            </div>
-
-                            <span class="status-dot active">
-                                Published
-                            </span>
-
-                        </div>
-
-
-                        <div class="simple-list-row">
-
-                            <div class="simple-list-icon">
-                                W
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Work Permit
-                                </strong>
-
-                                <small>
-                                    Support
-                                </small>
-
-                            </div>
-
-                            <span class="status-dot draft">
-                                Draft
-                            </span>
-
-                        </div>
+                        <?php endif; ?>
 
 
                     </div>
 
+
                 </div>
 
 
-                <!-- WEBSITE STATUS -->
+
+                <!-- =====================================================
+                     WEBSITE STATUS
+                ====================================================== -->
 
                 <div class="dashboard-panel">
+
 
                     <div class="panel-header">
 
@@ -599,6 +956,7 @@ require __DIR__ . '/components/header.php';
                             <span class="panel-eyebrow">
                                 SYSTEM
                             </span>
+
 
                             <h2>
                                 Website status
@@ -609,14 +967,19 @@ require __DIR__ . '/components/header.php';
                     </div>
 
 
+
                     <div class="system-status">
 
 
+                        <!-- WEBSITE -->
+
                         <div class="system-status-item">
+
 
                             <div class="system-status-icon success">
                                 ✓
                             </div>
+
 
                             <div>
 
@@ -624,70 +987,156 @@ require __DIR__ . '/components/header.php';
                                     Website
                                 </strong>
 
+
                                 <span>
                                     Online
                                 </span>
 
                             </div>
 
+
                             <b>
                                 Operational
                             </b>
+
 
                         </div>
 
 
+
+                        <!-- DATABASE -->
+
                         <div class="system-status-item">
 
-                            <div class="system-status-icon success">
-                                ✓
-                            </div>
 
-                            <div>
+                            <?php if ($database_connected): ?>
 
-                                <strong>
-                                    Database
-                                </strong>
 
-                                <span>
-                                    Connected
-                                </span>
+                                <div class="system-status-icon success">
+                                    ✓
+                                </div>
 
-                            </div>
 
-                            <b>
-                                Operational
-                            </b>
+                                <div>
+
+                                    <strong>
+                                        Database
+                                    </strong>
+
+
+                                    <span>
+                                        Connected
+                                    </span>
+
+                                </div>
+
+
+                                <b>
+                                    Operational
+                                </b>
+
+
+                            <?php else: ?>
+
+
+                                <div class="system-status-icon error">
+                                    !
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Database
+                                    </strong>
+
+
+                                    <span>
+                                        Connection failed
+                                    </span>
+
+                                </div>
+
+
+                                <b>
+                                    Error
+                                </b>
+
+
+                            <?php endif; ?>
+
 
                         </div>
 
 
+
+                        <!-- STORAGE -->
+
                         <div class="system-status-item">
 
-                            <div class="system-status-icon success">
-                                ✓
-                            </div>
 
-                            <div>
+                            <?php if ($storage_operational): ?>
 
-                                <strong>
-                                    Storage
-                                </strong>
 
-                                <span>
-                                    Media storage
-                                </span>
+                                <div class="system-status-icon success">
+                                    ✓
+                                </div>
 
-                            </div>
 
-                            <b>
-                                Operational
-                            </b>
+                                <div>
+
+                                    <strong>
+                                        Storage
+                                    </strong>
+
+
+                                    <span>
+                                        Media storage
+                                    </span>
+
+                                </div>
+
+
+                                <b>
+                                    Operational
+                                </b>
+
+
+                            <?php else: ?>
+
+
+                                <div class="system-status-icon error">
+                                    !
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Storage
+                                    </strong>
+
+
+                                    <span>
+                                        Upload directory unavailable
+                                    </span>
+
+                                </div>
+
+
+                                <b>
+                                    Check
+                                </b>
+
+
+                            <?php endif; ?>
+
 
                         </div>
 
 
                     </div>
+
 
                 </div>
 
@@ -697,9 +1146,12 @@ require __DIR__ . '/components/header.php';
 
         </main>
 
+
     </div>
 
+
 </div>
+
 
 
 <?php
