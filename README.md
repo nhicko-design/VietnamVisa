@@ -1,4 +1,4 @@
-# Immigra / SunViet frontend
+# VietnamVisa / SunViet frontend
 
 Frontend-only PHP project designed in a modern Hostinger-inspired visual direction. It contains no database and no admin logic.
 
@@ -22,4 +22,4 @@ Later the backend can populate `$SERVICES` and `$NEWS` from database/API with th
 
 ## Run
 
-Copy `immigra` to XAMPP `htdocs`, enable Apache rewrite, then open `/immigra/en`.
+Copy `VietnamVisa` to XAMPP `htdocs`, enable Apache rewrite, then open `/VietnamVisa/en`.

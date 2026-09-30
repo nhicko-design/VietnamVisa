@@ -6,7 +6,7 @@ $LANG = [
         'SunViet',
 
     'site_description' =>
-        'Vietnam visa and immigration services with a clear, modern customer experience.',
+        'Vietnam visa and VietnamVisation services with a clear, modern customer experience.',
 
 
     // Navigation
@@ -37,13 +37,13 @@ $LANG = [
 
     // Hero
     'hero_eyebrow' =>
-        'Vietnam immigration made simpler',
+        'Vietnam VietnamVisation made simpler',
 
     'hero_title' =>
         'Your Vietnam journey starts with less paperwork.',
 
     'hero_desc' =>
-        'Clear visa and immigration services for travelers, professionals and businesses — presented in a simpler way.',
+        'Clear visa and VietnamVisation services for travelers, professionals and businesses — presented in a simpler way.',
 
     'hero_primary' =>
         'Explore services',
@@ -63,7 +63,7 @@ $LANG = [
         'Everything you need, clearly explained.',
 
     'services_desc' =>
-        'Explore our core immigration services and open a detailed page when you need the full picture.',
+        'Explore our core VietnamVisation services and open a detailed page when you need the full picture.',
 
     'view_all' =>
         'View all services',
@@ -218,7 +218,7 @@ $LANG = [
 
     // Footer
     'footer_desc' =>
-        'Vietnam visa and immigration services presented with a clearer, more modern customer experience.',
+        'Vietnam visa and VietnamVisation services presented with a clearer, more modern customer experience.',
 
     'footer_services' =>
         'Services',

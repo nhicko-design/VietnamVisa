@@ -49,6 +49,9 @@ try {
             title,
             short_description,
             description,
+            title_vn,
+            short_description_vn,
+            description_vn,
             price,
             currency,
             image,
@@ -100,6 +103,15 @@ if (!$service) {
  */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (
+        !verify_csrf_token(
+            $_POST['csrf_token'] ?? null
+        )
+    ) {
+
+        $errors[] =
+            'Invalid security token. Please try again.';
+    }
 
     $category = trim(
         $_POST['category'] ?? ''
@@ -119,6 +131,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $description = trim(
         $_POST['description'] ?? ''
+    );
+
+    $titleVn = trim(
+        $_POST['title_vn'] ?? ''
+    );
+
+    $shortDescriptionVn = trim(
+        $_POST['short_description_vn'] ?? ''
+    );
+
+    $descriptionVn = trim(
+        $_POST['description_vn'] ?? ''
     );
 
     $price = trim(
@@ -159,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (
         !in_array(
             $category,
-            ['visa', 'support'],
+            ['visa', 'immigration', 'support'],
             true
         )
     ) {
@@ -175,6 +199,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'Title is required.';
     }
 
+    if ($titleVn === '') {
+
+        $errors[] =
+            'Vietnamese title is required.';
+    }
 
     if ($slug === '') {
 
@@ -281,6 +310,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     title = :title,
                     short_description = :short_description,
                     description = :description,
+                    title_vn = :title_vn,
+                    short_description_vn = :short_description_vn,
+                    description_vn = :description_vn,
                     price = :price,
                     currency = :currency,
                     image = :image,
@@ -307,6 +339,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'short_description' =>
                     $shortDescription !== ''
                         ? $shortDescription
+                        : null,
+                        
+                'title_vn' =>
+                    $titleVn !== ''
+                        ? $titleVn
+                        : null,
+
+                'short_description_vn' =>
+                    $shortDescriptionVn !== ''
+                        ? $shortDescriptionVn
+                        : null,
+
+                'description_vn' =>
+                    $descriptionVn !== ''
+                        ? $descriptionVn
                         : null,
 
                 'description' =>
@@ -391,6 +438,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $service['description'] =
         $description;
+
+    $service['title_vn'] =
+        $titleVn;
+
+    $service['short_description_vn'] =
+        $shortDescriptionVn;
+
+    $service['description_vn'] =
+
+    $descriptionVn;
 
     $service['price'] =
         $price;
@@ -1115,7 +1172,13 @@ $currentAdmin = current_admin();
                 method="POST"
                 action=""
             >
-
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars(
+                    csrf_token()
+                ) ?>"
+            >
 
                 <!-- BASIC INFORMATION -->
 
@@ -1158,7 +1221,14 @@ $currentAdmin = current_admin();
                                 >
                                     Visa
                                 </option>
-
+                                <option
+                                    value="immigration"
+                                    <?= $service['category'] === 'immigration'
+                                        ? 'selected'
+                                        : '' ?>
+                                >
+                                    Immigration
+                                </option>
 
                                 <option
                                     value="support"
@@ -1228,6 +1298,32 @@ $currentAdmin = current_admin();
 
                         </div>
 
+                        <!-- VIETNAMESE TITLE -->
+
+                        <div class="form-group full">
+
+                            <label for="title_vn">
+
+                                Vietnamese Title
+
+                                <span class="required">
+                                    *
+                                </span>
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="title_vn"
+                                name="title_vn"
+                                value="<?= htmlspecialchars(
+                                    $service['title_vn']
+                                    ?? ''
+                                ) ?>"
+                                required
+                            >
+
+                        </div>
 
                         <!-- SLUG -->
 
@@ -1286,6 +1382,25 @@ $currentAdmin = current_admin();
 
                         </div>
 
+                        <!-- VIETNAMESE SHORT DESCRIPTION -->
+
+                        <div class="form-group full">
+
+                            <label for="short_description_vn">
+
+                                Vietnamese Short Description
+
+                            </label>
+
+                            <textarea
+                                id="short_description_vn"
+                                name="short_description_vn"
+                            ><?= htmlspecialchars(
+                                $service['short_description_vn']
+                                ?? ''
+                            ) ?></textarea>
+
+                        </div>
 
                         <!-- DESCRIPTION -->
 
@@ -1310,6 +1425,33 @@ $currentAdmin = current_admin();
 
                                 Full description shown on
                                 the service detail page.
+
+                            </div>
+
+                        </div>
+                        <!-- VIETNAMESE DESCRIPTION -->
+
+                        <div class="form-group full">
+
+                            <label for="description_vn">
+
+                                Vietnamese Description
+
+                            </label>
+
+                            <textarea
+                                class="description"
+                                id="description_vn"
+                                name="description_vn"
+                            ><?= htmlspecialchars(
+                                $service['description_vn']
+                                ?? ''
+                            ) ?></textarea>
+
+                            <div class="help">
+
+                                Vietnamese description shown on
+                                the Vietnamese service detail page.
 
                             </div>
 

@@ -1,14 +1,14 @@
 -- ============================================================
--- SUNVIET / IMMIGRA DATABASE
+-- SUNVIET / VietnamVisa DATABASE
 -- XAMPP + MySQL / MariaDB
 -- Step 2: Database foundation + sample content
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS immigra
+CREATE DATABASE IF NOT EXISTS VietnamVisa
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE immigra;
+USE VietnamVisa;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -200,13 +200,13 @@ VALUES
  'A structured service for business travelers who need clear document guidance and a predictable application journey.',
  'Dịch vụ dành cho khách công tác cần hướng dẫn hồ sơ rõ ràng và quy trình đăng ký thuận tiện.',
  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=85',1,'published',2),
-('work-permit','03','Immigration','Work Permit','Giấy Phép Lao Động',
+('work-permit','03','VietnamVisation','Work Permit','Giấy Phép Lao Động',
  'A clear presentation of the work permit process for foreign employees in Vietnam.',
  'Trình bày rõ ràng quy trình giấy phép lao động cho người nước ngoài tại Việt Nam.',
  'Organize requirements, documents and process information in one clear place for employees and companies.',
  'Tổng hợp yêu cầu, giấy tờ và quy trình tại một nơi rõ ràng cho người lao động và doanh nghiệp.',
  'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=85',1,'published',3),
-('temporary-residence-card','04','Immigration','Temporary Residence Card','Thẻ Tạm Trú',
+('temporary-residence-card','04','VietnamVisation','Temporary Residence Card','Thẻ Tạm Trú',
  'Present your temporary residence card service clearly from requirements to result.',
  'Trình bày dịch vụ thẻ tạm trú rõ ràng từ yêu cầu đến kết quả.',
  'A structured information page for foreign residents and companies preparing temporary residence card applications.',
@@ -342,11 +342,11 @@ VALUES
  'A practical checklist for professionals planning meetings, projects and short business visits.',
  'Checklist thực tế dành cho chuyên gia chuẩn bị cuộc họp, dự án và chuyến công tác ngắn ngày.',
  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',
- 'Start with your travel purpose and schedule. Then identify the documents that match your case.\n\nKeep copies of important information and make sure the dates in your documents are consistent.\n\nIf your trip involves a company invitation or additional immigration support, plan that step early.',
+ 'Start with your travel purpose and schedule. Then identify the documents that match your case.\n\nKeep copies of important information and make sure the dates in your documents are consistent.\n\nIf your trip involves a company invitation or additional VietnamVisation support, plan that step early.',
  'Bắt đầu bằng mục đích chuyến đi và lịch trình. Sau đó xác định giấy tờ phù hợp với trường hợp của bạn.\n\nNên lưu bản sao các thông tin quan trọng và kiểm tra tính nhất quán của ngày tháng trên hồ sơ.\n\nNếu chuyến đi cần thư mời doanh nghiệp hoặc hỗ trợ di trú bổ sung, hãy chuẩn bị sớm.',
  'SunViet','published'),
-('new-immigration-website-experience','2026-07-14','Company','Công ty',
- 'A Simpler Immigration Website Experience','Trải nghiệm website dịch vụ di trú đơn giản hơn',
+('new-VietnamVisation-website-experience','2026-07-14','Company','Công ty',
+ 'A Simpler VietnamVisation Website Experience','Trải nghiệm website dịch vụ di trú đơn giản hơn',
  'Why we are redesigning the way visitors discover services, read details and contact our team.',
  'Vì sao chúng tôi thiết kế lại cách khách hàng khám phá dịch vụ, xem chi tiết và liên hệ đội ngũ.',
  'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85',

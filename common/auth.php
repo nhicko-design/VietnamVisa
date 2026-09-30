@@ -2,7 +2,7 @@
 
 /**
  * ============================================================
- * IMMIGRA ADMIN AUTHENTICATION
+ * VietnamVisa ADMIN AUTHENTICATION
  * ============================================================
  */
 
@@ -120,7 +120,7 @@ function require_admin_login(): void
     }
 
     header(
-        'Location: /immigra/admin/login.php'
+        'Location: /VietnamVisa/admin/login.php'
     );
 
     exit;

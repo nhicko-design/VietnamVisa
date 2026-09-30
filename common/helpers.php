@@ -92,49 +92,49 @@ function e($value): string
 }
 
 
-function field(
-    array $item,
-    string $key,
-    ?string $lang = null
-): string {
+function field(array $item, string $key): string
+{
     global $current_lang;
 
-    $lang = $lang ?: (
-        $current_lang ?? 'en'
-    );
+    $lang = $current_lang ?? 'en';
 
-    $value =
-        $item[$key . '_' . $lang]
-        ?? $item[$key . '_en']
-        ?? $item[$key]
-        ?? '';
+    $langKey = $key . '_' . $lang;
 
-    return is_string($value)
-        ? $value
-        : '';
+    if (array_key_exists($langKey, $item)) {
+        return (string) $item[$langKey];
+    }
+
+    if (array_key_exists($key, $item)) {
+        return (string) $item[$key];
+    }
+
+    return '';
 }
 
 
-function field_array(
-    array $item,
-    string $key,
-    ?string $lang = null
-): array {
+function field_array(array $item, string $key): array
+{
     global $current_lang;
 
-    $lang = $lang ?: (
-        $current_lang ?? 'en'
-    );
+    $lang = $current_lang ?? 'en';
 
-    $value =
-        $item[$key . '_' . $lang]
-        ?? $item[$key . '_en']
-        ?? $item[$key]
-        ?? [];
+    $langKey = $key . '_' . $lang;
 
-    return is_array($value)
-        ? $value
-        : [];
+    if (
+        array_key_exists($langKey, $item)
+        && is_array($item[$langKey])
+    ) {
+        return $item[$langKey];
+    }
+
+    if (
+        array_key_exists($key, $item)
+        && is_array($item[$key])
+    ) {
+        return $item[$key];
+    }
+
+    return [];
 }
 
 
@@ -144,18 +144,17 @@ function field_array(
  * Service data is loaded directly from MySQL,
  * including media, features, steps and FAQ.
  */
-function find_service(
-    string $slug
-): ?array {
-
-    require_once __DIR__ . '/../common/database.php';
+function find_service(string $slug): ?array
+{
+    require_once __DIR__ . '/database.php';
 
     $pdo = db();
 
+
     /*
-     * =========================================================
-     * SERVICE
-     * =========================================================
+     * ---------------------------------------------------------
+     * Load service
+     * ---------------------------------------------------------
      */
 
     $stmt = $pdo->prepare("
@@ -163,140 +162,330 @@ function find_service(
             id,
             category,
             slug,
+
             title,
+            title_vn,
+
             short_description,
+            short_description_vn,
+
             description,
+            description_vn,
+
             price,
             currency,
             image,
             icon,
+
             is_featured,
             is_active,
             sort_order,
+
             created_at,
             updated_at
+
         FROM services
+
         WHERE slug = ?
           AND is_active = 1
+
         LIMIT 1
     ");
 
-    $stmt->execute([
-        $slug
-    ]);
+    $stmt->execute([$slug]);
 
     $service = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
     if (!$service) {
         return null;
     }
 
 
-    $serviceId = (int) $service['id'];
-
-
     /*
-     * =========================================================
-     * BASIC SERVICE DATA
-     * =========================================================
+     * ---------------------------------------------------------
+     * Basic service data
+     * ---------------------------------------------------------
      */
 
-    $title = (string) (
-        $service['title'] ?? ''
-    );
+    $titleEn = (string) ($service['title'] ?? '');
+    $titleVn = (string) ($service['title_vn'] ?? '');
 
-    $short = (string) (
-        $service['short_description'] ?? ''
-    );
+    $shortEn = (string) ($service['short_description'] ?? '');
+    $shortVn = (string) ($service['short_description_vn'] ?? '');
 
-    $description = (string) (
-        $service['description'] ?? ''
-    );
+    $descriptionEn = (string) ($service['description'] ?? '');
+    $descriptionVn = (string) ($service['description_vn'] ?? '');
 
 
     /*
-     * =========================================================
-     * FEATURES
-     * =========================================================
+     * Vietnamese fallback
+     */
+
+    if ($titleVn === '') {
+        $titleVn = $titleEn;
+    }
+
+    if ($shortVn === '') {
+        $shortVn = $shortEn;
+    }
+
+    if ($descriptionVn === '') {
+        $descriptionVn = $descriptionEn;
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * Features
+     * ---------------------------------------------------------
      */
 
     $stmt = $pdo->prepare("
         SELECT
             id,
+
             title,
             description,
+
+            title_vn,
+            description_vn,
+
             sort_order,
             is_active
+
         FROM service_features
+
         WHERE service_id = ?
           AND is_active = 1
-        ORDER BY sort_order ASC, id ASC
+
+        ORDER BY
+            sort_order ASC,
+            id ASC
     ");
 
     $stmt->execute([
-        $serviceId
+        (int) $service['id']
     ]);
 
-    $features = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $featureRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    $featuresEn = [];
+    $featuresVn = [];
+
+
+    foreach ($featureRows as $feature) {
+
+        $featureTitleEn =
+            (string) ($feature['title'] ?? '');
+
+        $featureDescriptionEn =
+            (string) ($feature['description'] ?? '');
+
+        $featureTitleVn =
+            (string) ($feature['title_vn'] ?? '');
+
+        $featureDescriptionVn =
+            (string) ($feature['description_vn'] ?? '');
+
+
+        if ($featureTitleVn === '') {
+            $featureTitleVn = $featureTitleEn;
+        }
+
+        if ($featureDescriptionVn === '') {
+            $featureDescriptionVn = $featureDescriptionEn;
+        }
+
+
+        $featuresEn[] = [
+            'id' => (int) $feature['id'],
+            'title' => $featureTitleEn,
+            'description' => $featureDescriptionEn,
+            'sort_order' => (int) $feature['sort_order'],
+        ];
+
+
+        $featuresVn[] = [
+            'id' => (int) $feature['id'],
+            'title' => $featureTitleVn,
+            'description' => $featureDescriptionVn,
+            'sort_order' => (int) $feature['sort_order'],
+        ];
+    }
 
 
     /*
-     * =========================================================
-     * STEPS
-     * =========================================================
+     * ---------------------------------------------------------
+     * Steps
+     * ---------------------------------------------------------
      */
 
     $stmt = $pdo->prepare("
         SELECT
             id,
             step_number,
+
             title,
             description,
+
+            title_vn,
+            description_vn,
+
             sort_order,
             is_active
+
         FROM service_steps
+
         WHERE service_id = ?
           AND is_active = 1
-        ORDER BY sort_order ASC, step_number ASC, id ASC
+
+        ORDER BY
+            sort_order ASC,
+            step_number ASC,
+            id ASC
     ");
 
     $stmt->execute([
-        $serviceId
+        (int) $service['id']
     ]);
 
-    $steps = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stepRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    $stepsEn = [];
+    $stepsVn = [];
+
+
+    foreach ($stepRows as $step) {
+
+        $stepTitleEn =
+            (string) ($step['title'] ?? '');
+
+        $stepDescriptionEn =
+            (string) ($step['description'] ?? '');
+
+        $stepTitleVn =
+            (string) ($step['title_vn'] ?? '');
+
+        $stepDescriptionVn =
+            (string) ($step['description_vn'] ?? '');
+
+
+        if ($stepTitleVn === '') {
+            $stepTitleVn = $stepTitleEn;
+        }
+
+        if ($stepDescriptionVn === '') {
+            $stepDescriptionVn = $stepDescriptionEn;
+        }
+
+
+        $stepsEn[] = [
+            'id' => (int) $step['id'],
+            'step_number' => (int) $step['step_number'],
+            'title' => $stepTitleEn,
+            'description' => $stepDescriptionEn,
+            'sort_order' => (int) $step['sort_order'],
+        ];
+
+
+        $stepsVn[] = [
+            'id' => (int) $step['id'],
+            'step_number' => (int) $step['step_number'],
+            'title' => $stepTitleVn,
+            'description' => $stepDescriptionVn,
+            'sort_order' => (int) $step['sort_order'],
+        ];
+    }
 
 
     /*
-     * =========================================================
+     * ---------------------------------------------------------
      * FAQ
-     * =========================================================
+     * ---------------------------------------------------------
      */
 
     $stmt = $pdo->prepare("
         SELECT
             id,
+
             question,
             answer,
+
+            question_vn,
+            answer_vn,
+
             sort_order,
             is_active
+
         FROM service_faq
+
         WHERE service_id = ?
           AND is_active = 1
-        ORDER BY sort_order ASC, id ASC
+
+        ORDER BY
+            sort_order ASC,
+            id ASC
     ");
 
     $stmt->execute([
-        $serviceId
+        (int) $service['id']
     ]);
 
-    $faq = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $faqRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    $faqEn = [];
+    $faqVn = [];
+
+
+    foreach ($faqRows as $faq) {
+
+        $questionEn =
+            (string) ($faq['question'] ?? '');
+
+        $answerEn =
+            (string) ($faq['answer'] ?? '');
+
+        $questionVn =
+            (string) ($faq['question_vn'] ?? '');
+
+        $answerVn =
+            (string) ($faq['answer_vn'] ?? '');
+
+
+        if ($questionVn === '') {
+            $questionVn = $questionEn;
+        }
+
+        if ($answerVn === '') {
+            $answerVn = $answerEn;
+        }
+
+
+        $faqEn[] = [
+            'id' => (int) $faq['id'],
+            'q' => $questionEn,
+            'a' => $answerEn,
+            'sort_order' => (int) $faq['sort_order'],
+        ];
+
+
+        $faqVn[] = [
+            'id' => (int) $faq['id'],
+            'q' => $questionVn,
+            'a' => $answerVn,
+            'sort_order' => (int) $faq['sort_order'],
+        ];
+    }
 
 
     /*
-     * =========================================================
-     * MEDIA
-     * =========================================================
+     * ---------------------------------------------------------
+     * Service media
+     * ---------------------------------------------------------
      */
 
     $stmt = $pdo->prepare("
@@ -308,123 +497,78 @@ function find_service(
             alt_text,
             sort_order,
             is_active
+
         FROM service_media
+
         WHERE service_id = ?
           AND is_active = 1
-        ORDER BY sort_order ASC, id ASC
+
+        ORDER BY
+            sort_order ASC,
+            id ASC
     ");
 
     $stmt->execute([
-        $serviceId
+        (int) $service['id']
     ]);
 
     $media = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     /*
-     * =========================================================
-     * CONVERT TO EXISTING FRONTEND STRUCTURE
-     * =========================================================
-     */
-
-    $featureTitles = [];
-
-    foreach ($features as $feature) {
-
-        $featureTitles[] = [
-            'id' => (int) $feature['id'],
-            'title' => (string) ($feature['title'] ?? ''),
-            'description' => (string) ($feature['description'] ?? ''),
-            'sort_order' => (int) ($feature['sort_order'] ?? 0),
-        ];
-    }
-
-
-    $stepData = [];
-
-    foreach ($steps as $step) {
-
-        $stepData[] = [
-            'id' => (int) $step['id'],
-            'step_number' => (int) ($step['step_number'] ?? 1),
-            'title' => (string) ($step['title'] ?? ''),
-            'description' => (string) ($step['description'] ?? ''),
-            'sort_order' => (int) ($step['sort_order'] ?? 0),
-        ];
-    }
-
-
-    $faqData = [];
-
-    foreach ($faq as $item) {
-
-        $faqData[] = [
-            'id' => (int) $item['id'],
-            'q' => (string) ($item['question'] ?? ''),
-            'a' => (string) ($item['answer'] ?? ''),
-            'sort_order' => (int) ($item['sort_order'] ?? 0),
-        ];
-    }
-
-
-    /*
-     * =========================================================
-     * RETURN SERVICE
-     * =========================================================
+     * ---------------------------------------------------------
+     * Return final service structure
+     * ---------------------------------------------------------
      */
 
     return [
 
-        'id' => $serviceId,
+        'id' => (int) $service['id'],
 
-        'slug' => (string) (
-            $service['slug'] ?? ''
-        ),
+        'slug' => (string) $service['slug'],
 
-        'icon' => (string) (
-            $service['icon'] ?? ''
-        ),
+        'category' => (string) $service['category'],
 
-        'category' => (string) (
-            $service['category'] ?? ''
-        ),
+        'icon' => (string) ($service['icon'] ?? ''),
 
-        'featured' =>
-            (int) (
-                $service['is_featured'] ?? 0
-            ) === 1,
+        'image' => (string) ($service['image'] ?? ''),
 
 
         /*
-         * Existing multilingual structure.
-         *
-         * At the moment the DB has one title/description
-         * field, so it is used for both EN and VN.
+         * English
          */
 
-        'title_en' => $title,
-        'title_vn' => $title,
+        'title_en' => $titleEn,
 
-        'short_en' => $short,
-        'short_vn' => $short,
+        'short_en' => $shortEn,
 
-        'description_en' => $description,
-        'description_vn' => $description,
+        'description_en' => $descriptionEn,
 
 
         /*
-         * Existing direct fields
+         * Vietnamese
          */
 
-        'title' => $title,
+        'title_vn' => $titleVn,
 
-        'short_description' => $short,
+        'short_vn' => $shortVn,
 
-        'description' => $description,
+        'description_vn' => $descriptionVn,
 
 
         /*
-         * Price
+         * Generic compatibility fields
+         */
+
+        'title' => $titleEn,
+
+        'short_description' => $shortEn,
+
+        'description' => $descriptionEn,
+
+
+        /*
+         * Pricing
          */
 
         'price' =>
@@ -432,65 +576,54 @@ function find_service(
                 ? (float) $service['price']
                 : null,
 
-        'currency' => (string) (
-            $service['currency'] ?? 'USD'
-        ),
-
-
-        /*
-         * Main service image
-         */
-
-        'image' => (string) (
-            $service['image'] ?? ''
-        ),
+        'currency' =>
+            (string) ($service['currency'] ?? 'USD'),
 
 
         /*
          * Status
          */
 
-        'is_featured' => (int) (
-            $service['is_featured'] ?? 0
-        ),
+        'is_featured' =>
+            (int) ($service['is_featured'] ?? 0),
 
-        'is_active' => (int) (
-            $service['is_active'] ?? 0
-        ),
+        'is_active' =>
+            (int) ($service['is_active'] ?? 0),
 
-        'sort_order' => (int) (
-            $service['sort_order'] ?? 0
-        ),
+        'sort_order' =>
+            (int) ($service['sort_order'] ?? 0),
 
 
         /*
-         * Timestamps
+         * Features
          */
 
-        'created_at' =>
-            $service['created_at'] ?? null,
+        'features_en' => $featuresEn,
 
-        'updated_at' =>
-            $service['updated_at'] ?? null,
+        'features_vn' => $featuresVn,
 
 
         /*
-         * =====================================================
-         * RELATED DATA
-         * =====================================================
+         * Steps
          */
 
-        'features' => $featureTitles,
-        'features_en' => $featureTitles,
-        'features_vn' => $featureTitles,
+        'steps_en' => $stepsEn,
 
-        'steps' => $stepData,
-        'steps_en' => $stepData,
-        'steps_vn' => $stepData,
+        'steps_vn' => $stepsVn,
 
-        'faq' => $faqData,
-        'faq_en' => $faqData,
-        'faq_vn' => $faqData,
+
+        /*
+         * FAQ
+         */
+
+        'faq_en' => $faqEn,
+
+        'faq_vn' => $faqVn,
+
+
+        /*
+         * Media
+         */
 
         'media' => $media,
     ];

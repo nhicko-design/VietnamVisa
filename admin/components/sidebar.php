@@ -269,7 +269,7 @@
 
 
         <a
-            href="/immigra/admin/logout.php"
+            href="/VietnamVisa/admin/logout.php"
             class="sidebar-footer-link logout"
         >
 

@@ -12,9 +12,9 @@ Open:
 
 ## 3. Import the SQL
 
-Choose **Import** → select `database/immigra.sql` → click **Import**.
+Choose **Import** → select `database/VietnamVisa.sql` → click **Import**.
 
-The script creates database `immigra`, all tables and sample content.
+The script creates database `VietnamVisa`, all tables and sample content.
 
 ## 4. Local admin account
 
@@ -29,7 +29,7 @@ Change the password when the real authentication screen is implemented.
 
 - Host: `127.0.0.1`
 - Port: `3306`
-- Database: `immigra`
+- Database: `VietnamVisa`
 - User: `root`
 - Password: empty
 
