@@ -20,7 +20,7 @@
         <div class="footer-brand">
             <a class="brand brand-light" href="<?= e(url('')) ?>">
                 <span class="brand-mark">S</span>
-                <span class="brand-name">SunViet</span>
+                <span class="brand-name"><?= e(SITE_NAME) ?></span>
             </a>
             <p><?= __('footer_desc') ?></p>
         </div>
@@ -74,8 +74,8 @@
         </a>
 
         <!-- Messenger Contact -->
-        <a class="svqc__item" 
-           href="https://m.me/YOUR_MESSENGER_USERNAME" 
+        <a class="svqc__item"
+           href="<?= e(MESSENGER_URL ?: '#') ?>"
            target="_blank" 
            rel="noopener noreferrer" 
            aria-label="Contact SunViet on Messenger">
@@ -90,8 +90,8 @@
         </a>
 
         <!-- Zalo Contact -->
-        <a class="svqc__item" 
-           href="https://zalo.me/84901234567" 
+        <a class="svqc__item"
+           href="<?= e(ZALO_URL ?: '#') ?>"
            target="_blank" 
            rel="noopener noreferrer" 
            aria-label="Contact SunViet on Zalo">

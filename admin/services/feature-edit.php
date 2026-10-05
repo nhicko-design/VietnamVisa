@@ -21,6 +21,8 @@ $stmt = $pdo->prepare("
         sf.service_id,
         sf.title,
         sf.description,
+        sf.title_vn,
+        sf.description_vn,
         sf.sort_order,
         sf.is_active,
         s.title AS service_title
@@ -46,6 +48,8 @@ $serviceId = (int) $feature['service_id'];
 
 $title = $feature['title'];
 $description = $feature['description'] ?? '';
+$titleVn = $feature['title_vn'] ?? '';
+$descriptionVn = $feature['description_vn'] ?? '';
 $sortOrder = (int) $feature['sort_order'];
 $isActive = (int) $feature['is_active'];
 
@@ -69,6 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['description'] ?? ''
     );
 
+    $titleVn = trim($_POST['title_vn'] ?? '');
+    $descriptionVn = trim($_POST['description_vn'] ?? '');
+
     $sortOrder = (int) (
         $_POST['sort_order'] ?? 0
     );
@@ -90,6 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SET
                 title = ?,
                 description = ?,
+                title_vn = ?,
+                description_vn = ?,
                 sort_order = ?,
                 is_active = ?,
                 updated_at = NOW()
@@ -101,6 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $description !== ''
                 ? $description
                 : null,
+            $titleVn !== '' ? $titleVn : null,
+            $descriptionVn !== '' ? $descriptionVn : null,
             $sortOrder,
             $isActive,
             $id
@@ -240,9 +251,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
-<body>
+<body class="admin-body admin-legacy-service-page">
+<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
 
 <div class="container">
 
@@ -313,6 +328,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="description"
                 ><?= htmlspecialchars($description) ?></textarea>
 
+            </div>
+
+            <div class="field">
+                <label>Vietnamese feature title</label>
+                <input type="text" name="title_vn" value="<?= htmlspecialchars($titleVn, ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+
+            <div class="field">
+                <label>Vietnamese description</label>
+                <textarea name="description_vn"><?= htmlspecialchars($descriptionVn, ENT_QUOTES, 'UTF-8') ?></textarea>
             </div>
 
 

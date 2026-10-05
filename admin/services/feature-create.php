@@ -35,6 +35,8 @@ if (!$service) {
 
 $title = '';
 $description = '';
+$titleVn = '';
+$descriptionVn = '';
 $sortOrder = 0;
 $isActive = 1;
 
@@ -58,6 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['description'] ?? ''
     );
 
+    $titleVn = trim($_POST['title_vn'] ?? '');
+    $descriptionVn = trim($_POST['description_vn'] ?? '');
+
     $sortOrder = (int) (
         $_POST['sort_order'] ?? 0
     );
@@ -79,12 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 service_id,
                 title,
                 description,
+                title_vn,
+                description_vn,
                 sort_order,
                 is_active,
                 created_at,
                 updated_at
             )
             VALUES (
+                ?,
+                ?,
                 ?,
                 ?,
                 ?,
@@ -101,6 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $description !== ''
                 ? $description
                 : null,
+            $titleVn !== '' ? $titleVn : null,
+            $descriptionVn !== '' ? $descriptionVn : null,
             $sortOrder,
             $isActive
         ]);
@@ -239,9 +250,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
-<body>
+<body class="admin-body admin-legacy-service-page">
+<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
 
 <div class="container">
 
@@ -310,6 +325,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     name="description"
                 ><?= htmlspecialchars($description) ?></textarea>
 
+            </div>
+
+            <div class="field">
+                <label>Vietnamese feature title</label>
+                <input type="text" name="title_vn" value="<?= htmlspecialchars($titleVn, ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+
+            <div class="field">
+                <label>Vietnamese description</label>
+                <textarea name="description_vn"><?= htmlspecialchars($descriptionVn, ENT_QUOTES, 'UTF-8') ?></textarea>
             </div>
 
 

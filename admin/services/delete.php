@@ -61,6 +61,18 @@ if (!$service) {
     exit;
 }
 
+$mediaStmt = $pdo->prepare("
+    SELECT file_path
+    FROM service_media
+    WHERE service_id = :service_id
+");
+
+$mediaStmt->execute([
+    ':service_id' => $serviceId,
+]);
+
+$mediaPaths = $mediaStmt->fetchAll(PDO::FETCH_COLUMN);
+
 /*
 |--------------------------------------------------------------------------
 | DELETE SERVICE
@@ -79,6 +91,14 @@ $stmt = $pdo->prepare("
 $stmt->execute([
     ':id' => $serviceId
 ]);
+
+foreach ($mediaPaths as $mediaPath) {
+    $fullPath = admin_local_service_upload_path((string) $mediaPath);
+
+    if ($fullPath !== null && is_file($fullPath)) {
+        @unlink($fullPath);
+    }
+}
 
 header(
     'Location: ' . ADMIN_BASE_URL . '/services/index.php?deleted=1'

@@ -77,6 +77,44 @@ function verify_csrf_token(?string $token): bool
 }
 
 
+function admin_login_is_rate_limited(): bool
+{
+    $attempts = (int) ($_SESSION['admin_login_attempts'] ?? 0);
+    $firstAttempt = (int) ($_SESSION['admin_login_first_attempt'] ?? 0);
+
+    if ($firstAttempt > 0 && time() - $firstAttempt >= 900) {
+        unset(
+            $_SESSION['admin_login_attempts'],
+            $_SESSION['admin_login_first_attempt']
+        );
+
+        return false;
+    }
+
+    return $attempts >= 5;
+}
+
+
+function record_admin_login_failure(): void
+{
+    if (empty($_SESSION['admin_login_first_attempt'])) {
+        $_SESSION['admin_login_first_attempt'] = time();
+    }
+
+    $_SESSION['admin_login_attempts'] =
+        (int) ($_SESSION['admin_login_attempts'] ?? 0) + 1;
+}
+
+
+function clear_admin_login_failures(): void
+{
+    unset(
+        $_SESSION['admin_login_attempts'],
+        $_SESSION['admin_login_first_attempt']
+    );
+}
+
+
 /**
  * ============================================================
  * LOGIN STATE
@@ -139,6 +177,13 @@ function login_admin(
 ): array {
 
     $email = trim($email);
+
+    if (admin_login_is_rate_limited()) {
+        return [
+            'success' => false,
+            'message' => 'Too many sign-in attempts. Please try again in 15 minutes.',
+        ];
+    }
 
     if ($email === '') {
         return [
@@ -209,6 +254,8 @@ function login_admin(
          */
         if (!$admin) {
 
+            record_admin_login_failure();
+
             return [
                 'success' => false,
                 'message' => 'Invalid email or password.',
@@ -228,6 +275,8 @@ function login_admin(
          */
 
         if ((int) $admin['is_active'] !== 1) {
+
+            record_admin_login_failure();
 
             return [
                 'success' => false,
@@ -249,6 +298,8 @@ function login_admin(
             )
         ) {
 
+            record_admin_login_failure();
+
             return [
                 'success' => false,
                 'message' => 'Invalid email or password.',
@@ -263,6 +314,8 @@ function login_admin(
          */
 
         session_regenerate_id(true);
+
+        clear_admin_login_failures();
 
 
         /**

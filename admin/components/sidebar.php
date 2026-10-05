@@ -9,7 +9,7 @@
         <!-- BRAND -->
 
         <a
-            href="dashboard.php"
+            href="<?= htmlspecialchars(ADMIN_BASE_URL . '/dashboard.php', ENT_QUOTES, 'UTF-8') ?>"
             class="admin-brand"
         >
 
@@ -40,8 +40,8 @@
 
 
                 <a
-                    href="dashboard.php"
-                    class="sidebar-link active"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/dashboard.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'dashboard' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -65,8 +65,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'pages' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -81,8 +81,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/services/index.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'services' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -97,8 +97,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/news/manage.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'news' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -107,6 +107,22 @@
 
                     <span>
                         News
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/inquiries.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'inquiries' ? 'active' : '' ?>"
+                >
+
+                    <span class="sidebar-icon">
+                        R
+                    </span>
+
+                    <span>
+                        Requests
                     </span>
 
                 </a>
@@ -138,8 +154,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php?page=home', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'pages' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -154,8 +170,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php?page=about', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'pages' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -170,8 +186,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php?page=visa', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'pages' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -186,8 +202,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php?page=support', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'pages' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -211,8 +227,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/settings.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'settings' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -227,8 +243,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/users.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'users' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -254,7 +270,7 @@
     <div class="sidebar-footer">
 
         <a
-            href="../en"
+            href="<?= htmlspecialchars(dirname(ADMIN_BASE_URL) . '/en', ENT_QUOTES, 'UTF-8') ?>"
             target="_blank"
             class="sidebar-footer-link"
         >

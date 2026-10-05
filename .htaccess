@@ -1,6 +1,16 @@
 RewriteEngine On
 RewriteBase /VietnamVisa/
 
+Options -Indexes
+
+<FilesMatch "\.(?:sql|log|ini|md)$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^(?:\.env|composer\.(?:json|lock))$">
+    Require all denied
+</FilesMatch>
+
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]

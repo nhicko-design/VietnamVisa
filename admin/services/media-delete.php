@@ -115,20 +115,10 @@ $stmt->execute([
 */
 
 if ($filePath !== '') {
+    $fullPath = admin_local_service_upload_path($filePath);
 
-    $isLocalUpload =
-        strpos($filePath, 'uploads/services/') === 0;
-
-    if ($isLocalUpload) {
-
-        $fullPath =
-            dirname(__DIR__, 2) .
-            '/' .
-            $filePath;
-
-        if (is_file($fullPath)) {
-            @unlink($fullPath);
-        }
+    if ($fullPath !== null && is_file($fullPath)) {
+        @unlink($fullPath);
     }
 }
 

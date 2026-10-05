@@ -1,7 +1,7 @@
 <header class="site-header" id="siteHeader">
     <div class="container nav-wrap">
-        <a class="brand" href="<?= e(url('')) ?>" aria-label="SunViet Home">
-            <span class="brand-mark">S</span><span class="brand-name">SunViet</span>
+        <a class="brand" href="<?= e(url('')) ?>" aria-label="<?= e(SITE_NAME) ?> Home">
+            <span class="brand-mark">S</span><span class="brand-name"><?= e(SITE_NAME) ?></span>
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
             <a class="nav-link <?= $route === 'home' ? 'is-active' : '' ?>" href="<?= e(url('')) ?>"><?= __('nav_home') ?></a>

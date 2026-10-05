@@ -9,6 +9,7 @@ require_admin_login();
 $admin = current_admin();
 
 $page_title = 'Dashboard';
+$admin_section = 'dashboard';
 
 
 /*
@@ -28,9 +29,13 @@ $pdo = db();
 
 $stats = [
     'services' => 0,
+    'inactive_services' => 0,
     'news' => 0,
     'published_news' => 0,
+    'draft_news' => 0,
     'home_media' => 0,
+    'news_media' => 0,
+    'new_inquiries' => 0,
 ];
 
 
@@ -45,7 +50,7 @@ try {
     $stmt = $pdo->query("
         SELECT COUNT(*)
         FROM services
-        WHERE active = 1
+        WHERE is_active = 1
     ");
 
     $stats['services'] = (int) $stmt->fetchColumn();
@@ -53,6 +58,29 @@ try {
 } catch (Throwable $e) {
 
     $stats['services'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| INACTIVE SERVICES COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM services
+        WHERE is_active = 0
+    ");
+
+    $stats['inactive_services'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['inactive_services'] = 0;
 
 }
 
@@ -75,6 +103,29 @@ try {
 } catch (Throwable $e) {
 
     $stats['news'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| DRAFT NEWS COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM news
+        WHERE status = 'draft'
+    ");
+
+    $stats['draft_news'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['draft_news'] = 0;
 
 }
 
@@ -113,7 +164,7 @@ try {
     $stmt = $pdo->query("
         SELECT COUNT(*)
         FROM home_media
-        WHERE active = 1
+        WHERE is_active = 1
     ");
 
     $stats['home_media'] = (int) $stmt->fetchColumn();
@@ -121,6 +172,52 @@ try {
 } catch (Throwable $e) {
 
     $stats['home_media'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| NEWS MEDIA COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM news_media
+        WHERE is_active = 1
+    ");
+
+    $stats['news_media'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['news_media'] = 0;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| NEW CUSTOMER REQUESTS COUNT
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM inquiries
+        WHERE status = 'new'
+    ");
+
+    $stats['new_inquiries'] = (int) $stmt->fetchColumn();
+
+} catch (Throwable $e) {
+
+    $stats['new_inquiries'] = 0;
 
 }
 
@@ -140,11 +237,11 @@ try {
             id,
             title,
             excerpt,
-            image,
+            featured_image AS image,
             author,
             status,
             published_at,
-            featured
+            is_featured AS featured
         FROM news
         ORDER BY created_at DESC
         LIMIT 5
@@ -175,11 +272,11 @@ try {
             title,
             category,
             image,
-            featured,
-            active
+            is_featured AS featured,
+            is_active AS active
         FROM services
-        WHERE active = 1
-        ORDER BY featured DESC, id DESC
+        WHERE is_active = 1
+        ORDER BY is_featured DESC, sort_order ASC, id DESC
         LIMIT 5
     ");
 
@@ -188,6 +285,220 @@ try {
 } catch (Throwable $e) {
 
     $featured_services = [];
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| CONTENT ALERTS
+|--------------------------------------------------------------------------
+*/
+
+$content_alerts = [];
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM services
+        WHERE is_active = 1
+          AND (image IS NULL OR TRIM(image) = '')
+    ");
+
+    $services_without_image = (int) $stmt->fetchColumn();
+
+    if ($services_without_image > 0) {
+        $content_alerts[] = [
+            'icon' => 'IMG',
+            'title' => $services_without_image . ' active service' . ($services_without_image === 1 ? '' : 's') . ' without a cover image',
+            'description' => 'Add an image to improve the service listing.',
+            'url' => ADMIN_BASE_URL . '/services/index.php',
+            'action' => 'Review',
+        ];
+    }
+
+} catch (Throwable $e) {
+
+    // The dashboard remains usable when an optional content query fails.
+
+}
+
+if ($stats['draft_news'] > 0) {
+    $content_alerts[] = [
+        'icon' => 'DR',
+        'title' => $stats['draft_news'] . ' article' . ($stats['draft_news'] === 1 ? '' : 's') . ' still in draft',
+        'description' => 'Review and publish when the content is ready.',
+        'url' => ADMIN_BASE_URL . '/news/manage.php',
+        'action' => 'Open',
+    ];
+}
+
+if ($stats['new_inquiries'] > 0) {
+    $content_alerts[] = [
+        'icon' => 'RQ',
+        'title' => $stats['new_inquiries'] . ' new customer request' . ($stats['new_inquiries'] === 1 ? '' : 's'),
+        'description' => 'Review new Contact and Apply Online submissions.',
+        'url' => ADMIN_BASE_URL . '/inquiries.php?status=new',
+        'action' => 'Open',
+    ];
+}
+
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM services
+        WHERE is_active = 1
+          AND (title_vn IS NULL OR TRIM(title_vn) = '')
+    ");
+
+    $services_without_vietnamese = (int) $stmt->fetchColumn();
+
+    if ($services_without_vietnamese > 0) {
+        $content_alerts[] = [
+            'icon' => 'VN',
+            'title' => $services_without_vietnamese . ' active service' . ($services_without_vietnamese === 1 ? '' : 's') . ' missing Vietnamese content',
+            'description' => 'Add a Vietnamese title before promoting the service.',
+            'url' => ADMIN_BASE_URL . '/services/index.php',
+            'action' => 'Review',
+        ];
+    }
+
+} catch (Throwable $e) {
+
+    // The dashboard remains usable when an optional content query fails.
+
+}
+
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM news
+        WHERE status = 'published'
+          AND (
+              title_vn IS NULL
+              OR TRIM(title_vn) = ''
+              OR content_vn IS NULL
+              OR TRIM(content_vn) = ''
+          )
+    ");
+
+    $articles_without_vietnamese = (int) $stmt->fetchColumn();
+
+    if ($articles_without_vietnamese > 0) {
+        $content_alerts[] = [
+            'icon' => 'VN',
+            'title' => $articles_without_vietnamese . ' published article' . ($articles_without_vietnamese === 1 ? '' : 's') . ' missing Vietnamese content',
+            'description' => 'Complete the Vietnamese title and article body.',
+            'url' => ADMIN_BASE_URL . '/news/manage.php',
+            'action' => 'Review',
+        ];
+    }
+
+} catch (Throwable $e) {
+
+    // The dashboard remains usable when an optional content query fails.
+
+}
+
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM news n
+        WHERE n.status = 'published'
+          AND (n.featured_image IS NULL OR TRIM(n.featured_image) = '')
+          AND NOT EXISTS (
+              SELECT 1
+              FROM news_media nm
+              WHERE nm.news_id = n.id
+                AND nm.is_active = 1
+          )
+    ");
+
+    $articles_without_media = (int) $stmt->fetchColumn();
+
+    if ($articles_without_media > 0) {
+        $content_alerts[] = [
+            'icon' => 'MD',
+            'title' => $articles_without_media . ' published article' . ($articles_without_media === 1 ? '' : 's') . ' without media',
+            'description' => 'Add a featured image or article media.',
+            'url' => ADMIN_BASE_URL . '/news/manage.php',
+            'action' => 'Review',
+        ];
+    }
+
+} catch (Throwable $e) {
+
+    // news_media can be unavailable before its migration is applied.
+
+}
+
+if ($stats['home_media'] === 0) {
+    $content_alerts[] = [
+        'icon' => 'HM',
+        'title' => 'No homepage media is visible',
+        'description' => 'Add a hero image or video for the homepage.',
+        'url' => ADMIN_BASE_URL . '/home-media.php',
+        'action' => 'Add media',
+    ];
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| RECENT MEDIA
+|--------------------------------------------------------------------------
+*/
+
+$recent_media = [];
+
+try {
+
+    $stmt = $pdo->query("
+        SELECT
+            media_type,
+            file_path,
+            title,
+            source,
+            created_at,
+            action_url
+        FROM (
+            SELECT
+                media_type,
+                file_path,
+                COALESCE(NULLIF(title, ''), section) AS title,
+                'Homepage' AS source,
+                created_at,
+                '" . ADMIN_BASE_URL . "/home-media.php' AS action_url
+            FROM home_media
+
+            UNION ALL
+
+            SELECT
+                nm.media_type,
+                nm.file_path,
+                COALESCE(NULLIF(nm.title, ''), n.title) AS title,
+                'News' AS source,
+                nm.created_at,
+                CONCAT('" . ADMIN_BASE_URL . "/news/media.php?id=', nm.news_id) AS action_url
+            FROM news_media nm
+            INNER JOIN news n ON n.id = nm.news_id
+        ) AS media_items
+        ORDER BY created_at DESC
+        LIMIT 4
+    ");
+
+    $recent_media = $stmt->fetchAll();
+
+} catch (Throwable $e) {
+
+    $recent_media = [];
 
 }
 
@@ -328,7 +639,7 @@ require __DIR__ . '/components/header.php';
 
 
                     <p>
-                        Active services
+                        <?= $stats['inactive_services'] ?> inactive
                     </p>
 
                 </article>
@@ -400,7 +711,7 @@ require __DIR__ . '/components/header.php';
 
 
                     <p>
-                        Active homepage media
+                        <?= $stats['news_media'] ?> active article media
                     </p>
 
                 </article>
@@ -419,24 +730,24 @@ require __DIR__ . '/components/header.php';
 
 
                         <span class="stat-status">
-                            Published
+                            New
                         </span>
 
                     </div>
 
 
                     <strong>
-                        <?= $stats['published_news'] ?>
+                        <?= $stats['new_inquiries'] ?>
                     </strong>
 
 
                     <h3>
-                        Published
+                        New requests
                     </h3>
 
 
                     <p>
-                        Published articles
+                        Contact and application requests
                     </p>
 
                 </article>
@@ -507,7 +818,7 @@ require __DIR__ . '/components/header.php';
                                         <?php if (!empty($article['image'])): ?>
 
                                             <img
-                                                src="<?= htmlspecialchars($article['image']) ?>"
+                                                src="<?= htmlspecialchars(admin_media_url($article['image']), ENT_QUOTES, 'UTF-8') ?>"
                                                 alt="<?= htmlspecialchars($article['title']) ?>"
                                             >
 
@@ -746,7 +1057,7 @@ require __DIR__ . '/components/header.php';
                         <!-- MANAGE HOME -->
 
                         <a
-                            href="/VietnamVisa/admin/home/index.php"
+                            href="<?= ADMIN_BASE_URL ?>/home-media.php"
                             class="quick-action"
                         >
 
@@ -771,6 +1082,40 @@ require __DIR__ . '/components/header.php';
 
                             <span class="quick-arrow">
                                 →
+                            </span>
+
+                        </a>
+
+
+
+                        <!-- VIEW REQUESTS -->
+
+                        <a
+                            href="<?= ADMIN_BASE_URL ?>/inquiries.php?status=new"
+                            class="quick-action"
+                        >
+
+                            <span class="quick-action-icon orange">
+                                R
+                            </span>
+
+
+                            <span>
+
+                                <strong>
+                                    View Requests
+                                </strong>
+
+
+                                <small>
+                                    Review customer submissions
+                                </small>
+
+                            </span>
+
+
+                            <span class="quick-arrow">
+                                &rarr;
                             </span>
 
                         </a>
@@ -847,7 +1192,7 @@ require __DIR__ . '/components/header.php';
                                         <?php if (!empty($service['image'])): ?>
 
                                             <img
-                                                src="<?= htmlspecialchars($service['image']) ?>"
+                                                src="<?= htmlspecialchars(admin_media_url($service['image']), ENT_QUOTES, 'UTF-8') ?>"
                                                 alt="<?= htmlspecialchars($service['title']) ?>"
                                             >
 
@@ -940,6 +1285,204 @@ require __DIR__ . '/components/header.php';
 
                 </div>
 
+
+
+                <!-- =====================================================
+                     CONTENT ATTENTION
+                ====================================================== -->
+
+                <div class="dashboard-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-eyebrow">
+                                CONTENT HEALTH
+                            </span>
+
+                            <h2>
+                                Needs attention
+                            </h2>
+
+                        </div>
+
+                        <span class="panel-count">
+                            <?= count($content_alerts) ?> item<?= count($content_alerts) === 1 ? '' : 's' ?>
+                        </span>
+
+                    </div>
+
+                    <div class="attention-list">
+
+                        <?php if (!empty($content_alerts)): ?>
+
+                            <?php foreach ($content_alerts as $alert): ?>
+
+                                <a
+                                    href="<?= htmlspecialchars($alert['url'], ENT_QUOTES, 'UTF-8') ?>"
+                                    class="attention-row"
+                                >
+
+                                    <span class="attention-icon">
+                                        <?= htmlspecialchars($alert['icon'], ENT_QUOTES, 'UTF-8') ?>
+                                    </span>
+
+                                    <span>
+
+                                        <strong>
+                                            <?= htmlspecialchars($alert['title'], ENT_QUOTES, 'UTF-8') ?>
+                                        </strong>
+
+                                        <small>
+                                            <?= htmlspecialchars($alert['description'], ENT_QUOTES, 'UTF-8') ?>
+                                        </small>
+
+                                    </span>
+
+                                    <span class="attention-action">
+                                        <?= htmlspecialchars($alert['action'], ENT_QUOTES, 'UTF-8') ?>
+                                    </span>
+
+                                </a>
+
+                            <?php endforeach; ?>
+
+                        <?php else: ?>
+
+                            <div class="dashboard-empty-state">
+
+                                <span class="dashboard-empty-icon">
+                                    &#10003;
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Content is in good shape
+                                    </strong>
+
+                                    <p>
+                                        There are no draft or media alerts to review.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        <?php endif; ?>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     RECENT MEDIA
+                ====================================================== -->
+
+                <div class="dashboard-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-eyebrow">
+                                MEDIA LIBRARY
+                            </span>
+
+                            <h2>
+                                Recent media
+                            </h2>
+
+                        </div>
+
+                        <a
+                            href="<?= ADMIN_BASE_URL ?>/home-media.php"
+                            class="panel-link"
+                        >
+                            Manage &rarr;
+                        </a>
+
+                    </div>
+
+                    <div class="media-list">
+
+                        <?php if (!empty($recent_media)): ?>
+
+                            <?php foreach ($recent_media as $media): ?>
+
+                                <a
+                                    href="<?= htmlspecialchars($media['action_url'], ENT_QUOTES, 'UTF-8') ?>"
+                                    class="media-list-row"
+                                >
+
+                                    <span class="media-thumb">
+
+                                        <?php if ($media['media_type'] === 'image'): ?>
+
+                                            <img
+                                                src="<?= htmlspecialchars(admin_media_url($media['file_path']), ENT_QUOTES, 'UTF-8') ?>"
+                                                alt="<?= htmlspecialchars($media['title'], ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+
+                                        <?php else: ?>
+
+                                            VID
+
+                                        <?php endif; ?>
+
+                                    </span>
+
+                                    <span>
+
+                                        <strong>
+                                            <?= htmlspecialchars($media['title'], ENT_QUOTES, 'UTF-8') ?>
+                                        </strong>
+
+                                        <small>
+                                            <?= htmlspecialchars($media['source'], ENT_QUOTES, 'UTF-8') ?>
+                                            &bull;
+                                            <?= htmlspecialchars(ucfirst($media['media_type']), ENT_QUOTES, 'UTF-8') ?>
+                                        </small>
+
+                                    </span>
+
+                                    <span class="quick-arrow">
+                                        &rarr;
+                                    </span>
+
+                                </a>
+
+                            <?php endforeach; ?>
+
+                        <?php else: ?>
+
+                            <div class="dashboard-empty-state">
+
+                                <span class="dashboard-empty-icon">
+                                    +
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        No media added yet
+                                    </strong>
+
+                                    <p>
+                                        Add photos or videos to your homepage and articles.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        <?php endif; ?>
+
+                    </div>
+
+                </div>
 
 
                 <!-- =====================================================

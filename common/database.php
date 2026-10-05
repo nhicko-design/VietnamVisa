@@ -8,11 +8,15 @@ function db(): PDO
         return $pdo;
     }
 
-    $host = '127.0.0.1';
-    $port = '3306';
-    $database = 'sunviet';
-    $username = 'root';
-    $password = '';
+    $host = getenv('SUNVIET_DB_HOST') ?: '127.0.0.1';
+    $port = getenv('SUNVIET_DB_PORT') ?: '3306';
+    $database = getenv('SUNVIET_DB_NAME') ?: 'sunviet';
+    $username = getenv('SUNVIET_DB_USER') ?: 'root';
+    $password = getenv('SUNVIET_DB_PASSWORD') ?: '';
+
+    if (!preg_match('/^[0-9]{1,5}$/', $port)) {
+        throw new RuntimeException('Invalid database port configuration.');
+    }
 
     $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
 

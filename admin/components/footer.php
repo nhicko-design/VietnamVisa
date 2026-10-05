@@ -11,7 +11,7 @@
 </footer>
 
 
-<script src="assets/js/admin.js"></script>
+<script src="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/js/admin.js', ENT_QUOTES, 'UTF-8') ?>"></script>
 
 </body>
 

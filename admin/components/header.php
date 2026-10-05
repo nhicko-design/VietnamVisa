@@ -4,6 +4,11 @@ if (!isset($page_title)) {
     $page_title = 'Admin';
 }
 
+$admin_css_path = __DIR__ . '/../assets/css/admin.css';
+$admin_css_version = is_file($admin_css_path)
+    ? (string) filemtime($admin_css_path)
+    : '1';
+
 ?>
 
 <!DOCTYPE html>
@@ -48,7 +53,7 @@ if (!isset($page_title)) {
 
     <link
         rel="stylesheet"
-        href="assets/css/admin.css"
+        href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . $admin_css_version, ENT_QUOTES, 'UTF-8') ?>"
     >
 
 </head>

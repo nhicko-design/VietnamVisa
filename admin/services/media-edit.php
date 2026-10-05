@@ -345,6 +345,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: block;
         }
 
+        .preview-box video {
+            width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+        }
+
         .video-placeholder {
             width: 100%;
             height: 180px;
@@ -359,9 +365,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
-<body>
+<body class="admin-body admin-legacy-service-page">
+<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
 
 <div class="container">
 
@@ -463,15 +473,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php if ($mediaType === 'image'): ?>
 
                         <img
-                            src="<?= htmlspecialchars($filePath) ?>"
+                            src="<?= htmlspecialchars(admin_media_url($filePath), ENT_QUOTES, 'UTF-8') ?>"
                             alt="<?= htmlspecialchars($altText) ?>"
                         >
 
                     <?php else: ?>
 
-                        <div class="video-placeholder">
-                            VIDEO
-                        </div>
+                        <video
+                            controls
+                            preload="metadata"
+                            src="<?= htmlspecialchars(admin_media_url($filePath), ENT_QUOTES, 'UTF-8') ?>"
+                        ></video>
 
                     <?php endif; ?>
 

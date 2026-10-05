@@ -1,0 +1,289 @@
+/* =========================================================
+   SERVICES MANAGEMENT UI
+   Loaded after legacy page styles to unify service screens.
+   ========================================================= */
+
+:root {
+    --management-primary: #6554d9;
+    --management-primary-dark: #5040bf;
+    --management-primary-soft: #f1efff;
+    --management-surface: #ffffff;
+    --management-canvas: #f5f6fb;
+    --management-ink: #20212d;
+    --management-muted: #747686;
+    --management-line: #e5e7f0;
+    --management-success: #16734b;
+    --management-danger: #c23030;
+    --management-shadow: 0 14px 36px rgba(32, 33, 45, .07);
+}
+
+body {
+    background: var(--management-canvas) !important;
+    color: var(--management-ink);
+}
+
+/* Legacy service pages now render the shared Admin sidebar component. */
+.admin-legacy-service-page > .admin-sidebar ~ .page .sidebar {
+    display: none;
+}
+
+.admin-legacy-service-page > .admin-sidebar ~ .page {
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
+}
+
+.admin-legacy-service-page > .admin-sidebar ~ .page .topbar {
+    padding-left: 32px;
+}
+
+.topbar {
+    min-height: 76px;
+    padding: 0 32px;
+    background: rgba(255, 255, 255, .94);
+    border-bottom: 1px solid var(--management-line);
+    box-shadow: 0 2px 14px rgba(32, 33, 45, .03);
+}
+
+.brand {
+    color: var(--management-primary);
+    font-family: 'Manrope', Arial, sans-serif;
+    letter-spacing: -.03em;
+}
+
+.layout {
+    align-items: stretch;
+}
+
+.sidebar {
+    width: 254px;
+    padding: 28px 14px;
+    background: linear-gradient(180deg, #20212d 0%, #151620 100%);
+    box-shadow: 8px 0 30px rgba(19, 20, 31, .08);
+}
+
+.sidebar-title {
+    padding: 0 14px 16px;
+    color: #9a9cac;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 14px;
+    margin-bottom: 5px;
+    color: #c9cbd5;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.nav-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, .08);
+}
+
+.nav-link.active {
+    color: #fff;
+    background: linear-gradient(135deg, #7667e8, #5d4acb);
+    border-color: rgba(255, 255, 255, .12);
+    box-shadow: 0 8px 20px rgba(92, 74, 203, .28);
+}
+
+.content {
+    width: min(1280px, 100%);
+    max-width: none;
+    padding: 42px 38px 58px;
+    margin: 0 auto;
+}
+
+.page-header {
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    color: var(--management-ink);
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(28px, 3vw, 34px);
+    letter-spacing: -.04em;
+}
+
+.page-description {
+    color: var(--management-muted);
+    font-size: 15px;
+}
+
+.btn {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    box-shadow: none;
+    font-weight: 700;
+    transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7667e8, #5d4acb);
+    box-shadow: 0 9px 18px rgba(93, 74, 203, .22);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #6758d8, #5140bd);
+    box-shadow: 0 11px 22px rgba(93, 74, 203, .28);
+}
+
+.btn-secondary {
+    color: #515260;
+    background: #fff;
+    border-color: #dfe1eb;
+}
+
+.btn-secondary:hover {
+    color: var(--management-primary);
+    background: var(--management-primary-soft);
+    border-color: #d6d1fb;
+}
+
+.card {
+    padding: 30px;
+    margin-bottom: 24px;
+    background: var(--management-surface);
+    border: 1px solid var(--management-line);
+    border-top: 3px solid var(--management-primary);
+    border-radius: 16px;
+    box-shadow: var(--management-shadow);
+}
+
+.card h2 {
+    color: var(--management-ink);
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: 18px;
+    letter-spacing: -.02em;
+}
+
+.form-grid {
+    gap: 22px;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+label {
+    color: #3a3b49;
+    font-size: 13px;
+}
+
+input,
+select,
+textarea {
+    min-height: 44px;
+    padding: 11px 13px;
+    color: var(--management-ink);
+    border-color: #dfe1e9;
+    border-radius: 9px;
+    transition: border-color .16s ease, box-shadow .16s ease;
+}
+
+textarea {
+    min-height: 128px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--management-primary);
+    box-shadow: 0 0 0 3px rgba(101, 84, 217, .13);
+}
+
+.help-text,
+.form-help,
+.muted {
+    color: var(--management-muted);
+}
+
+.error-box,
+.success,
+.notice {
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.error-box {
+    color: #a82323;
+    background: #fff2f2;
+    border: 1px solid #ffd6d6;
+}
+
+table {
+    overflow: hidden;
+    border: 1px solid var(--management-line);
+    border-radius: 12px;
+    box-shadow: var(--management-shadow);
+}
+
+th {
+    color: var(--management-muted);
+    background: #fafafe;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+td,
+th {
+    border-color: var(--management-line) !important;
+}
+
+tbody tr {
+    transition: background .16s ease;
+}
+
+tbody tr:hover {
+    background: #fbfaff;
+}
+
+.action-btn,
+.row-action {
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+@media (max-width: 800px) {
+    .admin-legacy-service-page > .admin-sidebar ~ .page {
+        margin-left: 0;
+    }
+    .topbar {
+        padding: 0 18px;
+    }
+
+    .content {
+        padding: 28px 18px 42px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

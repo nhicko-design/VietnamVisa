@@ -80,12 +80,7 @@
             <?php if (!empty($mainImage)): ?>
 
                 <img
-                    src="<?= e(
-                        app_base() . '/' . ltrim(
-                            $mainImage,
-                            '/'
-                        )
-                    ) ?>"
+                    src="<?= e(asset_url($mainImage)) ?>"
                     alt="<?= e(field($service, 'title')) ?>"
                 >
 
@@ -157,12 +152,7 @@ foreach ($serviceMedia as $media) {
                     <div class="service-media-item">
 
                         <img
-                            src="<?= e(
-                                app_base() . '/' . ltrim(
-                                    $media['file_path'],
-                                    '/'
-                                )
-                            ) ?>"
+                            src="<?= e(asset_url($media['file_path'])) ?>"
                             alt="<?= e(
                                 $media['alt_text']
                                 ?: ($media['title'] ?? '')
@@ -192,12 +182,7 @@ foreach ($serviceMedia as $media) {
                         >
 
                         <source
-                            src="<?= e(
-                                app_base() . '/' . ltrim(
-                                    $media['file_path'],
-                                    '/'
-                                )
-                            ) ?>"
+                            src="<?= e(asset_url($media['file_path'])) ?>"
                         >
 
                             Your browser does not support

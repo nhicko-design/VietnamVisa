@@ -23,9 +23,11 @@ DROP TABLE IF EXISTS service_faq;
 DROP TABLE IF EXISTS service_steps;
 DROP TABLE IF EXISTS service_features;
 DROP TABLE IF EXISTS service_media;
+DROP TABLE IF EXISTS news_media;
 DROP TABLE IF EXISTS services;
 DROP TABLE IF EXISTS news;
 DROP TABLE IF EXISTS home_media;
+DROP TABLE IF EXISTS inquiries;
 DROP TABLE IF EXISTS settings;
 DROP TABLE IF EXISTS admin_users;
 
@@ -82,7 +84,43 @@ COLLATE=utf8mb4_unicode_ci;
 
 
 -- ============================================================
--- 3. HOME MEDIA
+-- 3. CUSTOMER INQUIRIES
+-- ============================================================
+
+CREATE TABLE inquiries (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    inquiry_type ENUM('contact', 'application') NOT NULL,
+    status ENUM('new', 'in_progress', 'closed') NOT NULL DEFAULT 'new',
+
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NULL,
+    service VARCHAR(255) NULL,
+    nationality VARCHAR(100) NULL,
+    entry_date DATE NULL,
+    entry_point VARCHAR(255) NULL,
+    message TEXT NULL,
+
+    language_code CHAR(2) NOT NULL DEFAULT 'en',
+    source_url VARCHAR(1000) NULL,
+    ip_hash CHAR(64) NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_inquiries_type (inquiry_type),
+    INDEX idx_inquiries_status (status),
+    INDEX idx_inquiries_created_at (created_at)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
+
+-- ============================================================
+-- 4. HOME MEDIA
 -- ============================================================
 
 CREATE TABLE home_media (
@@ -123,9 +161,15 @@ CREATE TABLE news (
 
     slug VARCHAR(255) NOT NULL,
 
+    category VARCHAR(100) NULL,
+    category_vn VARCHAR(100) NULL,
+
     title VARCHAR(255) NOT NULL,
+    title_vn VARCHAR(255) NULL,
     excerpt TEXT NULL,
+    excerpt_vn TEXT NULL,
     content LONGTEXT NULL,
+    content_vn LONGTEXT NULL,
 
     featured_image VARCHAR(1000) NULL,
 
@@ -155,7 +199,43 @@ COLLATE=utf8mb4_unicode_ci;
 
 
 -- ============================================================
--- 5. SERVICES
+-- 5. NEWS MEDIA
+-- ============================================================
+
+CREATE TABLE news_media (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    news_id INT UNSIGNED NOT NULL,
+    media_type ENUM('image', 'video') NOT NULL DEFAULT 'image',
+    file_path VARCHAR(1000) NOT NULL,
+    title VARCHAR(255) NULL,
+    alt_text VARCHAR(255) NULL,
+
+    sort_order INT NOT NULL DEFAULT 0,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_news_media_news
+        FOREIGN KEY (news_id)
+        REFERENCES news(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    INDEX idx_news_media_news_id (news_id),
+    INDEX idx_news_media_type (media_type),
+    INDEX idx_news_media_sort_order (sort_order),
+    INDEX idx_news_media_active (is_active)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
+
+-- ============================================================
+-- 6. SERVICES
 -- ============================================================
 
 CREATE TABLE services (
@@ -362,6 +442,41 @@ COLLATE=utf8mb4_unicode_ci;
 -- ============================================================
 -- INSERT SERVICES
 -- ============================================================
+
+INSERT INTO news
+(
+    slug, category, category_vn, title, title_vn, excerpt, excerpt_vn,
+    content, content_vn, featured_image, author, status, published_at,
+    is_featured, sort_order
+)
+VALUES
+(
+    'vietnam-visa-guide-for-first-time-travelers', 'Visa Guide', 'Hướng dẫn Visa',
+    'Vietnam Visa Guide for First-Time Travelers', 'Hướng dẫn Visa Việt Nam cho người đi lần đầu',
+    'A clear starting point for travelers who want to understand the visa journey.', 'Điểm bắt đầu dễ hiểu cho du khách muốn nắm quy trình visa.',
+    'Prepare your passport information, intended entry date and entry point.\nClear information makes the application easier to understand.',
+    'Hãy chuẩn bị thông tin hộ chiếu, ngày nhập cảnh và cửa khẩu.\nThông tin rõ ràng giúp quy trình đăng ký dễ hiểu hơn.',
+    'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=85',
+    'SunViet', 'published', '2026-09-05 00:00:00', 1, 1
+),
+(
+    'how-to-prepare-business-trip-to-vietnam', 'Business', 'Công tác',
+    'How to Prepare for a Business Trip to Vietnam', 'Cách chuẩn bị cho chuyến công tác tại Việt Nam',
+    'A practical checklist for professionals planning meetings and short business visits.', 'Checklist thực tế dành cho chuyên gia chuẩn bị chuyến công tác.',
+    'Start with your travel purpose and schedule.\nKeep copies of important information and check the dates in your documents.',
+    'Bắt đầu bằng mục đích chuyến đi và lịch trình.\nLưu bản sao thông tin quan trọng và kiểm tra ngày tháng trên hồ sơ.',
+    'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',
+    'SunViet', 'published', '2026-08-21 00:00:00', 0, 2
+),
+(
+    'new-immigration-website-experience', 'Company', 'Công ty',
+    'A Simpler Immigration Website Experience', 'Trải nghiệm website dịch vụ di trú đơn giản hơn',
+    'Why we are redesigning the way visitors discover services and contact our team.', 'Vì sao chúng tôi thiết kế lại cách khách hàng khám phá dịch vụ và liên hệ đội ngũ.',
+    'Service websites should answer questions before asking for information.\nEach service now has its own detail page and FAQ.',
+    'Website dịch vụ nên trả lời câu hỏi trước khi yêu cầu thông tin.\nMỗi dịch vụ có trang chi tiết và FAQ riêng.',
+    'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85',
+    'SunViet', 'published', '2026-07-14 00:00:00', 0, 3
+);
 
 INSERT INTO services (
     category,

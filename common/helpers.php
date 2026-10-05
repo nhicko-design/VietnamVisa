@@ -50,6 +50,29 @@ function app_base(): string
 }
 
 
+function public_origin(): string
+{
+    $isHttps = !empty($_SERVER['HTTPS'])
+        && $_SERVER['HTTPS'] !== 'off';
+
+    $host = (string) ($_SERVER['HTTP_HOST'] ?? 'localhost');
+
+    if (!preg_match('/^[a-z0-9.-]+(?::[0-9]{1,5})?$/i', $host)) {
+        $host = 'localhost';
+    }
+
+    return ($isHttps ? 'https' : 'http') . '://' . $host;
+}
+
+
+function absolute_url(
+    string $path = '',
+    ?string $lang = null
+): string {
+    return public_origin() . url($path, $lang);
+}
+
+
 function url(
     string $path = '',
     ?string $lang = null
@@ -74,6 +97,10 @@ function url(
 
 function asset_url(string $path): string
 {
+    if (preg_match('~^https?://~i', $path)) {
+        return $path;
+    }
+
     $path = ltrim(
         str_replace('\\', '/', $path),
         '/'
@@ -635,9 +662,7 @@ function find_news(
 ): ?array {
     global $NEWS;
 
-    foreach (
-        $NEWS as $article
-    ) {
+    foreach ($NEWS as $article) {
         if (
             ($article['slug'] ?? '')
             === $slug

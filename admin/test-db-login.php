@@ -1,36 +1,15 @@
 <?php
 
-require_once __DIR__ . '/../common/database.php';
+require_once __DIR__ . '/config.php';
 
-echo '<h2>Database Connection Test</h2>';
+require_admin_login();
 
 try {
+    db()->query('SELECT 1');
 
-    $pdo = db();
+    http_response_code(204);
+} catch (Throwable $exception) {
+    error_log('Admin database health check failed: ' . $exception->getMessage());
 
-    echo '<p style="color:green;">
-        ✓ Database connection successful
-    </p>';
-
-    echo '<p>Database: sunviet</p>';
-
-    $stmt = $pdo->query("SELECT COUNT(*) FROM admin_users");
-
-    $count = $stmt->fetchColumn();
-
-    echo '<p>Admin users: ' . (int) $count . '</p>';
-
-} catch (Throwable $e) {
-
-    echo '<p style="color:red;">
-        ✗ Database connection failed
-    </p>';
-
-    echo '<pre>';
-    echo htmlspecialchars(
-        $e->getMessage(),
-        ENT_QUOTES,
-        'UTF-8'
-    );
-    echo '</pre>';
+    http_response_code(503);
 }

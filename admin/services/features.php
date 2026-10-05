@@ -43,6 +43,8 @@ $stmt = $pdo->prepare("
         id,
         title,
         description,
+        title_vn,
+        description_vn,
         sort_order,
         is_active
     FROM service_features
@@ -236,9 +238,13 @@ $features = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
-<body>
+<body class="admin-body admin-legacy-service-page">
+<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
 
 <div class="container">
 
@@ -359,6 +365,18 @@ $features = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 </div>
 
+                            <?php endif; ?>
+
+                            <?php if (!empty($feature['title_vn'])): ?>
+                                <div class="feature-title">
+                                    Vietnamese: <?= htmlspecialchars($feature['title_vn'], ENT_QUOTES, 'UTF-8') ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($feature['description_vn'])): ?>
+                                <div class="feature-description">
+                                    <?= nl2br(htmlspecialchars($feature['description_vn'], ENT_QUOTES, 'UTF-8')) ?>
+                                </div>
                             <?php endif; ?>
 
                         </td>

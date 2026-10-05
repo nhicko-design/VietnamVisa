@@ -4,6 +4,10 @@ require_once __DIR__ . '/../config.php';
 
 require_admin_login();
 
+$query = !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
+header('Location: manage.php' . $query);
+exit;
+
 $pdo = db();
 $message = '';
 
@@ -47,7 +51,7 @@ try {
 
     $services = [];
 
-    $error = $e->getMessage();
+    $error = 'Unable to load services. Please try again.';
 }
 
 $currentAdmin = current_admin();

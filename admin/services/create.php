@@ -14,6 +14,9 @@ $old = [
     'title' => '',
     'short_description' => '',
     'description' => '',
+    'title_vn' => '',
+    'short_description_vn' => '',
+    'description_vn' => '',
     'price' => '',
     'currency' => 'USD',
     'image' => '',
@@ -24,6 +27,10 @@ $old = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $errors[] = 'Invalid security token. Please try again.';
+    }
 
     $old['category'] = trim(
         $_POST['category'] ?? ''
@@ -44,6 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old['description'] = trim(
         $_POST['description'] ?? ''
     );
+
+    $old['title_vn'] = trim($_POST['title_vn'] ?? '');
+    $old['short_description_vn'] = trim($_POST['short_description_vn'] ?? '');
+    $old['description_vn'] = trim($_POST['description_vn'] ?? '');
 
     $old['price'] = trim(
         $_POST['price'] ?? ''
@@ -83,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (
         !in_array(
             $old['category'],
-            ['visa', 'support'],
+            ['visa', 'immigration', 'support'],
             true
         )
     ) {
@@ -93,6 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($old['title'] === '') {
         $errors[] = 'Title is required.';
+    }
+
+    if ($old['title_vn'] === '') {
+        $errors[] = 'Vietnamese title is required.';
     }
 
 
@@ -139,6 +154,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $old['slug'],
             '-'
         );
+
+        if ($old['slug'] === '') {
+            $errors[] = 'Slug must contain letters or numbers.';
+        }
     }
 
 
@@ -196,6 +215,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     title,
                     short_description,
                     description,
+                    title_vn,
+                    short_description_vn,
+                    description_vn,
                     price,
                     currency,
                     image,
@@ -213,6 +235,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     :title,
                     :short_description,
                     :description,
+                    :title_vn,
+                    :short_description_vn,
+                    :description_vn,
                     :price,
                     :currency,
                     :image,
@@ -261,6 +286,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ? $old['description']
                         : null,
 
+                'title_vn' => $old['title_vn'],
+                'short_description_vn' => $old['short_description_vn'] !== ''
+                    ? $old['short_description_vn']
+                    : null,
+                'description_vn' => $old['description_vn'] !== ''
+                    ? $old['description_vn']
+                    : null,
+
                 'price' =>
                     $price,
 
@@ -304,9 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (Throwable $e) {
 
-            $errors[] =
-                'Unable to create service: ' .
-                $e->getMessage();
+            $errors[] = 'Unable to create service. Please try again.';
         }
     }
 }
@@ -842,12 +873,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
 
-<body>
+<body class="admin-body">
 
-<div class="page">
+<div class="admin-layout">
+
+    <?php
+    $admin_section = 'services';
+    require __DIR__ . '/../components/sidebar.php';
+    ?>
+
+    <div class="admin-main">
+
+        <div class="page service-create-page">
 
 
     <!-- =====================================================
@@ -886,51 +929,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <div class="layout">
-
-
-        <!-- =================================================
-             SIDEBAR
-             ================================================= -->
-
-        <aside class="sidebar">
-
-            <div class="sidebar-title">
-                Management
-            </div>
-
-
-            <a
-                class="nav-link"
-                href="<?= ADMIN_BASE_URL ?>/index.php"
-            >
-                Dashboard
-            </a>
-
-
-            <a
-                class="nav-link active"
-                href="<?= ADMIN_BASE_URL ?>/services/index.php"
-            >
-                Services
-            </a>
-
-
-            <a
-                class="nav-link"
-                href="<?= ADMIN_BASE_URL ?>/news/index.php"
-            >
-                News
-            </a>
-
-
-            <a
-                class="nav-link"
-                href="<?= ADMIN_BASE_URL ?>/settings.php"
-            >
-                Settings
-            </a>
-
-        </aside>
 
 
         <!-- =================================================
@@ -996,6 +994,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 action=""
             >
 
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>"
+                >
+
 
                 <!-- BASIC INFORMATION -->
 
@@ -1037,6 +1041,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         : '' ?>
                                 >
                                     Visa
+                                </option>
+
+                                <option
+                                    value="immigration"
+                                    <?= $old['category'] === 'immigration'
+                                        ? 'selected'
+                                        : '' ?>
+                                >
+                                    Immigration
                                 </option>
 
 
@@ -1110,6 +1123,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
 
+                        <!-- VIETNAMESE TITLE -->
+                        <div class="form-group full">
+                            <label for="title_vn">Vietnamese Title <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="title_vn"
+                                name="title_vn"
+                                value="<?= htmlspecialchars($old['title_vn'], ENT_QUOTES, 'UTF-8') ?>"
+                                required
+                            >
+                        </div>
+
                         <!-- SLUG -->
 
                         <div class="form-group full">
@@ -1165,6 +1190,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
 
+                        <!-- VIETNAMESE SHORT DESCRIPTION -->
+                        <div class="form-group full">
+                            <label for="short_description_vn">Vietnamese Short Description</label>
+                            <textarea
+                                id="short_description_vn"
+                                name="short_description_vn"
+                            ><?= htmlspecialchars($old['short_description_vn'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                        </div>
+
                         <!-- DESCRIPTION -->
 
                         <div class="form-group full">
@@ -1188,6 +1222,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 This content will be used on the service detail page.
                             </div>
 
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="description_vn">Vietnamese Description</label>
+                            <textarea
+                                class="description"
+                                id="description_vn"
+                                name="description_vn"
+                            ><?= htmlspecialchars($old['description_vn'], ENT_QUOTES, 'UTF-8') ?></textarea>
                         </div>
 
                     </div>
@@ -1431,6 +1474,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
         </main>
+
+    </div>
+
+</div>
 
     </div>
 

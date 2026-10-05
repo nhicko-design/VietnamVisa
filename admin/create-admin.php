@@ -1,9 +1,17 @@
 <?php
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../common/auth.php';
+
+require_admin_login();
+
 $pdo = db();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $errors = ['Invalid security token. Please refresh and try again.'];
+    } else {
 
     $username  = trim($_POST['username'] ?? '');
     $full_name = trim($_POST['full_name'] ?? '');
@@ -27,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate password
     if ($password === '') {
         $errors[] = 'Password is required.';
-    } elseif (strlen($password) < 6) {
-        $errors[] = 'Password must be at least 6 characters.';
+    } elseif (strlen($password) < 8) {
+        $errors[] = 'Password must be at least 8 characters.';
     }
 
     if (empty($errors)) {
@@ -109,8 +117,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (PDOException $e) {
 
-            $errors[] = 'Database error: ' . $e->getMessage();
+            $errors[] = 'Unable to create this account. The username or email may already be in use.';
         }
+    }
     }
 }
 
@@ -336,6 +345,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         autocomplete="off"
     >
 
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>"
+        >
+
         <div class="form-group">
 
             <label for="username">
@@ -396,7 +411,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 type="password"
                 id="password"
                 name="password"
-                placeholder="Minimum 6 characters"
+                placeholder="Minimum 8 characters"
+                minlength="8"
                 required
             >
 

@@ -21,6 +21,8 @@ $stmt = $pdo->prepare("
         f.service_id,
         f.question,
         f.answer,
+        f.question_vn,
+        f.answer_vn,
         f.sort_order,
         f.is_active,
         s.title AS service_title
@@ -44,6 +46,8 @@ $serviceId = (int) $faq['service_id'];
 
 $question = $faq['question'];
 $answer = $faq['answer'];
+$questionVn = $faq['question_vn'] ?? '';
+$answerVn = $faq['answer_vn'] ?? '';
 $sortOrder = (int) $faq['sort_order'];
 $isActive = (int) $faq['is_active'];
 
@@ -66,6 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $answer = trim(
         $_POST['answer'] ?? ''
     );
+
+    $questionVn = trim($_POST['question_vn'] ?? '');
+    $answerVn = trim($_POST['answer_vn'] ?? '');
 
     $sortOrder = (int) (
         $_POST['sort_order'] ?? 0
@@ -92,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SET
                 question = ?,
                 answer = ?,
+                question_vn = ?,
+                answer_vn = ?,
                 sort_order = ?,
                 is_active = ?,
                 updated_at = NOW()
@@ -101,6 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([
             $question,
             $answer,
+            $questionVn !== '' ? $questionVn : null,
+            $answerVn !== '' ? $answerVn : null,
             $sortOrder,
             $isActive,
             $id
@@ -240,9 +251,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
-<body>
+<body class="admin-body admin-legacy-service-page">
+<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
 
 <div class="container">
 
@@ -314,6 +329,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     required
                 ><?= htmlspecialchars($answer) ?></textarea>
 
+            </div>
+
+            <div class="field">
+                <label>Vietnamese question</label>
+                <input type="text" name="question_vn" value="<?= htmlspecialchars($questionVn, ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+
+            <div class="field">
+                <label>Vietnamese answer</label>
+                <textarea name="answer_vn"><?= htmlspecialchars($answerVn, ENT_QUOTES, 'UTF-8') ?></textarea>
             </div>
 
 

@@ -12,9 +12,11 @@ Open:
 
 ## 3. Import the SQL
 
-Choose **Import** → select `database/VietnamVisa.sql` → click **Import**.
+Choose **Import** → select `database/sunviet.sql` → click **Import**.
 
-The script creates database `VietnamVisa`, all tables and sample content.
+The script creates database `sunviet`, all tables and sample content.
+
+For an existing database, run `database/migrations/20261001_news_multilingual.sql` once. It adds the News language fields and seeds the three existing sample articles without dropping tables.
 
 ## 4. Local admin account
 
@@ -29,7 +31,7 @@ Change the password when the real authentication screen is implemented.
 
 - Host: `127.0.0.1`
 - Port: `3306`
-- Database: `VietnamVisa`
+- Database: `sunviet`
 - User: `root`
 - Password: empty
 

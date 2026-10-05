@@ -10,15 +10,15 @@
         <div class="hero-copy reveal">
 
             <span class="eyebrow eyebrow-light">
-                <?= __('hero_eyebrow') ?>
+                <?= e(page_content_value('home', 'eyebrow', __('hero_eyebrow'))) ?>
             </span>
 
             <h1>
-                <?= __('hero_title') ?>
+                <?= e(page_content_value('home', 'title', __('hero_title'))) ?>
             </h1>
 
             <p>
-                <?= __('hero_desc') ?>
+                <?= e(page_content_value('home', 'description', __('hero_desc'))) ?>
             </p>
 
 
@@ -26,16 +26,16 @@
 
                 <a
                     class="btn btn-primary"
-                    href="<?= e(url('services')) ?>"
+                    href="<?= e(page_content_value('home', 'primary_url', url('services'))) ?>"
                 >
-                    <?= __('hero_primary') ?> ↗
+                    <?= e(page_content_value('home', 'primary_label', __('hero_primary'))) ?> &rarr;
                 </a>
 
                 <a
                     class="btn btn-ghost-white"
-                    href="<?= e(url('contact')) ?>"
+                    href="<?= e(page_content_value('home', 'secondary_url', url('contact'))) ?>"
                 >
-                    <?= __('hero_secondary') ?>
+                    <?= e(page_content_value('home', 'secondary_label', __('hero_secondary'))) ?>
                 </a>
 
             </div>
@@ -52,10 +52,18 @@
 
             <div class="hero-image-wrap">
 
+                <?php $heroMedia = $HOME_MEDIA['hero'][0] ?? null; ?>
+
+                <?php if ($heroMedia && $heroMedia['media_type'] === 'video'): ?>
+                    <video autoplay muted loop playsinline>
+                        <source src="<?= e(asset_url($heroMedia['file_path'])) ?>">
+                    </video>
+                <?php else: ?>
                 <img
-                    src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1400&q=85"
-                    alt="Vietnam landscape"
+                    src="<?= e(asset_url($heroMedia['file_path'] ?? 'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1400&q=85')) ?>"
+                    alt="<?= e($heroMedia['title'] ?? 'Vietnam landscape') ?>"
                 >
+                <?php endif; ?>
 
 
                 <div class="hero-floating-card">
@@ -65,11 +73,11 @@
                     </span>
 
                     <strong>
-                        Visa & Immigration
+                        <?= e(page_content_value('home', 'highlight_title', 'Visa & Immigration')) ?>
                     </strong>
 
                     <small>
-                        Clear information. Human support.
+                        <?= e(page_content_value('home', 'highlight_description', 'Clear information. Human support.')) ?>
                     </small>
 
                 </div>
@@ -430,7 +438,7 @@
                     >
 
                         <img
-                            src="<?= e($article['image']) ?>"
+                            src="<?= e(asset_url($article['image'])) ?>"
                             alt=""
                         >
 

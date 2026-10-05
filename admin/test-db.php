@@ -1,32 +1,15 @@
 <?php
 
-require_once __DIR__ . '/../common/database.php';
+require_once __DIR__ . '/config.php';
+
+require_admin_login();
 
 try {
+    db()->query('SELECT 1');
 
-    $pdo = db();
+    http_response_code(204);
+} catch (Throwable $exception) {
+    error_log('Admin database health check failed: ' . $exception->getMessage());
 
-    echo '<h2>Database connection: SUCCESS</h2>';
-
-    echo '<p>Database: sunviet</p>';
-
-    $tables = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
-
-    echo '<h3>Tables:</h3>';
-
-    echo '<ul>';
-
-    foreach ($tables as $table) {
-        echo '<li>' . htmlspecialchars($table) . '</li>';
-    }
-
-    echo '</ul>';
-
-} catch (Throwable $e) {
-
-    echo '<h2>Database connection: FAILED</h2>';
-
-    echo '<pre>';
-    echo htmlspecialchars($e->getMessage());
-    echo '</pre>';
+    http_response_code(503);
 }

@@ -4,8 +4,9 @@ Frontend-only PHP project designed in a modern Hostinger-inspired visual directi
 
 ## Important architecture
 
-- `data/services.php` and `data/news.php` are **mock data only**.
-- A backend developer can replace those arrays with DB/API results without redesigning the views.
+- `data/services.php` is retained as legacy mock data; the active services source is `data/services-db.php`.
+- News is loaded from MySQL through `data/news-db.php`; `data/news.php` is retained as the original reference content.
+- Admin News management is available at `/VietnamVisa/admin/news/`.
 - Service detail pages: `/en/service/{slug}` and `/vn/service/{slug}`.
 - News detail pages: `/en/article/{slug}` and `/vn/article/{slug}`.
 - Main pages: `/en`, `/en/services`, `/en/visa`, `/en/support`, `/en/about`, `/en/news`, `/en/apply`, `/en/contact`, `/en/quotation`.

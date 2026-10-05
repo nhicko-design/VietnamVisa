@@ -36,7 +36,7 @@
 
 
         <a
-            href="../en"
+            href="<?= htmlspecialchars(dirname(ADMIN_BASE_URL) . '/en', ENT_QUOTES, 'UTF-8') ?>"
             target="_blank"
             class="topbar-website"
         >

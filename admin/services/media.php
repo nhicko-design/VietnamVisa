@@ -214,7 +214,8 @@ if (isset($_GET['deleted'])) {
             font-size: 12px;
         }
 
-        .preview img {
+        .preview img,
+        .preview video {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -311,9 +312,13 @@ if (isset($_GET['deleted'])) {
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
-<body>
+<body class="admin-body admin-legacy-service-page">
+<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
 
 <div class="container">
 
@@ -449,15 +454,17 @@ if (isset($_GET['deleted'])) {
                                 <?php if ($media['media_type'] === 'image'): ?>
 
                                     <img
-                                        src="<?= htmlspecialchars($media['file_path']) ?>"
+                                        src="<?= htmlspecialchars(admin_media_url($media['file_path']), ENT_QUOTES, 'UTF-8') ?>"
                                         alt="<?= htmlspecialchars($media['alt_text'] ?? '') ?>"
                                     >
 
                                 <?php else: ?>
 
-                                    <div class="video-preview">
-                                        VIDEO
-                                    </div>
+                                    <video
+                                        controls
+                                        preload="metadata"
+                                        src="<?= htmlspecialchars(admin_media_url($media['file_path']), ENT_QUOTES, 'UTF-8') ?>"
+                                    ></video>
 
                                 <?php endif; ?>
 

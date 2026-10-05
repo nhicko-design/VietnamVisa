@@ -74,9 +74,7 @@ try {
 
 } catch (Throwable $e) {
 
-    $errors[] =
-        'Unable to load service: ' .
-        $e->getMessage();
+    $errors[] = 'Unable to load service.';
 }
 
 
@@ -252,6 +250,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $slug,
             '-'
         );
+
+        if ($slug === '') {
+            $errors[] = 'Slug must contain letters or numbers.';
+        }
     }
 
 
@@ -411,9 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (Throwable $e) {
 
-            $errors[] =
-                'Unable to update service: ' .
-                $e->getMessage();
+            $errors[] = 'Unable to update service. Please try again.';
         }
     }
 
@@ -1015,12 +1015,24 @@ $currentAdmin = current_admin();
 
     </style>
 
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="../assets/css/management.css">
+
 </head>
 
 
-<body>
+<body class="admin-body">
 
-<div class="page">
+<div class="admin-layout">
+
+    <?php
+    $admin_section = 'services';
+    require __DIR__ . '/../components/sidebar.php';
+    ?>
+
+    <div class="admin-main">
+
+        <div class="page service-edit-page">
 
 
     <!-- =====================================================
@@ -1059,51 +1071,6 @@ $currentAdmin = current_admin();
 
 
     <div class="layout">
-
-
-        <!-- =================================================
-             SIDEBAR
-             ================================================= -->
-
-        <aside class="sidebar">
-
-            <div class="sidebar-title">
-                Management
-            </div>
-
-
-            <a
-                class="nav-link"
-                href="<?= ADMIN_BASE_URL ?>/index.php"
-            >
-                Dashboard
-            </a>
-
-
-            <a
-                class="nav-link active"
-                href="<?= ADMIN_BASE_URL ?>/services/index.php"
-            >
-                Services
-            </a>
-
-
-            <a
-                class="nav-link"
-                href="<?= ADMIN_BASE_URL ?>/news/index.php"
-            >
-                News
-            </a>
-
-
-            <a
-                class="nav-link"
-                href="<?= ADMIN_BASE_URL ?>/settings.php"
-            >
-                Settings
-            </a>
-
-        </aside>
 
 
         <!-- =================================================
@@ -1706,6 +1673,10 @@ $currentAdmin = current_admin();
             </form>
 
         </main>
+
+    </div>
+
+</div>
 
     </div>
 
