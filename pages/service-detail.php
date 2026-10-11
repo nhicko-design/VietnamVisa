@@ -1,3 +1,17 @@
+<?php
+
+require_once __DIR__ . '/../components/media-hero.php';
+
+$isVietnamVisaService = strtolower((string) ($service['category'] ?? '')) === 'visa';
+$serviceBackUrl = $isVietnamVisaService
+    ? url('vietnam-visa')
+    : url('services');
+$serviceBackLabel = $isVietnamVisaService
+    ? (($current_lang ?? 'en') === 'vn' ? 'Quay lại Visa Việt Nam' : 'Back to Vietnam Visa')
+    : __('back_services');
+
+?>
+
 <section class="detail-hero">
 
     <div class="container detail-hero-grid">
@@ -6,9 +20,9 @@
 
             <a
                 class="back-link"
-                href="<?= e(url('services')) ?>"
+                href="<?= e($serviceBackUrl) ?>"
             >
-                ← <?= __('back_services') ?>
+                ← <?= e($serviceBackLabel) ?>
             </a>
 
 
@@ -23,7 +37,7 @@
 
 
             <p>
-                <?= e(field($service, 'description')) ?>
+                <?= e(trim(strip_tags(field($service, 'description')))) ?>
             </p>
 
 
@@ -49,169 +63,16 @@
 
 
         <div class="detail-image">
-
-            <?php
-            $mainImage = $service['image'] ?? '';
-
-            /*
-             * If the service does not have a main image,
-             * use the first active image from service_media.
-             */
-            if (
-                empty($mainImage) &&
-                !empty($service['media'])
-            ) {
-                foreach ($service['media'] as $media) {
-
-                    if (
-                        ($media['media_type'] ?? '')
-                        === 'image'
-                    ) {
-                        $mainImage =
-                            $media['file_path'];
-
-                        break;
-                    }
-                }
-            }
-            ?>
-
-
-            <?php if (!empty($mainImage)): ?>
-
-                <img
-                    src="<?= e(asset_url($mainImage)) ?>"
-                    alt="<?= e(field($service, 'title')) ?>"
-                >
-
-            <?php endif; ?>
-
+            <?php render_media_hero(
+                $service['media'] ?? [],
+                (string) ($service['image'] ?? ''),
+                field($service, 'title')
+            ); ?>
         </div>
 
     </div>
 
 </section>
-
-
-<?php
-/*
- * ============================================================
- * SERVICE MEDIA
- * ============================================================
- *
- * Display additional images/videos uploaded from Admin.
- */
-
-$serviceMedia = $service['media'] ?? [];
-
-$galleryImages = [];
-$galleryVideos = [];
-
-foreach ($serviceMedia as $media) {
-
-    $type = $media['media_type'] ?? '';
-
-    if ($type === 'image') {
-
-        $galleryImages[] = $media;
-
-    } elseif ($type === 'video') {
-
-        $galleryVideos[] = $media;
-
-    }
-}
-?>
-
-
-<?php if (!empty($galleryImages) || !empty($galleryVideos)): ?>
-
-<section class="section section-white">
-
-    <div class="container">
-
-        <div class="section-intro">
-
-            <span class="eyebrow">
-                <?= __('services_label') ?>
-            </span>
-
-            <h2 class="section-title">
-                <?= e(field($service, 'title')) ?>
-            </h2>
-
-        </div>
-
-
-        <?php if (!empty($galleryImages)): ?>
-
-            <div class="service-media-grid">
-
-                <?php foreach ($galleryImages as $media): ?>
-
-                    <div class="service-media-item">
-
-                        <img
-                            src="<?= e(asset_url($media['file_path'])) ?>"
-                            alt="<?= e(
-                                $media['alt_text']
-                                ?: ($media['title'] ?? '')
-                            ) ?>"
-                        >
-
-                    </div>
-
-                <?php endforeach; ?>
-
-            </div>
-
-        <?php endif; ?>
-
-
-        <?php if (!empty($galleryVideos)): ?>
-
-            <div class="service-video-list">
-
-                <?php foreach ($galleryVideos as $media): ?>
-
-                    <div class="service-video-item">
-
-                        <video
-                            controls
-                            preload="metadata"
-                        >
-
-                        <source
-                            src="<?= e(asset_url($media['file_path'])) ?>"
-                        >
-
-                            Your browser does not support
-                            HTML5 video.
-
-                        </video>
-
-
-                        <?php if (!empty($media['title'])): ?>
-
-                            <h3>
-                                <?= e($media['title']) ?>
-                            </h3>
-
-                        <?php endif; ?>
-
-                    </div>
-
-                <?php endforeach; ?>
-
-            </div>
-
-        <?php endif; ?>
-
-    </div>
-
-</section>
-
-<?php endif; ?>
 
 
 <section class="section section-white">
@@ -230,18 +91,18 @@ foreach ($serviceMedia as $media) {
             </h2>
 
 
-            <p class="detail-lead">
-                <?= e(field($service, 'description')) ?>
-            </p>
+            <div class="detail-lead rich-content">
+                <?= rich_content_html(field($service, 'description')) ?>
+            </div>
 
 
+            <?php $serviceFeatures = field_array($service, 'features'); ?>
+
+            <?php if (!empty($serviceFeatures)): ?>
             <div class="feature-cards">
 
                 <?php
-                foreach (
-                    field_array($service, 'features')
-                    as $index => $feature
-                ):
+                foreach ($serviceFeatures as $index => $feature):
                 ?>
 
                     <div class="mini-card">
@@ -281,7 +142,12 @@ foreach ($serviceMedia as $media) {
 
             </div>
 
+            <?php endif; ?>
 
+
+            <?php $serviceSteps = field_array($service, 'steps'); ?>
+
+            <?php if (!empty($serviceSteps)): ?>
             <div class="detail-process">
 
                 <span class="eyebrow">
@@ -290,10 +156,7 @@ foreach ($serviceMedia as $media) {
 
 
                 <?php
-                foreach (
-                    field_array($service, 'steps')
-                    as $index => $step
-                ):
+                foreach ($serviceSteps as $index => $step):
                 ?>
 
                     <div class="detail-step">
@@ -342,6 +205,8 @@ foreach ($serviceMedia as $media) {
 
             </div>
 
+            <?php endif; ?>
+
         </main>
 
 
@@ -383,6 +248,9 @@ foreach ($serviceMedia as $media) {
 </section>
 
 
+<?php $serviceFaqs = field_array($service, 'faq'); ?>
+
+<?php if (!empty($serviceFaqs)): ?>
 <section class="section section-soft">
 
     <div class="container narrow-grid">
@@ -403,12 +271,7 @@ foreach ($serviceMedia as $media) {
 
         <div class="faq-list">
 
-            <?php
-            foreach (
-                field_array($service, 'faq')
-                as $faq
-            ):
-            ?>
+            <?php foreach ($serviceFaqs as $faq): ?>
 
                 <details class="faq-item">
 
@@ -436,3 +299,4 @@ foreach ($serviceMedia as $media) {
     </div>
 
 </section>
+<?php endif; ?>

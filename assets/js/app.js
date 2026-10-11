@@ -239,3 +239,66 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
 })();
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-media-hero]').forEach((hero) => {
+        const slides = Array.from(hero.querySelectorAll('[data-media-slide]'));
+        const dots = Array.from(hero.querySelectorAll('[data-media-dot]'));
+        const previous = hero.querySelector('[data-media-prev]');
+        const next = hero.querySelector('[data-media-next]');
+        let index = 0;
+        let timer = null;
+
+        if (slides.length < 2) {
+            return;
+        }
+
+        const show = (nextIndex) => {
+            slides[index]?.querySelector('video')?.pause();
+            index = (nextIndex + slides.length) % slides.length;
+            slides.forEach((slide, slideIndex) => {
+                slide.classList.toggle('is-active', slideIndex === index);
+                slide.setAttribute('aria-hidden', slideIndex === index ? 'false' : 'true');
+            });
+            dots.forEach((dot, dotIndex) => {
+                dot.classList.toggle('is-active', dotIndex === index);
+                dot.setAttribute('aria-current', dotIndex === index ? 'true' : 'false');
+            });
+        };
+
+        const start = () => {
+            window.clearInterval(timer);
+            timer = window.setInterval(() => show(index + 1), 5500);
+        };
+
+        previous?.addEventListener('click', () => {
+            show(index - 1);
+            start();
+        });
+        next?.addEventListener('click', () => {
+            show(index + 1);
+            start();
+        });
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                show(Number(dot.dataset.mediaDot));
+                start();
+            });
+        });
+        slides.forEach((slide) => {
+            const video = slide.querySelector('video');
+            video?.addEventListener('play', () => window.clearInterval(timer));
+            video?.addEventListener('pause', start);
+            video?.addEventListener('ended', () => {
+                show(index + 1);
+                start();
+            });
+        });
+        hero.addEventListener('mouseenter', () => window.clearInterval(timer));
+        hero.addEventListener('mouseleave', start);
+        hero.addEventListener('focusin', () => window.clearInterval(timer));
+        hero.addEventListener('focusout', start);
+        show(0);
+        start();
+    });
+});

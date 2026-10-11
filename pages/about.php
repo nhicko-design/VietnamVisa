@@ -1,4 +1,9 @@
-<section class="page-hero">
+<?php $aboutHeroImage = page_content_asset_value('about', 'hero_image'); ?>
+
+<section
+    class="page-hero <?= $aboutHeroImage !== '' ? 'page-hero-image' : '' ?>"
+    <?= $aboutHeroImage !== '' ? 'style="--page-hero-image: url(\'' . e(asset_url($aboutHeroImage)) . '\');"' : '' ?>
+>
     <div class="container">
         <span class="eyebrow"><?= e(page_content_value('about', 'eyebrow', __('why_label'))) ?></span>
         <h1><?= e(page_content_value('about', 'title', __('about_page_title'))) ?></h1>

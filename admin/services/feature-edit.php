@@ -252,14 +252,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 
 <link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/sunviet-admin-theme.css', ENT_QUOTES, 'UTF-8') ?>">
 <link rel="stylesheet" href="../assets/css/management.css">
 
 </head>
 
 <body class="admin-body admin-legacy-service-page">
-<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
+<?php $admin_section = admin_service_section($pdo, $serviceId); require __DIR__ . '/../components/sidebar.php'; ?>
 
-<div class="container">
+<div class="admin-main">
+    <?php $page_title = 'Edit Feature'; require __DIR__ . '/../components/topbar.php'; ?>
+    <main class="admin-content service-child-page">
+        <div class="container">
 
     <div class="card">
 
@@ -399,7 +403,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
 </div>
+    </main>
+</div>
 
+<script src="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/js/admin.js', ENT_QUOTES, 'UTF-8') ?>"></script>
 </body>
 
 </html>

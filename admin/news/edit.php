@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../config.php';
 
 require_admin_login();
+require_once __DIR__ . '/../media-upload.php';
 
 $pdo = db();
 $id = (int) ($_GET['id'] ?? 0);
@@ -17,7 +18,39 @@ if (!$article) {
     exit('Article not found.');
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['media_action'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $errors[] = 'Invalid security token. Please try again.';
+    } else {
+        $mediaId = (int) ($_POST['media_id'] ?? 0);
+        $action = (string) $_POST['media_action'];
+
+        if ($action === 'remove') {
+            $statement = $pdo->prepare('DELETE FROM news_media WHERE id = ? AND news_id = ?');
+            $statement->execute([$mediaId, $id]);
+        } elseif (in_array($action, ['move_up', 'move_down'], true)) {
+            $statement = $pdo->prepare('SELECT id FROM news_media WHERE news_id = ? ORDER BY sort_order, id');
+            $statement->execute([$id]);
+            $ids = array_map('intval', $statement->fetchAll(PDO::FETCH_COLUMN));
+            $current = array_search($mediaId, $ids, true);
+            $target = $current === false ? false : $current + ($action === 'move_up' ? -1 : 1);
+
+            if ($current !== false && isset($ids[$target])) {
+                [$ids[$current], $ids[$target]] = [$ids[$target], $ids[$current]];
+                $statement = $pdo->prepare('UPDATE news_media SET sort_order = ? WHERE id = ?');
+                foreach ($ids as $position => $mediaItemId) {
+                    $statement->execute([$position + 1, $mediaItemId]);
+                }
+            }
+        }
+
+        header('Location: edit.php?id=' . $id . '&media_updated=1');
+        exit;
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['media_action'])) {
+    $errors = array_merge($errors, admin_media_upload_errors($_FILES['media_files'] ?? []));
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $errors[] = 'Invalid security token. Please try again.';
     }
@@ -84,6 +117,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'id' => $id,
             ]);
 
+            $firstImage = admin_save_media_uploads($pdo, $_FILES['media_files'] ?? [], 'news', $id);
+
+            if ($firstImage && $article['featured_image'] === '') {
+                $pdo->prepare('UPDATE news SET featured_image = ? WHERE id = ?')->execute([$firstImage, $id]);
+            }
+
             header('Location: manage.php?updated=1');
             exit;
         } catch (Throwable $exception) {
@@ -91,5 +130,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$statement = $pdo->prepare('SELECT id, media_type, file_path, title, alt_text, sort_order FROM news_media WHERE news_id = ? ORDER BY sort_order, id');
+$statement->execute([$id]);
+$articleMedia = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 require __DIR__ . '/form-layout.php';

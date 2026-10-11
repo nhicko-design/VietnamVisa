@@ -33,6 +33,8 @@ if (!$service) {
     exit;
 }
 
+$serviceManagementUrl = admin_service_manage_url($pdo, $serviceId);
+
 $stmt = $pdo->prepare("
     SELECT
         id,
@@ -228,14 +230,18 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </style>
 
 <link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/sunviet-admin-theme.css', ENT_QUOTES, 'UTF-8') ?>">
 <link rel="stylesheet" href="../assets/css/management.css">
 
 </head>
 
 <body class="admin-body admin-legacy-service-page">
-<?php $admin_section = 'services'; require __DIR__ . '/../components/sidebar.php'; ?>
+<?php $admin_section = admin_service_section($pdo, $serviceId); require __DIR__ . '/../components/sidebar.php'; ?>
 
-<div class="container">
+<div class="admin-main">
+    <?php $page_title = 'Service FAQ'; require __DIR__ . '/../components/topbar.php'; ?>
+    <main class="admin-content service-child-page">
+        <div class="container">
 
     <div class="topbar">
 
@@ -255,7 +261,7 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <a
                 class="button"
-                href="index.php"
+                href="<?= htmlspecialchars($serviceManagementUrl, ENT_QUOTES, 'UTF-8') ?>"
             >
                 Back to Services
             </a>
@@ -449,7 +455,10 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
 </div>
+    </main>
+</div>
 
+<script src="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/js/admin.js', ENT_QUOTES, 'UTF-8') ?>"></script>
 </body>
 
 </html>

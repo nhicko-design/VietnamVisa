@@ -3,6 +3,15 @@ RewriteBase /VietnamVisa/
 
 Options -Indexes
 
+# Allow administrators to upload high-quality hero videos and media.
+# post_max_size includes multipart form data, so it must be larger than a file.
+<IfModule php_module>
+    php_value upload_max_filesize 100M
+    php_value post_max_size 128M
+    php_value max_execution_time 120
+    php_value max_input_time 120
+</IfModule>
+
 <FilesMatch "\.(?:sql|log|ini|md)$">
     Require all denied
 </FilesMatch>

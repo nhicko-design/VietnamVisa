@@ -210,17 +210,68 @@
         </div>
 
 
+        <?php
+        $homeHelpCards = [
+            [
+                'number' => '01',
+                'title_en' => 'Vietnam Visa',
+                'title_vn' => 'Visa Việt Nam',
+                'short_en' => 'Explore visa options and entry support for Vietnam.',
+                'short_vn' => 'Khám phá các lựa chọn visa và hỗ trợ nhập cảnh Việt Nam.',
+                'path' => 'vietnam-visa',
+            ],
+            [
+                'number' => '02',
+                'title_en' => 'Temporary Resident Card',
+                'title_vn' => 'Thẻ tạm trú',
+                'short_en' => 'Find the suitable residence route for your situation.',
+                'short_vn' => 'Tìm diện thẻ tạm trú phù hợp với tình trạng của bạn.',
+                'path' => 'temporary-resident-card',
+            ],
+            [
+                'number' => '03',
+                'title_en' => 'Work Permit',
+                'title_vn' => 'Giấy phép lao động',
+                'short_en' => 'Get guidance for working legally in Vietnam.',
+                'short_vn' => 'Nhận hướng dẫn để làm việc hợp pháp tại Việt Nam.',
+                'path' => 'work-permit',
+            ],
+            [
+                'number' => '04',
+                'title_en' => 'Other Countries Visa',
+                'title_vn' => 'Visa các nước khác',
+                'short_en' => 'Choose an international destination and visa route.',
+                'short_vn' => 'Chọn điểm đến quốc tế và diện visa phù hợp.',
+                'path' => 'other-countries-visa',
+            ],
+        ];
+        ?>
+
         <div class="service-grid">
+            <?php foreach ($homeHelpCards as $homeHelpCard): ?>
+                <article class="service-card">
+                    <div class="service-card-top">
+                        <span class="service-number">
+                            <?= e($homeHelpCard['number']) ?>
+                        </span>
+                    </div>
 
-            <?php
-            foreach (
-                array_slice($SERVICES, 0, 4)
-                as $service
-            ):
-                include __DIR__ . '/../components/service-card.php';
-            endforeach;
-            ?>
+                    <div class="service-icon">&rarr;</div>
 
+                    <h3>
+                        <?= e(field($homeHelpCard, 'title')) ?>
+                    </h3>
+
+                    <p>
+                        <?= e(field($homeHelpCard, 'short')) ?>
+                    </p>
+
+                    <a class="text-link" href="<?= e(url($homeHelpCard['path'])) ?>">
+                        <?= __('learn_more') ?>
+                        <span>&rarr;</span>
+                    </a>
+                </article>
+            <?php endforeach; ?>
         </div>
 
 

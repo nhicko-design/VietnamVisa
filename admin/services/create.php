@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../config.php';
 
 require_admin_login();
+require_once __DIR__ . '/../media-upload.php';
 
 $pdo = db();
 
@@ -26,15 +27,27 @@ $old = [
     'sort_order' => 0,
 ];
 
+$managementScope = (string) ($_GET['scope'] ?? $_POST['scope'] ?? '');
+$managementUrl = ADMIN_BASE_URL . '/services/manage.php'
+    . ($managementScope ? '?scope=' . rawurlencode($managementScope) : '');
+
+if ($managementScope === 'vietnam-visa') {
+    $old['category'] = 'visa';
+} elseif ($managementScope === 'other-services') {
+    $old['category'] = 'support';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $errors = array_merge($errors, admin_media_upload_errors($_FILES['media_files'] ?? []));
 
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $errors[] = 'Invalid security token. Please try again.';
     }
 
-    $old['category'] = trim(
-        $_POST['category'] ?? ''
-    );
+    $old['category'] = $managementScope === 'vietnam-visa'
+        ? 'visa'
+        : ($managementScope === 'other-services' ? 'support' : trim($_POST['category'] ?? ''));
 
     $old['slug'] = trim(
         $_POST['slug'] ?? ''
@@ -322,6 +335,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $sortOrder,
             ]);
 
+            $newServiceId = (int) $pdo->lastInsertId();
+
+            if (!empty($_FILES['media_files']['name'])) {
+                $firstImage = admin_save_media_uploads($pdo, $_FILES['media_files'], 'service', $newServiceId);
+
+                if ($firstImage && $old['image'] === '') {
+                    $pdo->prepare('UPDATE services SET image = ? WHERE id = ?')->execute([$firstImage, $newServiceId]);
+                }
+            }
+
 
             /*
              * Redirect after successful insert.
@@ -329,7 +352,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header(
                 'Location: ' .
                 ADMIN_BASE_URL .
-                '/services/index.php?created=1'
+                '/services/manage.php?created=1' .
+                ($managementScope ? '&scope=' . rawurlencode($managementScope) : '')
             );
 
             exit;
@@ -955,7 +979,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <a
                     class="btn btn-secondary"
-                    href="<?= ADMIN_BASE_URL ?>/services/index.php"
+                    href="<?= htmlspecialchars($managementUrl, ENT_QUOTES, 'UTF-8') ?>"
                 >
                     ← Back to Services
                 </a>
@@ -992,8 +1016,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form
                 method="POST"
                 action=""
+                enctype="multipart/form-data"
             >
 
+                <input type="hidden" name="scope" value="<?= htmlspecialchars($managementScope, ENT_QUOTES, 'UTF-8') ?>">
                 <input
                     type="hidden"
                     name="csrf_token"
@@ -1019,7 +1045,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <label for="category">
 
-                                Category
+                                Service Category
 
                                 <span class="required">
                                     *
@@ -1040,7 +1066,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         ? 'selected'
                                         : '' ?>
                                 >
-                                    Visa
+                                    Vietnam Visa
                                 </option>
 
                                 <option
@@ -1049,7 +1075,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         ? 'selected'
                                         : '' ?>
                                 >
-                                    Immigration
+                                    Immigration / Residence
                                 </option>
 
 
@@ -1059,10 +1085,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         ? 'selected'
                                         : '' ?>
                                 >
-                                    Support
+                                    Other Services / Support
                                 </option>
 
                             </select>
+
+                            <div class="help">
+                                Choose where this service is grouped on the website.
+                            </div>
 
                         </div>
 
@@ -1212,6 +1242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 class="description"
                                 id="description"
                                 name="description"
+                                data-rich-editor="English service description"
                                 placeholder="Full service description..."
                             ><?= htmlspecialchars(
                                 $old['description']
@@ -1230,7 +1261,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 class="description"
                                 id="description_vn"
                                 name="description_vn"
+                                data-rich-editor="Vietnamese service description"
                             ><?= htmlspecialchars($old['description_vn'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                        </div>
+
+                        <div class="form-group full admin-media-picker">
+                            <label for="media_files">Images and videos</label>
+                            <input id="media_files" name="media_files[]" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple>
+                            <div class="help">Choose one or multiple files. Images and videos rotate in the service Hero in saved order. The first image becomes the cover when no image is set below. Up to 100 MB per file and 128 MB total per save.</div>
                         </div>
 
                     </div>
@@ -1455,7 +1493,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <a
                         class="btn btn-secondary"
-                        href="<?= ADMIN_BASE_URL ?>/services/index.php"
+                        href="<?= htmlspecialchars($managementUrl, ENT_QUOTES, 'UTF-8') ?>"
                     >
                         Cancel
                     </a>
@@ -1483,6 +1521,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </div>
 
+<script>
+window.SunVietEditor = <?= json_encode(['endpoint' => ADMIN_BASE_URL . '/editor-media.php', 'csrfToken' => csrf_token()], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+</script>
+<script src="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/js/rich-editor.js?v=' . filemtime(__DIR__ . '/../assets/js/rich-editor.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
 </body>
 
 </html>

@@ -51,6 +51,8 @@ foreach ($articles as $article) {
         'content_vn' => $contentVn === ''
             ? ($contentEn === '' ? [] : preg_split('/\R+/', $contentEn))
             : preg_split('/\R+/', $contentVn),
+        'body_en' => $contentEn,
+        'body_vn' => $contentVn !== '' ? $contentVn : $contentEn,
         'image' => (string) ($article['featured_image'] ?? ''),
         'media' => $mediaByNewsId[(int) $article['id']] ?? [],
         'author' => (string) ($article['author'] ?? ''),

@@ -13,9 +13,11 @@
             class="admin-brand"
         >
 
-            <span class="admin-brand-mark">
-                S
-            </span>
+            <img
+                class="admin-brand-logo"
+                src="<?= htmlspecialchars(dirname(ADMIN_BASE_URL) . '/assets/images/sunviet-logo.png', ENT_QUOTES, 'UTF-8') ?>"
+                alt="SunViet"
+            >
 
             <span class="admin-brand-text">
                 SunViet
@@ -65,24 +67,8 @@
 
 
                 <a
-                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php', ENT_QUOTES, 'UTF-8') ?>"
-                    class="sidebar-link <?= ($admin_section ?? '') === 'pages' ? 'active' : '' ?>"
-                >
-
-                    <span class="sidebar-icon">
-                        □
-                    </span>
-
-                    <span>
-                        Pages
-                    </span>
-
-                </a>
-
-
-                <a
-                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/services/index.php', ENT_QUOTES, 'UTF-8') ?>"
-                    class="sidebar-link <?= ($admin_section ?? '') === 'services' ? 'active' : '' ?>"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/vietnam-visa.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'vietnam-visa' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -90,9 +76,33 @@
                     </span>
 
                     <span>
-                        Services
+                        Vietnam Visa
                     </span>
 
+                </a>
+
+                <a
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/temporary-resident-card.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'temporary-resident-card' ? 'active' : '' ?>"
+                >
+                    <span class="sidebar-icon">T</span>
+                    <span>Resident Card</span>
+                </a>
+
+                <a
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/other-countries-visa.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'other-countries-visa' ? 'active' : '' ?>"
+                >
+                    <span class="sidebar-icon">G</span>
+                    <span>Other Countries Visa</span>
+                </a>
+
+                <a
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/other-services.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'other-services' ? 'active' : '' ?>"
+                >
+                    <span class="sidebar-icon">S</span>
+                    <span>Other Services</span>
                 </a>
 
 
@@ -129,8 +139,8 @@
 
 
                 <a
-                    href="#"
-                    class="sidebar-link"
+                    href="<?= htmlspecialchars(ADMIN_BASE_URL . '/faqs.php', ENT_QUOTES, 'UTF-8') ?>"
+                    class="sidebar-link <?= ($admin_section ?? '') === 'faqs' ? 'active' : '' ?>"
                 >
 
                     <span class="sidebar-icon">
@@ -195,11 +205,10 @@
                     </span>
 
                     <span>
-                        Visa
+                        Vietnam Visa Content
                     </span>
 
                 </a>
-
 
                 <a
                     href="<?= htmlspecialchars(ADMIN_BASE_URL . '/pages.php?page=support', ENT_QUOTES, 'UTF-8') ?>"
@@ -211,7 +220,7 @@
                     </span>
 
                     <span>
-                        Support
+                        Support Content
                     </span>
 
                 </a>

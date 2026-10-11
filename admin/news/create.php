@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../config.php';
 
 require_admin_login();
+require_once __DIR__ . '/../media-upload.php';
 
 $pdo = db();
 $errors = [];
@@ -25,6 +26,7 @@ $article = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $errors = array_merge($errors, admin_media_upload_errors($_FILES['media_files'] ?? []));
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $errors[] = 'Invalid security token. Please try again.';
     }
@@ -89,6 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'is_featured' => $article['is_featured'],
                 'sort_order' => (int) $article['sort_order'],
             ]);
+
+            $newArticleId = (int) $pdo->lastInsertId();
+            $firstImage = admin_save_media_uploads($pdo, $_FILES['media_files'] ?? [], 'news', $newArticleId);
+
+            if ($firstImage && $article['featured_image'] === '') {
+                $pdo->prepare('UPDATE news SET featured_image = ? WHERE id = ?')->execute([$firstImage, $newArticleId]);
+            }
 
             header('Location: manage.php?created=1');
             exit;

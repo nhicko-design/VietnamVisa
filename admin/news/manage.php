@@ -112,7 +112,6 @@ require __DIR__ . '/../components/header.php';
                     <td><?= (int) $article['sort_order'] ?></td>
                     <td>
                         <div class="management-actions">
-                            <a class="admin-btn admin-btn-secondary admin-btn-small" href="media.php?id=<?= (int) $article['id'] ?>">Media</a>
                             <a class="admin-btn admin-btn-secondary admin-btn-small" href="edit.php?id=<?= (int) $article['id'] ?>">Edit</a>
 
                             <form method="post" action="delete.php" onsubmit="return confirm('Delete this article?');">

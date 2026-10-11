@@ -3,14 +3,19 @@
 require_once __DIR__ . '/../config.php';
 
 require_admin_login();
+require_once __DIR__ . '/../media-upload.php';
 
 $pdo = db();
+$managementScope = (string) ($_GET['scope'] ?? $_POST['scope'] ?? '');
+$managementUrl = ADMIN_BASE_URL . '/services/manage.php'
+    . ($managementScope ? '?scope=' . rawurlencode($managementScope) : '');
 
 $serviceId = isset($_GET['id'])
     ? (int) $_GET['id']
     : 0;
 
 $errors = [];
+$notice = isset($_GET['updated']) ? 'Service and media library saved.' : '';
 
 $service = null;
 
@@ -26,7 +31,7 @@ if ($serviceId <= 0) {
     header(
         'Location: ' .
         ADMIN_BASE_URL .
-        '/services/index.php'
+        '/services/manage.php'
     );
 
     exit;
@@ -93,6 +98,62 @@ if (!$service) {
     );
 }
 
+/*
+ * Media is managed from this screen. Removing an item only removes it from
+ * this service's Hero/gallery; the file remains available in Media Library.
+ */
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && in_array($_POST['media_action'] ?? '', ['remove', 'move_up', 'move_down'], true)
+) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $errors[] = 'Invalid security token. Please try again.';
+    } else {
+        $mediaAction = (string) $_POST['media_action'];
+        $mediaId = (int) ($_POST['media_id'] ?? 0);
+
+        if ($mediaAction === 'remove') {
+            $statement = $pdo->prepare('SELECT file_path FROM service_media WHERE id = ? AND service_id = ?');
+            $statement->execute([$mediaId, $serviceId]);
+            $removedPath = (string) $statement->fetchColumn();
+
+            $statement = $pdo->prepare('DELETE FROM service_media WHERE id = ? AND service_id = ?');
+            $statement->execute([$mediaId, $serviceId]);
+            if ($removedPath !== '' && $removedPath === (string) ($service['image'] ?? '')) {
+                $statement = $pdo->prepare('SELECT file_path FROM service_media WHERE service_id = ? AND media_type = ? AND is_active = 1 ORDER BY sort_order ASC, id ASC LIMIT 1');
+                $statement->execute([$serviceId, 'image']);
+                $replacementImage = $statement->fetchColumn() ?: null;
+                $statement = $pdo->prepare('UPDATE services SET image = ? WHERE id = ?');
+                $statement->execute([$replacementImage, $serviceId]);
+            }
+        } else {
+            $statement = $pdo->prepare(
+                'SELECT id FROM service_media WHERE service_id = ? ORDER BY sort_order ASC, id ASC'
+            );
+            $statement->execute([$serviceId]);
+            $ids = array_map('intval', $statement->fetchAll(PDO::FETCH_COLUMN));
+            $currentIndex = array_search($mediaId, $ids, true);
+            $targetIndex = $currentIndex === false
+                ? false
+                : $currentIndex + ($mediaAction === 'move_up' ? -1 : 1);
+
+            if ($currentIndex !== false && isset($ids[$targetIndex])) {
+                [$ids[$currentIndex], $ids[$targetIndex]] = [$ids[$targetIndex], $ids[$currentIndex]];
+                $statement = $pdo->prepare('UPDATE service_media SET sort_order = ? WHERE id = ?');
+                foreach ($ids as $position => $orderedId) {
+                    $statement->execute([$position + 1, $orderedId]);
+                }
+            }
+        }
+
+        header(
+            'Location: ' . ADMIN_BASE_URL . '/services/edit.php?id=' . $serviceId
+            . ($managementScope ? '&scope=' . rawurlencode($managementScope) : '')
+        );
+        exit;
+    }
+}
+
 
 /*
  * ============================================================
@@ -100,7 +161,12 @@ if (!$service) {
  * ============================================================
  */
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && empty($_POST['media_action'])
+) {
+
+    $errors = array_merge($errors, admin_media_upload_errors($_FILES['media_files'] ?? []));
     if (
         !verify_csrf_token(
             $_POST['csrf_token'] ?? null
@@ -398,6 +464,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $serviceId,
             ]);
 
+            if (!empty($_FILES['media_files']['name'])) {
+                $firstImage = admin_save_media_uploads($pdo, $_FILES['media_files'], 'service', $serviceId);
+
+                if ($firstImage && $image === '') {
+                    $pdo->prepare('UPDATE services SET image = ? WHERE id = ?')->execute([$firstImage, $serviceId]);
+                }
+            }
+
 
             /*
              * Redirect after successful update.
@@ -406,7 +480,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header(
                 'Location: ' .
                 ADMIN_BASE_URL .
-                '/services/index.php?updated=1'
+                '/services/edit.php?id=' . $serviceId .
+                ($managementScope ? '&scope=' . rawurlencode($managementScope) : '')
+                . '&updated=1'
             );
 
             exit;
@@ -471,6 +547,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sortOrder;
 }
 
+
+$mediaStatement = $pdo->prepare(
+    'SELECT id, media_type, file_path, title, alt_text, sort_order
+     FROM service_media WHERE service_id = ? ORDER BY sort_order ASC, id ASC'
+);
+$mediaStatement->execute([$serviceId]);
+$serviceMedia = $mediaStatement->fetchAll(PDO::FETCH_ASSOC);
 
 $currentAdmin = current_admin();
 
@@ -1016,6 +1099,7 @@ $currentAdmin = current_admin();
     </style>
 
 <link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . filemtime(__DIR__ . '/../assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/sunviet-admin-theme.css', ENT_QUOTES, 'UTF-8') ?>">
 <link rel="stylesheet" href="../assets/css/management.css">
 
 </head>
@@ -1026,58 +1110,17 @@ $currentAdmin = current_admin();
 <div class="admin-layout">
 
     <?php
-    $admin_section = 'services';
+    $admin_section = $service['category'] === 'visa'
+        ? 'vietnam-visa'
+        : ($service['category'] === 'immigration' ? 'temporary-resident-card' : 'other-services');
     require __DIR__ . '/../components/sidebar.php';
     ?>
 
     <div class="admin-main">
 
-        <div class="page service-edit-page">
+        <?php $page_title = 'Edit Service'; require __DIR__ . '/../components/topbar.php'; ?>
 
-
-    <!-- =====================================================
-         TOPBAR
-         ===================================================== -->
-
-    <header class="topbar">
-
-        <div class="brand">
-            SunViet Admin
-        </div>
-
-
-        <div class="admin-info">
-
-            <span class="admin-name">
-
-                <?= htmlspecialchars(
-                    $currentAdmin['name']
-                    ?? 'Administrator'
-                ) ?>
-
-            </span>
-
-
-            <a
-                class="logout"
-                href="<?= ADMIN_BASE_URL ?>/logout.php"
-            >
-                Logout
-            </a>
-
-        </div>
-
-    </header>
-
-
-    <div class="layout">
-
-
-        <!-- =================================================
-             CONTENT
-             ================================================= -->
-
-        <main class="content">
+        <main class="admin-content service-editor-page">
 
 
             <div class="page-header">
@@ -1099,7 +1142,7 @@ $currentAdmin = current_admin();
 
                 <a
                     class="btn btn-secondary"
-                    href="<?= ADMIN_BASE_URL ?>/services/index.php"
+                    href="<?= htmlspecialchars($managementUrl, ENT_QUOTES, 'UTF-8') ?>"
                 >
                     ← Back to Services
                 </a>
@@ -1130,6 +1173,10 @@ $currentAdmin = current_admin();
 
             <?php endif; ?>
 
+            <?php if ($notice): ?>
+                <div class="notice"><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></div>
+            <?php endif; ?>
+
 
             <!-- =================================================
                  FORM
@@ -1138,13 +1185,20 @@ $currentAdmin = current_admin();
             <form
                 method="POST"
                 action=""
+                enctype="multipart/form-data"
             >
+            <input type="hidden" name="scope" value="<?= htmlspecialchars($managementScope, ENT_QUOTES, 'UTF-8') ?>">
             <input
                 type="hidden"
                 name="csrf_token"
                 value="<?= htmlspecialchars(
                     csrf_token()
                 ) ?>"
+            >
+            <input
+                type="hidden"
+                name="image"
+                value="<?= htmlspecialchars($service['image'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
             >
 
                 <!-- BASIC INFORMATION -->
@@ -1165,7 +1219,7 @@ $currentAdmin = current_admin();
 
                             <label for="category">
 
-                                Category
+                                Service Category
 
                                 <span class="required">
                                     *
@@ -1186,7 +1240,7 @@ $currentAdmin = current_admin();
                                         ? 'selected'
                                         : '' ?>
                                 >
-                                    Visa
+                                    Vietnam Visa
                                 </option>
                                 <option
                                     value="immigration"
@@ -1194,7 +1248,7 @@ $currentAdmin = current_admin();
                                         ? 'selected'
                                         : '' ?>
                                 >
-                                    Immigration
+                                    Immigration / Residence
                                 </option>
 
                                 <option
@@ -1203,10 +1257,14 @@ $currentAdmin = current_admin();
                                         ? 'selected'
                                         : '' ?>
                                 >
-                                    Support
+                                    Other Services / Support
                                 </option>
 
                             </select>
+
+                            <div class="help">
+                                Choose where this service is grouped on the website.
+                            </div>
 
                         </div>
 
@@ -1382,6 +1440,7 @@ $currentAdmin = current_admin();
                                 class="description"
                                 id="description"
                                 name="description"
+                                data-rich-editor="English service description"
                             ><?= htmlspecialchars(
                                 $service['description']
                                 ?? ''
@@ -1410,10 +1469,17 @@ $currentAdmin = current_admin();
                                 class="description"
                                 id="description_vn"
                                 name="description_vn"
+                                data-rich-editor="Vietnamese service description"
                             ><?= htmlspecialchars(
                                 $service['description_vn']
                                 ?? ''
                             ) ?></textarea>
+
+                            <div class="admin-media-picker">
+                                <label for="media_files">Add images and videos</label>
+                                <input id="media_files" name="media_files[]" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple>
+                                <div class="help">Choose one or multiple files. New files are appended to the Hero slideshow. Save changes, then use the Media Library below to change order or remove an item.</div>
+                            </div>
 
                             <div class="help">
 
@@ -1529,39 +1595,11 @@ $currentAdmin = current_admin();
                 <div class="card">
 
                     <h2>
-                        Media
+                        Display settings
                     </h2>
 
 
                     <div class="form-grid">
-
-
-                        <div class="form-group">
-
-                            <label for="image">
-                                Image
-                            </label>
-
-
-                            <input
-                                type="text"
-                                id="image"
-                                name="image"
-                                value="<?= htmlspecialchars(
-                                    $service['image']
-                                    ?? ''
-                                ) ?>"
-                                placeholder="images/services/evisa.jpg"
-                            >
-
-
-                            <div class="help">
-
-                                Enter an image path or URL.
-
-                            </div>
-
-                        </div>
 
 
                         <div class="form-group">
@@ -1654,7 +1692,7 @@ $currentAdmin = current_admin();
 
                     <a
                         class="btn btn-secondary"
-                        href="<?= ADMIN_BASE_URL ?>/services/index.php"
+                        href="<?= htmlspecialchars($managementUrl, ENT_QUOTES, 'UTF-8') ?>"
                     >
                         Cancel
                     </a>
@@ -1672,16 +1710,60 @@ $currentAdmin = current_admin();
 
             </form>
 
+            <section class="card service-media-library">
+                <div class="service-media-library-header">
+                    <div>
+                        <h2>Media Library</h2>
+                        <p>Hero items play in this order. Removing an item here keeps the original file available in the editor Media Library.</p>
+                    </div>
+                    <span><?= count($serviceMedia) ?> item(s)</span>
+                </div>
+
+                <?php if (!$serviceMedia): ?>
+                    <div class="empty">No Hero media yet. Add images or videos above, then save this service.</div>
+                <?php else: ?>
+                    <div class="service-media-library-grid">
+                        <?php foreach ($serviceMedia as $media): ?>
+                            <article class="service-media-library-item">
+                                <?php if ($media['media_type'] === 'video'): ?>
+                                    <video controls preload="metadata">
+                                        <source src="<?= htmlspecialchars(admin_media_url((string) $media['file_path']), ENT_QUOTES, 'UTF-8') ?>">
+                                    </video>
+                                <?php else: ?>
+                                    <img src="<?= htmlspecialchars(admin_media_url((string) $media['file_path']), ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string) ($media['alt_text'] ?: $media['title'] ?: $service['title']), ENT_QUOTES, 'UTF-8') ?>">
+                                <?php endif; ?>
+
+                                <div class="service-media-library-item-body">
+                                    <strong><?= htmlspecialchars((string) ($media['title'] ?: ucfirst($media['media_type'])), ENT_QUOTES, 'UTF-8') ?></strong>
+                                    <small>Hero position <?= (int) $media['sort_order'] ?></small>
+                                    <div class="service-media-library-actions">
+                                        <form method="post">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="hidden" name="scope" value="<?= htmlspecialchars($managementScope, ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="hidden" name="media_id" value="<?= (int) $media['id'] ?>">
+                                            <button class="btn btn-secondary" name="media_action" value="move_up" type="submit">Up</button>
+                                            <button class="btn btn-secondary" name="media_action" value="move_down" type="submit">Down</button>
+                                            <button class="btn btn-danger" name="media_action" value="remove" type="submit" onclick="return confirm('Remove this item from this service?');">Remove</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
+
         </main>
 
     </div>
 
 </div>
 
-    </div>
-
-</div>
-
+<script>
+window.SunVietEditor = <?= json_encode(['endpoint' => ADMIN_BASE_URL . '/editor-media.php', 'csrfToken' => csrf_token()], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+</script>
+<script src="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/js/admin.js', ENT_QUOTES, 'UTF-8') ?>"></script>
+<script src="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/js/rich-editor.js?v=' . filemtime(__DIR__ . '/../assets/js/rich-editor.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
 </body>
 
 </html>

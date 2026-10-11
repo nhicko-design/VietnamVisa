@@ -39,20 +39,7 @@ require __DIR__ . '/../components/header.php';
                 </div>
             <?php endif; ?>
 
-            <?php if ($isEdit): ?>
-                <div class="article-media-shortcut">
-                    <div>
-                        <strong>Article media</strong>
-                        <span>Add multiple images or direct video links for this article.</span>
-                    </div>
-
-                    <a class="admin-btn admin-btn-secondary" href="media.php?id=<?= (int) $id ?>">
-                        Manage Media
-                    </a>
-                </div>
-            <?php endif; ?>
-
-            <form method="post" class="news-form">
+            <form method="post" class="news-form" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
 
                 <section class="admin-card news-form-card">
@@ -99,16 +86,22 @@ require __DIR__ . '/../components/header.php';
 
                         <div class="full">
                             <label for="content">English content</label>
-                            <textarea id="content" name="content" placeholder="Use one paragraph per line."><?= htmlspecialchars((string) $article['content'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                            <textarea id="content" name="content" data-rich-editor="English article content"><?= htmlspecialchars((string) $article['content'], ENT_QUOTES, 'UTF-8') ?></textarea>
                         </div>
 
                         <div class="full">
                             <label for="content_vn">Vietnamese content</label>
-                            <textarea id="content_vn" name="content_vn" placeholder="Use one paragraph per line."><?= htmlspecialchars((string) $article['content_vn'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                            <textarea id="content_vn" name="content_vn" data-rich-editor="Vietnamese article content"><?= htmlspecialchars((string) $article['content_vn'], ENT_QUOTES, 'UTF-8') ?></textarea>
                         </div>
                         <div class="full">
                             <label for="featured_image">Featured image URL or path</label>
                             <input id="featured_image" name="featured_image" value="<?= htmlspecialchars((string) $article['featured_image'], ENT_QUOTES, 'UTF-8') ?>">
+                        </div>
+
+                        <div class="full admin-media-picker">
+                            <label for="media_files">Images and videos</label>
+                            <input id="media_files" name="media_files[]" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple>
+                            <small>Choose one or multiple files. They rotate in the article Hero in saved order; the first image also becomes the featured image when the field above is empty. Up to 100 MB per file and 128 MB total per save.</small>
                         </div>
 
                         <div>
@@ -143,6 +136,41 @@ require __DIR__ . '/../components/header.php';
                     </button>
                 </div>
             </form>
+
+            <?php if ($isEdit): ?>
+                <section class="admin-card service-media-library">
+                    <div class="service-media-library-header">
+                        <div><h2>Hero Media Library</h2><p>These items appear only in the article Hero slideshow.</p></div>
+                        <span><?= count($articleMedia ?? []) ?> item(s)</span>
+                    </div>
+                    <?php if (empty($articleMedia)): ?>
+                        <div class="empty-state"><p>No Hero media yet. Upload images or videos above, then save the article.</p></div>
+                    <?php else: ?>
+                        <div class="service-media-library-grid">
+                            <?php foreach ($articleMedia as $media): ?>
+                                <article class="service-media-library-item">
+                                    <?php if ($media['media_type'] === 'video'): ?>
+                                        <video controls preload="metadata" src="<?= htmlspecialchars(admin_media_url($media['file_path']), ENT_QUOTES, 'UTF-8') ?>"></video>
+                                    <?php else: ?>
+                                        <img src="<?= htmlspecialchars(admin_media_url($media['file_path']), ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($media['alt_text'] ?: $media['title'] ?: $article['title'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <?php endif; ?>
+                                    <div class="service-media-library-item-body">
+                                        <strong><?= htmlspecialchars($media['title'] ?: ucfirst($media['media_type']), ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <small>Hero position <?= (int) $media['sort_order'] ?></small>
+                                        <form class="service-media-library-actions" method="post">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="hidden" name="media_id" value="<?= (int) $media['id'] ?>">
+                                            <button class="admin-btn admin-btn-secondary admin-btn-small" name="media_action" value="move_up">Up</button>
+                                            <button class="admin-btn admin-btn-secondary admin-btn-small" name="media_action" value="move_down">Down</button>
+                                            <button class="admin-btn admin-btn-danger admin-btn-small" name="media_action" value="remove" onclick="return confirm('Remove this Hero media item?');">Remove</button>
+                                        </form>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </section>
+            <?php endif; ?>
         </main>
     </div>
 </div>

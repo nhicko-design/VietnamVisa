@@ -54,3 +54,33 @@ function page_content_value(
         ? $settings[$cacheKey]
         : $fallback;
 }
+
+
+function page_content_asset_value(string $page, string $field): string
+{
+    static $assets = [];
+
+    $cacheKey = $page . ':' . $field;
+
+    if (array_key_exists($cacheKey, $assets)) {
+        return $assets[$cacheKey];
+    }
+
+    try {
+        $statement = db()->prepare(
+            'SELECT setting_value
+             FROM settings
+             WHERE setting_key = :setting_key
+             LIMIT 1'
+        );
+        $statement->execute([
+            'setting_key' => 'page_' . $page . '_' . $field,
+        ]);
+
+        $assets[$cacheKey] = trim((string) $statement->fetchColumn());
+    } catch (Throwable $exception) {
+        $assets[$cacheKey] = '';
+    }
+
+    return $assets[$cacheKey];
+}

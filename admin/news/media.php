@@ -24,7 +24,9 @@ if (!$article) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+    if (admin_post_exceeds_server_limit()) {
+        $errors[] = 'The selected file exceeds the server upload limit. Please choose a file below 100 MB.';
+    } elseif (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $errors[] = 'Invalid security token. Please try again.';
     } elseif (($_POST['action'] ?? '') === 'delete') {
         $mediaId = (int) ($_POST['media_id'] ?? 0);
@@ -148,8 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
                 $errors[] = 'File upload failed.';
-            } elseif ($file['size'] > 50 * 1024 * 1024) {
-                $errors[] = 'File is too large. Maximum size is 50 MB.';
+            } elseif ($file['size'] > 100 * 1024 * 1024) {
+                $errors[] = 'File is too large. Maximum size is 100 MB.';
             } else {
                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                 $mimeType = finfo_file($finfo, $file['tmp_name']);
@@ -300,7 +302,7 @@ require __DIR__ . '/../components/header.php';
                         <div class="full">
                             <label for="media_file">Upload image or video</label>
                             <input id="media_file" type="file" name="media_file" accept="image/*,video/*">
-                            <small>Images: JPG, PNG, WEBP, GIF. Videos: MP4, WEBM, MOV. Maximum 50 MB.</small>
+                            <small>Images: JPG, PNG, WEBP, GIF. Videos: MP4, WEBM, MOV. Maximum 100 MB.</small>
                         </div>
 
                         <div class="full">

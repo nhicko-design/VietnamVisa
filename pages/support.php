@@ -1,4 +1,9 @@
-<section class="page-hero">
+<?php $supportHeroImage = page_content_asset_value('support', 'hero_image'); ?>
+
+<section
+    class="page-hero <?= $supportHeroImage !== '' ? 'page-hero-image' : '' ?>"
+    <?= $supportHeroImage !== '' ? 'style="--page-hero-image: url(\'' . e(asset_url($supportHeroImage)) . '\');"' : '' ?>
+>
     <div class="container">
         <span class="eyebrow"><?= e(page_content_value('support', 'eyebrow', __('nav_support'))) ?></span>
         <h1><?= e(page_content_value('support', 'title', __('support_page_title'))) ?></h1>

@@ -1,0 +1,23 @@
+/* SunViet Admin brand theme. */
+
+.admin-brand-logo {
+    display: block;
+    width: 52px;
+    height: 52px;
+    padding: 4px;
+    border-radius: 13px;
+    background: #fff;
+    object-fit: contain;
+}
+
+.admin-sidebar {
+    background: linear-gradient(180deg, #06386e 0%, #042b55 100%);
+}
+
+.admin-brand-mark {
+    display: none;
+}
+
+.admin-brand-text small {
+    color: #ffdc55;
+}

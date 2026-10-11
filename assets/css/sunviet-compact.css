@@ -1,0 +1,116 @@
+/*
+ * SunViet compact public-site override.
+ * Delete this file and its link in header.php to restore the previous scale.
+ */
+
+:root {
+    --compact-section-y: 68px;
+}
+
+.section {
+    padding-top: var(--compact-section-y);
+    padding-bottom: var(--compact-section-y);
+}
+
+.page-hero {
+    padding-top: 68px;
+    padding-bottom: 60px;
+}
+
+.page-hero h1,
+.article-hero h1 {
+    font-size: clamp(42px, 5.5vw, 68px);
+    margin: 14px 0;
+}
+
+.page-hero p {
+    font-size: 16px;
+}
+
+.detail-hero {
+    padding-top: 54px;
+    padding-bottom: 66px;
+}
+
+.detail-hero-grid {
+    gap: 48px;
+}
+
+.detail-hero h1 {
+    font-size: clamp(42px, 5vw, 64px);
+    margin: 14px 0;
+}
+
+.detail-hero p,
+.detail-lead {
+    font-size: 16px;
+}
+
+.detail-image img,
+.detail-image .media-hero {
+    min-height: 390px;
+    height: 390px;
+}
+
+.section-title {
+    font-size: clamp(30px, 3.8vw, 46px);
+}
+
+.application-form {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 22px;
+}
+
+.application-form .application-form-section {
+    margin-bottom: 30px;
+    padding-bottom: 28px;
+}
+
+.application-form .application-form-section h2 {
+    font-size: 25px;
+    margin-bottom: 18px;
+}
+
+.application-form input,
+.application-form textarea,
+.application-form select {
+    padding: 12px 14px;
+    border-radius: 10px;
+}
+
+.choice-grid label span {
+    padding: 18px;
+    border-radius: 13px;
+}
+
+.cta-band {
+    padding: 58px 0;
+}
+
+.site-footer {
+    padding-top: 46px;
+}
+
+@media (max-width: 820px) {
+    :root { --compact-section-y: 52px; }
+
+    .page-hero,
+    .detail-hero {
+        padding-top: 50px;
+        padding-bottom: 52px;
+    }
+
+    .detail-image img,
+    .detail-image .media-hero {
+        min-height: 300px;
+        height: 300px;
+    }
+}
+
+@media (max-width: 560px) {
+    .application-form {
+        padding: 22px;
+    }
+}

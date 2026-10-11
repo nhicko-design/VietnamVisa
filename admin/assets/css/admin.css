@@ -10,12 +10,12 @@
 
 :root {
 
-    --admin-purple: #673de6;
-    --admin-purple-dark: #5730d4;
-    --admin-purple-soft: #f1edff;
+    --admin-purple: #075ca8;
+    --admin-purple-dark: #044a8c;
+    --admin-purple-soft: #eaf5fc;
 
-    --admin-dark: #111114;
-    --admin-ink: #19191d;
+    --admin-dark: #06386e;
+    --admin-ink: #063d78;
 
     --admin-text: #323238;
     --admin-muted: #7b7b84;
@@ -88,6 +88,25 @@
     font-size: 18px;
 }
 
+.page-hero-media-card {
+    margin-bottom: 22px;
+}
+
+.page-hero-image-preview {
+    height: 220px;
+    overflow: hidden;
+    background: var(--admin-soft);
+    border: 1px solid var(--admin-line);
+    border-radius: 12px;
+}
+
+.page-hero-image-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* Management view overrides: kept at the end so page-level rules cannot override them. */
 .admin-content .page-header {
     display: flex;
@@ -145,6 +164,425 @@
 .admin-content .management-card .admin-table th:last-child,
 .admin-content .management-card .admin-table td:last-child {
     min-width: 180px;
+}
+
+.management-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 18px;
+}
+
+.management-filters input,
+.management-filters select {
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid #d7e2ec;
+    border-radius: 10px;
+    background: #fff;
+    color: #17324d;
+    font: inherit;
+}
+
+.management-filters input {
+    min-width: min(100%, 280px);
+}
+
+.admin-content .form-card {
+    padding: 28px;
+    border: 1px solid #e4e3ee;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 14px 36px rgba(27, 25, 44, .07);
+}
+
+.admin-content .form-card h2 {
+    margin: 0 0 24px;
+    color: #123e70;
+    font-size: 22px;
+}
+
+.admin-content .admin-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.admin-content .admin-form label {
+    display: grid;
+    gap: 8px;
+    color: #284561;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.admin-content .admin-form .full {
+    grid-column: 1 / -1;
+}
+
+.admin-content .admin-form input:not([type="checkbox"]),
+.admin-content .admin-form textarea,
+.admin-content .admin-form select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd9e7;
+    border-radius: 10px;
+    outline: none;
+    background: #fff;
+    color: #1c344d;
+    font: inherit;
+    font-weight: 400;
+}
+
+.admin-content .admin-form textarea {
+    min-height: 108px;
+    resize: vertical;
+}
+
+.admin-content .admin-form input:focus,
+.admin-content .admin-form textarea:focus,
+.admin-content .admin-form select:focus {
+    border-color: #086bb9;
+    box-shadow: 0 0 0 3px rgba(8, 107, 185, .12);
+}
+
+.admin-content .admin-form .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding-top: 28px;
+}
+
+.admin-content .admin-form .checkbox-row input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #086bb9;
+}
+
+.rich-editor {
+    overflow: hidden;
+    border: 1px solid #cbd9e7;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.rich-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+    border-bottom: 1px solid #dce6ef;
+    background: #f5f9fd;
+}
+
+.rich-editor-toolbar button {
+    padding: 7px 10px;
+    border: 1px solid #d4e0ea;
+    border-radius: 7px;
+    background: #fff;
+    color: #173a5d;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rich-editor-toolbar button:hover,
+.rich-editor-toolbar button:focus-visible {
+    border-color: #086bb9;
+    background: #eaf5ff;
+}
+
+.rich-editor-surface {
+    min-height: 220px;
+    max-height: 540px;
+    overflow: auto;
+    padding: 18px;
+    color: #24384c;
+    line-height: 1.65;
+    outline: none;
+}
+
+.rich-editor-surface:focus {
+    box-shadow: inset 0 0 0 2px rgba(8, 107, 185, .22);
+}
+
+.rich-editor-surface.is-dragging-media {
+    background: #eaf5ff;
+    box-shadow: inset 0 0 0 3px #1683c8;
+}
+
+.rich-editor-surface table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rich-editor-surface td,
+.rich-editor-surface th {
+    min-width: 80px;
+    padding: 8px;
+    border: 1px solid #b9cede;
+}
+
+.editor-media-block {
+    position: relative;
+    clear: both;
+    max-width: 100%;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    padding: 6px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: #f5f9fd;
+}
+
+.editor-media-block[data-align="left"] {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.editor-media-block[data-align="center"] {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.editor-media-block[data-align="right"] {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.editor-media-block.is-selected {
+    border-color: #1683c8;
+}
+
+.editor-media-block img,
+.editor-media-block video {
+    display: block;
+    width: 100%;
+    max-height: 460px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #0b1d2e;
+}
+
+.editor-media-block figcaption {
+    padding: 8px 6px 2px;
+    color: #60768a;
+    font-size: 13px;
+    text-align: center;
+}
+
+.rich-editor-inspector {
+    display: grid;
+    grid-template-columns: auto minmax(160px, 1fr) minmax(160px, 1fr) minmax(170px, 1fr) auto;
+    gap: 10px;
+    align-items: end;
+    padding: 12px;
+    border-top: 1px solid #dce6ef;
+    background: #eef6fc;
+}
+
+.rich-editor-inspector[hidden] {
+    display: none;
+}
+
+.rich-editor-inspector label {
+    display: grid;
+    gap: 4px;
+    color: #284561;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.rich-editor-inspector input,
+.rich-editor-inspector select {
+    min-height: 36px;
+    padding: 7px 9px;
+    border: 1px solid #bfd1df;
+    border-radius: 7px;
+    background: #fff;
+}
+
+.rich-editor-inspector .rich-editor-width {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+}
+
+.rich-editor-inspector .rich-editor-width input {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 0;
+}
+
+.rich-editor-inspector output {
+    color: #086bb9;
+    font-size: 12px;
+}
+
+.rich-editor-remove {
+    min-height: 36px;
+    padding: 7px 10px;
+    border: 1px solid #efb8b8;
+    border-radius: 7px;
+    background: #fff3f3;
+    color: #b42318;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rich-editor-status {
+    min-height: 28px;
+    padding: 6px 12px;
+    color: #54708a;
+    font-size: 12px;
+}
+
+.rich-editor-status.is-error {
+    color: #b42318;
+}
+
+.rich-editor.is-uploading {
+    opacity: .72;
+    pointer-events: none;
+}
+
+.rich-editor-library {
+    width: min(960px, calc(100vw - 40px));
+    max-height: min(760px, calc(100vh - 40px));
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 24px 80px rgba(8, 36, 62, .25);
+}
+
+.rich-editor-library::backdrop {
+    background: rgba(8, 25, 40, .62);
+}
+
+.rich-editor-library-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid #dce6ef;
+}
+
+.rich-editor-library-head strong,
+.rich-editor-library-head small {
+    display: block;
+}
+
+.rich-editor-library-head small {
+    margin-top: 3px;
+    color: #657b8f;
+}
+
+.rich-editor-library-head button {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: #edf3f8;
+    cursor: pointer;
+}
+
+.rich-editor-library-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    max-height: 620px;
+    overflow: auto;
+    padding: 20px;
+}
+
+.rich-editor-library-item {
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid #dce6ef;
+    border-radius: 12px;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.rich-editor-library-item:hover {
+    border-color: #1683c8;
+    box-shadow: 0 8px 24px rgba(8, 107, 185, .12);
+}
+
+.rich-editor-library-item img,
+.rich-editor-library-item video {
+    display: block;
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    background: #0b1d2e;
+}
+
+.rich-editor-library-item span {
+    display: block;
+    overflow: hidden;
+    padding: 10px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-media-picker {
+    display: grid;
+    gap: 10px;
+    padding: 18px;
+    border: 1px dashed #a9c9e2;
+    border-radius: 12px;
+    background: #f5faff;
+}
+
+.admin-media-picker input[type="file"] {
+    max-width: 100%;
+}
+
+.admin-media-existing {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-media-existing span {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #e6f2fb;
+    color: #173a5d;
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .rich-editor-inspector {
+        grid-template-columns: 1fr;
+    }
+
+    .rich-editor-library-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-content .form-card {
+        padding: 20px;
+    }
+
+    .admin-content .admin-form .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-content .admin-form .full {
+        grid-column: auto;
+    }
+
+    .admin-content .admin-form .checkbox-row {
+        padding-top: 0;
+    }
 }
 
 @media (max-width: 700px) {

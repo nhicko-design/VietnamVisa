@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <section class="page-hero">
     <div class="container">
-        <span class="eyebrow">01 / 04</span>
+        <span class="eyebrow">APPLICATION REQUEST</span>
         <h1><?= __('apply_page_title') ?></h1>
         <p><?= __('cta_desc') ?></p>
     </div>
@@ -67,14 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
-            <div class="form-progress">
-                <span class="active">01</span>
-                <span>02</span>
-                <span>03</span>
-                <span>04</span>
-            </div>
-
-            <div class="form-step active">
+            <div class="form-step active application-form-section">
                 <h2>Tell us about you</h2>
 
                 <div class="form-grid">
@@ -96,10 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </label>
                 </div>
 
-                <button type="button" class="btn btn-primary next-step">Continue &rarr;</button>
             </div>
 
-            <div class="form-step">
+            <div class="form-step application-form-section">
                 <h2>Choose a service</h2>
 
                 <div class="choice-grid">
@@ -116,13 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endforeach; ?>
                 </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary prev-step">&larr; Back</button>
-                    <button type="button" class="btn btn-primary next-step">Continue &rarr;</button>
-                </div>
             </div>
 
-            <div class="form-step">
+            <div class="form-step application-form-section">
                 <h2>Travel information</h2>
 
                 <div class="form-grid">
@@ -140,21 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </label>
                 </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary prev-step">&larr; Back</button>
-                    <button type="button" class="btn btn-primary next-step">Review &rarr;</button>
-                </div>
             </div>
 
-            <div class="form-step">
-                <h2>Review your request</h2>
-                <div class="review-box" id="applicationReview"></div>
+            <div class="application-form-submit">
                 <p class="form-note">Submit your request and our team will contact you using the email provided.</p>
-
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary prev-step">&larr; Back</button>
-                    <button type="submit" class="btn btn-primary">Submit request &rarr;</button>
-                </div>
+                <button type="submit" class="btn btn-primary">Submit request &rarr;</button>
             </div>
         </form>
     </div>

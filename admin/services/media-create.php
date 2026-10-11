@@ -78,7 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $csrfToken = $_POST['csrf_token'] ?? '';
 
-    if (!verify_csrf_token($csrfToken)) {
+    if (admin_post_exceeds_server_limit()) {
+
+        $error = 'The selected file exceeds the server upload limit. Please choose a file below 100 MB.';
+
+    } elseif (!verify_csrf_token($csrfToken)) {
 
         $error = 'Invalid CSRF token.';
 
@@ -157,15 +161,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     | MAX FILE SIZE
                     |--------------------------------------------------------------------------
                     |
-                    | 50 MB
+                    | 100 MB
                     |
                     */
 
-                    $maxSize = 50 * 1024 * 1024;
+                    $maxSize = 100 * 1024 * 1024;
 
                     if ($file['size'] > $maxSize) {
 
-                        $error = 'File is too large. Maximum size is 50 MB.';
+                        $error = 'File is too large. Maximum size is 100 MB.';
 
                     } else {
 
@@ -659,7 +663,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <br>
 
-                        Maximum size: 50 MB
+                        Maximum size: 100 MB
 
                     </div>
 

@@ -62,6 +62,9 @@ if (!isset($pageDefinitions[$page])) {
     $page = 'home';
 }
 
+$supportsHeroImage = $page !== 'home';
+$heroImage = '';
+
 $fields = [];
 
 foreach (array_keys($pageDefinitions[$page]['fields']) as $field) {
@@ -90,8 +93,23 @@ foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $setting) {
     }
 }
 
+if ($supportsHeroImage) {
+    $statement = $pdo->prepare(
+        'SELECT setting_value
+         FROM settings
+         WHERE setting_key = :setting_key
+         LIMIT 1'
+    );
+    $statement->execute([
+        'setting_key' => 'page_' . $page . '_hero_image',
+    ]);
+    $heroImage = (string) $statement->fetchColumn();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+    if (admin_post_exceeds_server_limit()) {
+        $errors[] = 'The selected file exceeds the server upload limit. Please choose a smaller file and try again.';
+    } elseif (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $errors[] = 'Invalid security token. Please try again.';
     } else {
         foreach (array_keys($fields) as $field) {
@@ -121,6 +139,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        $removeHeroImage = isset($_POST['remove_hero_image']);
+        $hasHeroUpload = $supportsHeroImage
+            && isset($_FILES['hero_image_file'])
+            && $_FILES['hero_image_file']['error'] !== UPLOAD_ERR_NO_FILE;
+
+        if ($hasHeroUpload) {
+            $file = $_FILES['hero_image_file'];
+            $allowedImages = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/webp' => 'webp',
+                'image/gif' => 'gif',
+            ];
+
+            if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 10 * 1024 * 1024) {
+                $errors[] = 'Hero image upload failed or exceeds the 10 MB limit.';
+            } else {
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mimeType = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
+
+                if (!isset($allowedImages[$mimeType])) {
+                    $errors[] = 'Hero image must be a JPG, PNG, WEBP or GIF file.';
+                } else {
+                    $relativeDirectory = 'uploads/pages/images/';
+                    $directory = dirname(__DIR__) . '/' . $relativeDirectory;
+
+                    if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
+                        $errors[] = 'Unable to create the hero image upload directory.';
+                    } else {
+                        $fileName = $page . '_' . date('YmdHis') . '_' . bin2hex(random_bytes(6)) . '.' . $allowedImages[$mimeType];
+
+                        if (!move_uploaded_file($file['tmp_name'], $directory . $fileName)) {
+                            $errors[] = 'Unable to save the hero image.';
+                        } else {
+                            $newHeroImage = $relativeDirectory . $fileName;
+                        }
+                    }
+                }
+            }
+        }
+
         if (!$errors) {
             $statement = $pdo->prepare(
                 'INSERT INTO settings (setting_key, setting_value, setting_group)
@@ -137,6 +197,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'setting_value' => $value,
                     'setting_group' => 'pages',
                 ]);
+            }
+
+            if ($supportsHeroImage) {
+                $nextHeroImage = $newHeroImage
+                    ?? ($removeHeroImage ? '' : $heroImage);
+
+                $statement->execute([
+                    'setting_key' => 'page_' . $page . '_hero_image',
+                    'setting_value' => $nextHeroImage,
+                    'setting_group' => 'pages',
+                ]);
+
+                if (($removeHeroImage || isset($newHeroImage)) && $heroImage !== '') {
+                    $localPath = admin_local_page_upload_path($heroImage);
+
+                    if ($localPath !== null && is_file($localPath)) {
+                        @unlink($localPath);
+                    }
+                }
+
+                $heroImage = $nextHeroImage;
             }
 
             $message = $pageDefinitions[$page]['label'] . ' content saved successfully.';
@@ -190,9 +271,37 @@ require __DIR__ . '/components/header.php';
                 </div>
             <?php endif; ?>
 
-            <form method="post" class="news-form">
+            <form method="post" class="news-form" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                 <input type="hidden" name="page" value="<?= htmlspecialchars($page, ENT_QUOTES, 'UTF-8') ?>">
+
+                <?php if ($supportsHeroImage): ?>
+                    <section class="admin-card news-form-card page-hero-media-card">
+                        <div class="page-language-heading">
+                            <span>IMG</span>
+                            <h2>Hero image</h2>
+                        </div>
+
+                        <div class="news-form-grid">
+                            <div class="full">
+                                <label for="hero_image_file">Choose an image file</label>
+                                <input id="hero_image_file" type="file" name="hero_image_file" accept="image/jpeg,image/png,image/webp,image/gif">
+                                <small>JPG, PNG, WEBP or GIF. Maximum 10 MB. A new upload replaces the current hero image.</small>
+                            </div>
+
+                            <?php if ($heroImage !== ''): ?>
+                                <div class="full page-hero-image-preview">
+                                    <img src="<?= htmlspecialchars(admin_media_url($heroImage), ENT_QUOTES, 'UTF-8') ?>" alt="Current hero image">
+                                </div>
+
+                                <label class="news-checkbox">
+                                    <input type="checkbox" name="remove_hero_image" value="1">
+                                    Remove current hero image
+                                </label>
+                            <?php endif; ?>
+                        </div>
+                    </section>
+                <?php endif; ?>
 
                 <section class="admin-card news-form-card">
                     <div class="page-language-heading">

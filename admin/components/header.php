@@ -56,6 +56,11 @@ $admin_css_version = is_file($admin_css_path)
         href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/admin.css?v=' . $admin_css_version, ENT_QUOTES, 'UTF-8') ?>"
     >
 
+    <link
+        rel="stylesheet"
+        href="<?= htmlspecialchars(ADMIN_BASE_URL . '/assets/css/sunviet-admin-theme.css', ENT_QUOTES, 'UTF-8') ?>"
+    >
+
 </head>
 
 <body class="admin-body">
