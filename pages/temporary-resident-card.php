@@ -74,84 +74,22 @@ $contactLabel = $isVietnamese ? 'Trao đổi với tư vấn viên' : 'Talk to a
 
 ?>
 
-<section class="detail-hero">
-    <div class="container detail-hero-grid">
-        <div>
-            <span class="eyebrow">
-                <?= e($heroEyebrow) ?>
-            </span>
+<?php
+require_once __DIR__ . '/../components/service-page-hero.php';
+require_once __DIR__ . '/../components/service-consultation.php';
 
-            <h1>
-                <?= e($heroTitle) ?>
-            </h1>
-
-            <p>
-                <?= e($heroDescription) ?>
-            </p>
-
-            <div class="detail-actions">
-                <a class="btn btn-primary" href="<?= e(url('apply')) ?>">
-                    <?= e($applyLabel) ?> &rarr;
-                </a>
-
-                <a class="btn btn-secondary" href="<?= e(url('contact')) ?>">
-                    <?= e($contactLabel) ?>
-                </a>
-            </div>
-        </div>
-
-        <div class="detail-image">
-            <img
-                src="<?= e($residentCardHeroVisual) ?>"
-                alt="<?= e($heroTitle) ?>"
-            >
-        </div>
-    </div>
-</section>
+render_service_page_hero([
+    'eyebrow' => $heroEyebrow,
+    'title' => $heroTitle,
+    'description' => $heroDescription,
+    'image' => $residentCardHeroVisual,
+    'media' => $residentCardParent['media'] ?? [],
+]);
+?>
 
 <section class="section section-white resident-card-services-section">
     <div class="container detail-grid">
         <main>
-            <span class="eyebrow">
-                <?= $isVietnamese ? 'Tổng quan dịch vụ' : 'Service overview' ?>
-            </span>
-
-            <h2 class="section-title">
-                <?= $isVietnamese ? 'Chọn diện thẻ phù hợp với hồ sơ của bạn' : 'Choose the residence route that fits your profile' ?>
-            </h2>
-
-            <p class="detail-lead">
-                <?= $isVietnamese
-                    ? 'Mỗi diện thẻ có điều kiện và hồ sơ riêng. Chọn nhóm phù hợp để bắt đầu trao đổi cùng đội ngũ SunViet.'
-                    : 'Each route has its own eligibility and documents. Choose the group that matches your situation before speaking with SunViet.' ?>
-            </p>
-
-            <div class="feature-cards">
-                <div class="mini-card">
-                    <span>01</span>
-                    <h3><?= $isVietnamese ? 'Xác định diện phù hợp' : 'Identify your route' ?></h3>
-                    <p><?= $isVietnamese ? 'Dựa trên quan hệ gia đình, khoản đầu tư hoặc công việc hiện tại của bạn.' : 'Start with your family relationship, investment, or current employment.' ?></p>
-                </div>
-
-                <div class="mini-card">
-                    <span>02</span>
-                    <h3><?= $isVietnamese ? 'Chuẩn bị hồ sơ' : 'Prepare your documents' ?></h3>
-                    <p><?= $isVietnamese ? 'Kiểm tra giấy tờ nền tảng và thời hạn hiệu lực trước khi nộp yêu cầu.' : 'Check your supporting documents and their validity before submitting a request.' ?></p>
-                </div>
-
-                <div class="mini-card">
-                    <span>03</span>
-                    <h3><?= $isVietnamese ? 'Nhận tư vấn' : 'Receive guidance' ?></h3>
-                    <p><?= $isVietnamese ? 'Trao đổi với tư vấn viên nếu hồ sơ của bạn có yêu cầu riêng.' : 'Speak with an advisor if your circumstances need tailored guidance.' ?></p>
-                </div>
-
-                <div class="mini-card">
-                    <span>04</span>
-                    <h3><?= $isVietnamese ? 'Gửi yêu cầu' : 'Send your request' ?></h3>
-                    <p><?= $isVietnamese ? 'Bắt đầu yêu cầu với thông tin rõ ràng để đội ngũ hỗ trợ nhanh hơn.' : 'Submit clear information so our team can support you promptly.' ?></p>
-                </div>
-            </div>
-
             <div class="resident-card-services-panel">
                 <div class="section-intro">
                     <span class="eyebrow">
@@ -198,32 +136,52 @@ $contactLabel = $isVietnamese ? 'Trao đổi với tư vấn viên' : 'Talk to a
                     <?php endforeach; ?>
                 </div>
             </div>
+
+            <section class="service-content-section service-planning-section">
+                <span class="eyebrow">
+                    <?= $isVietnamese ? 'Tổng quan dịch vụ' : 'Service overview' ?>
+                </span>
+
+                <h2 class="section-title">
+                    <?= $isVietnamese ? 'Chọn diện thẻ phù hợp với hồ sơ của bạn' : 'Choose the residence route that fits your profile' ?>
+                </h2>
+
+                <p class="detail-lead">
+                    <?= $isVietnamese
+                        ? 'Mỗi diện thẻ có điều kiện và hồ sơ riêng. Chọn nhóm phù hợp để bắt đầu trao đổi cùng đội ngũ SunViet.'
+                        : 'Each route has its own eligibility and documents. Choose the group that matches your situation before speaking with SunViet.' ?>
+                </p>
+
+                <div class="feature-cards">
+                    <div class="mini-card">
+                        <span>01</span>
+                        <h3><?= $isVietnamese ? 'Xác định diện phù hợp' : 'Identify your route' ?></h3>
+                        <p><?= $isVietnamese ? 'Dựa trên quan hệ gia đình, khoản đầu tư hoặc công việc hiện tại của bạn.' : 'Start with your family relationship, investment, or current employment.' ?></p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>02</span>
+                        <h3><?= $isVietnamese ? 'Chuẩn bị hồ sơ' : 'Prepare your documents' ?></h3>
+                        <p><?= $isVietnamese ? 'Kiểm tra giấy tờ nền tảng và thời hạn hiệu lực trước khi nộp yêu cầu.' : 'Check your supporting documents and their validity before submitting a request.' ?></p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>03</span>
+                        <h3><?= $isVietnamese ? 'Nhận tư vấn' : 'Receive guidance' ?></h3>
+                        <p><?= $isVietnamese ? 'Trao đổi với tư vấn viên nếu hồ sơ của bạn có yêu cầu riêng.' : 'Speak with an advisor if your circumstances need tailored guidance.' ?></p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>04</span>
+                        <h3><?= $isVietnamese ? 'Gửi yêu cầu' : 'Send your request' ?></h3>
+                        <p><?= $isVietnamese ? 'Bắt đầu yêu cầu với thông tin rõ ràng để đội ngũ hỗ trợ nhanh hơn.' : 'Submit clear information so our team can support you promptly.' ?></p>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <aside class="detail-sidebar">
-            <div class="sticky-card">
-                <span class="eyebrow">
-                    <?= $isVietnamese ? 'Tư vấn thẻ tạm trú' : 'Resident card consultation' ?>
-                </span>
-
-                <h3>
-                    <?= $isVietnamese ? 'Cần xác định diện thẻ?' : 'Need help identifying your route?' ?>
-                </h3>
-
-                <p>
-                    <?= $isVietnamese
-                        ? 'Chia sẻ tình trạng của bạn để đội ngũ SunViet hướng dẫn diện thẻ phù hợp.'
-                        : 'Tell us about your situation and the SunViet team will guide you to the appropriate route.' ?>
-                </p>
-
-                <a class="btn btn-primary btn-full" href="<?= e(url('contact')) ?>">
-                    <?= e($contactLabel) ?>
-                </a>
-
-                <a class="btn btn-secondary btn-full" href="<?= e(url('apply')) ?>">
-                    <?= e($applyLabel) ?>
-                </a>
-            </div>
+            <?php render_service_consultation(); ?>
         </aside>
     </div>
 </section>

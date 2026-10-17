@@ -7,6 +7,21 @@ $sunvietV2CssVersion = is_file($sunvietV2CssPath)
 $mainCssVersion = (string) filemtime(__DIR__ . '/assets/css/style.css');
 $compactCssPath = __DIR__ . '/assets/css/sunviet-compact.css';
 $compactCssVersion = is_file($compactCssPath) ? (string) filemtime($compactCssPath) : '1';
+$redesignCssPath = __DIR__ . '/assets/css/sunviet-redesign.css';
+$redesignCssVersion = is_file($redesignCssPath) ? (string) filemtime($redesignCssPath) : '1';
+$serviceDesignRoutes = [
+    'services',
+    'vietnam-visa',
+    'temporary-resident-card',
+    'work-permit',
+    'other-countries-visa',
+    'other-services',
+    'service-detail',
+    'visa',
+    'support',
+];
+$isServiceDesign = in_array($route, $serviceDesignRoutes, true);
+
 
 ?>
 
@@ -29,7 +44,7 @@ $compactCssVersion = is_file($compactCssPath) ? (string) filemtime($compactCssPa
     <title><?= e($page_title ?? __('site_name')) ?> · <?= e(__('site_name')) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/style.css?v=<?= e($mainCssVersion) ?>">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/components.css">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/responsive.css">
@@ -38,6 +53,11 @@ $compactCssVersion = is_file($compactCssPath) ? (string) filemtime($compactCssPa
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-v1.css?v=1">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-v2.css?v=<?= e($sunvietV2CssVersion) ?>">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-compact.css?v=<?= e($compactCssVersion) ?>">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-redesign.css?v=<?= e($redesignCssVersion) ?>">
+    <?php if ($isServiceDesign): ?>
+        <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-services.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-services.css')) ?>">
+    <?php endif; ?>
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-motion.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-motion.css')) ?>">
     <script type="application/ld+json"><?= json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'Organization',
@@ -47,5 +67,5 @@ $compactCssVersion = is_file($compactCssPath) ? (string) filemtime($compactCssPa
         'telephone' => SITE_PHONE,
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?></script>
 </head>
-<body class="route-<?= e($route) ?>">
+<body class="route-<?= e($route) ?><?= $isServiceDesign ? ' service-design' : '' ?>">
 <div class="site-progress" id="siteProgress"></div>

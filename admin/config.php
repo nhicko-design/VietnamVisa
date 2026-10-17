@@ -4,10 +4,9 @@ require_once __DIR__ . '/../common/database.php';
 require_once __DIR__ . '/../common/auth.php';
 
 
-define(
-    'ADMIN_BASE_URL',
-    '/VietnamVisa/admin'
-);
+if (!defined('ADMIN_BASE_URL')) {
+    define('ADMIN_BASE_URL', admin_base_url());
+}
 
 function admin_ini_size_to_bytes(string $value): int
 {

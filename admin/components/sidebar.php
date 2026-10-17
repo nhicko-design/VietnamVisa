@@ -294,7 +294,7 @@
 
 
         <a
-            href="/VietnamVisa/admin/logout.php"
+            href="<?= htmlspecialchars(ADMIN_BASE_URL . '/logout.php', ENT_QUOTES, 'UTF-8') ?>"
             class="sidebar-footer-link logout"
         >
 

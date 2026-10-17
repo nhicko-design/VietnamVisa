@@ -15,10 +15,10 @@ require_once __DIR__ . '/../common/database.php';
  * XAMPP:
  * http://localhost/VietnamVisa/admin
  */
-define(
-    'ADMIN_BASE_URL',
-    '/VietnamVisa/admin'
-);
+if (!defined('ADMIN_BASE_URL')) {
+    require_once __DIR__ . '/auth.php';
+    define('ADMIN_BASE_URL', admin_base_url());
+}
 
 $siteDefaults = [
     'site_name' => 'SunViet',

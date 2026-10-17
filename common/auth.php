@@ -8,6 +8,21 @@
 
 require_once __DIR__ . '/database.php';
 
+function admin_base_url(): string
+{
+    $scriptName = str_replace(
+        '\\',
+        '/',
+        (string) ($_SERVER['SCRIPT_NAME'] ?? '')
+    );
+
+    if (preg_match('~^(.*?/admin)(?:/.*)?$~', $scriptName, $matches)) {
+        return rtrim($matches[1], '/');
+    }
+
+    return '/admin';
+}
+
 
 /**
  * ============================================================
@@ -158,7 +173,7 @@ function require_admin_login(): void
     }
 
     header(
-        'Location: /VietnamVisa/admin/login.php'
+        'Location: ' . admin_base_url() . '/login.php'
     );
 
     exit;

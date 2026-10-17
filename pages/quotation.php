@@ -1,2 +1,35 @@
-<section class="page-hero"><div class="container"><span class="eyebrow">01 / 01</span><h1><?= __('quotation_page_title') ?></h1><p><?= __('services_desc') ?></p></div></section>
-<section class="section section-soft"><div class="container quote-grid"><div class="quote-form"><label>Service<select id="quoteService"><option value="45">Vietnam E-Visa</option><option value="70">Business Visa</option><option value="120">Work Permit</option><option value="100">Temporary Residence Card</option></select></label><label>Applicants<input id="quoteApplicants" type="number" min="1" value="1"></label><label>Processing<select id="quoteProcessing"><option value="1">Standard</option><option value="1.35">Priority</option></select></label><button id="calculateQuote" class="btn btn-primary" type="button">Calculate estimate ↗</button><p class="form-note">Demo pricing only. Backend/admin will provide the real pricing rules later.</p></div><div class="quote-result"><span class="eyebrow">Estimated</span><strong id="quoteTotal">$45</strong><p>Use the result as a visual placeholder until the pricing API is connected.</p><a class="btn btn-secondary" href="<?= e(url('apply')) ?>"><?= __('nav_apply') ?> ↗</a></div></div></section>
+<?php $isVietnamese = ($current_lang ?? 'en') === 'vn'; ?>
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">SunViet</span>
+        <h1><?= e(__('quotation_page_title')) ?></h1>
+        <p><?= $isVietnamese
+            ? 'Chia sẻ nhu cầu của bạn để đội ngũ SunViet tư vấn phương án phù hợp.'
+            : 'Tell us what you need so the SunViet team can recommend a suitable service.' ?></p>
+    </div>
+</section>
+
+<section class="section section-white">
+    <div class="container">
+        <div class="section-intro">
+            <span class="eyebrow"><?= $isVietnamese ? 'Tư vấn cùng SunViet' : 'Personal guidance' ?></span>
+            <h2 class="section-title"><?= $isVietnamese
+                ? 'Bắt đầu với nhu cầu của bạn.'
+                : 'Let’s start with your plans.' ?></h2>
+            <p><?= $isVietnamese
+                ? 'Gửi thông tin về dịch vụ bạn quan tâm. Đội ngũ sẽ liên hệ và hướng dẫn bước tiếp theo.'
+                : 'Send us details about the service you are interested in. Our team will contact you with the next steps.' ?></p>
+        </div>
+
+        <div class="detail-actions">
+            <a class="btn btn-primary" href="<?= e(url('apply')) ?>">
+                <?= $isVietnamese ? 'Gửi yêu cầu tư vấn' : 'Start your request' ?>
+                <span aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn-secondary" href="<?= e(url('contact')) ?>">
+                <?= $isVietnamese ? 'Liên hệ đội ngũ' : 'Contact the team' ?>
+            </a>
+        </div>
+    </div>
+</section>

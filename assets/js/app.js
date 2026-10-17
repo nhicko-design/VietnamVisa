@@ -1,6 +1,6 @@
-console.log('APP JS LOADED');
-
 document.addEventListener('DOMContentLoaded', () => {
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const progress = document.getElementById(
         'siteProgress'
@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     el.dataset.counter,
                     10
                 );
+
+                if (reducedMotion.matches) {
+                    el.textContent = target + (el.dataset.counterSuffix || (target === 10 ? '+' : ''));
+                    return;
+                }
 
                 let n = 0;
 
@@ -83,32 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     scroll();
-
-
-    document
-        .querySelectorAll('.faq-item')
-        .forEach(d =>
-            d.addEventListener(
-                'toggle',
-                () => {
-
-                    if (d.open) {
-
-                        document
-                            .querySelectorAll('.faq-item')
-                            .forEach(x => {
-
-                                if (x !== d) {
-                                    x.removeAttribute('open');
-                                }
-
-                            });
-
-                    }
-
-                }
-            )
-        );
 
 
     document
@@ -241,6 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
     document.querySelectorAll('[data-media-hero]').forEach((hero) => {
         const slides = Array.from(hero.querySelectorAll('[data-media-slide]'));
         const dots = Array.from(hero.querySelectorAll('[data-media-dot]'));
@@ -248,6 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const next = hero.querySelector('[data-media-next]');
         let index = 0;
         let timer = null;
+        let pointerOver = false;
+        let focusWithin = hero.contains(document.activeElement);
 
         if (slides.length < 2) {
             return;
@@ -266,8 +249,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        const start = () => {
+        const stop = () => {
             window.clearInterval(timer);
+            timer = null;
+        };
+
+        const start = () => {
+            stop();
+
+            const activeVideo = slides[index].querySelector('video');
+
+            if (
+                reducedMotion.matches ||
+                document.hidden ||
+                pointerOver ||
+                focusWithin ||
+                (activeVideo && !activeVideo.paused && !activeVideo.ended)
+            ) {
+                return;
+            }
+
             timer = window.setInterval(() => show(index + 1), 5500);
         };
 
@@ -287,17 +288,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         slides.forEach((slide) => {
             const video = slide.querySelector('video');
-            video?.addEventListener('play', () => window.clearInterval(timer));
+            video?.addEventListener('play', stop);
             video?.addEventListener('pause', start);
             video?.addEventListener('ended', () => {
-                show(index + 1);
+                if (!reducedMotion.matches) {
+                    show(index + 1);
+                }
                 start();
             });
         });
-        hero.addEventListener('mouseenter', () => window.clearInterval(timer));
-        hero.addEventListener('mouseleave', start);
-        hero.addEventListener('focusin', () => window.clearInterval(timer));
-        hero.addEventListener('focusout', start);
+        hero.addEventListener('mouseenter', () => {
+            pointerOver = true;
+            stop();
+        });
+        hero.addEventListener('mouseleave', () => {
+            pointerOver = false;
+            start();
+        });
+        hero.addEventListener('focusin', () => {
+            focusWithin = true;
+            stop();
+        });
+        hero.addEventListener('focusout', (event) => {
+            focusWithin = hero.contains(event.relatedTarget);
+            start();
+        });
+        document.addEventListener('visibilitychange', start);
+        reducedMotion.addEventListener('change', start);
         show(0);
         start();
     });

@@ -50,37 +50,36 @@ $heroImage = $heroImage ?: 'https://images.unsplash.com/photo-1500530855697-b586
 $heroMedia = $country['media'] ?? $region['media'] ?? [];
 ?>
 
-<section class="detail-hero">
-    <div class="container detail-hero-grid">
-        <div>
-            <span class="eyebrow">
-                <?= e($isVietnamese ? 'Dịch vụ visa quốc tế' : 'International visa services') ?>
-            </span>
+<?php
+require_once __DIR__ . '/../components/service-page-hero.php';
+require_once __DIR__ . '/../components/service-consultation.php';
+require_once __DIR__ . '/../components/service-content-sections.php';
 
-            <h1>
-                <?= e($pageTitle) ?>
-            </h1>
+$visaBreadcrumbs = [];
 
-            <p>
-                <?= e($pageDescription) ?>
-            </p>
+if ($region !== null) {
+    $visaBreadcrumbs[] = [
+        'label' => $isVietnamese ? 'Visa các nước khác' : 'Other Countries Visa',
+        'url' => url('other-countries-visa'),
+    ];
+}
 
-            <div class="detail-actions">
-                <a class="btn btn-primary" href="<?= e(url('apply')) ?>">
-                    <?= e($applyLabel) ?> &rarr;
-                </a>
+if ($country !== null && $regionKey !== 'china') {
+    $visaBreadcrumbs[] = [
+        'label' => $value($region, 'title'),
+        'url' => url('other-countries-visa/' . $regionKey),
+    ];
+}
 
-                <a class="btn btn-secondary" href="<?= e(url('contact')) ?>">
-                    <?= e($contactLabel) ?>
-                </a>
-            </div>
-        </div>
-
-        <div class="detail-image">
-            <?php render_media_hero($heroMedia, (string) $heroImage, $pageTitle); ?>
-        </div>
-    </div>
-</section>
+render_service_page_hero([
+    'eyebrow' => $isVietnamese ? 'Dịch vụ visa quốc tế' : 'International visa services',
+    'title' => $pageTitle,
+    'description' => $pageDescription,
+    'image' => $heroImage,
+    'media' => $heroMedia,
+    'breadcrumbs' => $visaBreadcrumbs,
+]);
+?>
 
 <?php if ($region === null): ?>
     <section class="section section-white international-visa-section">
@@ -133,8 +132,8 @@ $heroMedia = $country['media'] ?? $region['media'] ?? [];
             </main>
 
             <aside class="detail-sidebar">
-                <?php include __DIR__ . '/../components/international-visa-sticky-card.php'; ?>
-            </aside>
+            <?php render_service_consultation(); ?>
+        </aside>
         </div>
     </section>
 <?php elseif ($country === null): ?>
@@ -161,19 +160,26 @@ $heroMedia = $country['media'] ?? $region['media'] ?? [];
                     <?= rich_content_html($value($region, 'short')) ?>
                 </div>
 
-                <?php foreach (['features' => 'Features', 'steps' => 'Steps', 'faqs' => 'Frequently asked questions'] as $contentKey => $heading): ?>
-                    <?php if (!empty($region[$contentKey])): ?>
-                        <section class="detail-process">
-                            <span class="eyebrow"><?= e($heading) ?></span>
-                            <?php foreach ($region[$contentKey] as $index => $item): ?>
-                                <div class="detail-step">
-                                    <strong><?= e(str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT)) ?></strong>
-                                    <div><span><?= e($value($item, 'title')) ?></span><p><?= e($value($item, 'content')) ?></p></div>
-                                </div>
-                            <?php endforeach; ?>
-                        </section>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                <?php
+                $contentOwner = $region;
+                $normalizeContent = static function (array $item) use ($value): array {
+                    return [
+                        'title' => $value($item, 'title'),
+                        'description' => $value($item, 'content'),
+                    ];
+                };
+                $normalizeFaq = static function (array $item) use ($value): array {
+                    return [
+                        'q' => $value($item, 'title'),
+                        'a' => $value($item, 'content'),
+                    ];
+                };
+                render_service_content_sections(
+                    array_map($normalizeContent, $contentOwner['features'] ?? []),
+                    array_map($normalizeContent, $contentOwner['steps'] ?? []),
+                    array_map($normalizeFaq, $contentOwner['faqs'] ?? [])
+                );
+                ?>
 
                 <div class="international-visa-panel">
                     <div class="service-grid international-country-grid">
@@ -204,15 +210,15 @@ $heroMedia = $country['media'] ?? $region['media'] ?? [];
             </main>
 
             <aside class="detail-sidebar">
-                <?php include __DIR__ . '/../components/international-visa-sticky-card.php'; ?>
-            </aside>
+            <?php render_service_consultation(); ?>
+        </aside>
         </div>
     </section>
 <?php else: ?>
     <section class="section section-white international-visa-section">
         <div class="container detail-grid">
             <main>
-                <a class="detail-back-link" href="<?= e(url('other-countries-visa/' . $regionKey)) ?>">
+                <a class="detail-back-link" href="<?= e(url($regionKey === 'china' ? 'other-countries-visa' : 'other-countries-visa/' . $regionKey)) ?>">
                     &larr; <?= e($isVietnamese ? 'Quay lại danh sách quốc gia' : 'Back to country list') ?>
                 </a>
 
@@ -248,19 +254,26 @@ $heroMedia = $country['media'] ?? $region['media'] ?? [];
                     </div>
                 </div>
 
-                <?php foreach (['features' => 'Features', 'steps' => 'Steps', 'faqs' => 'Frequently asked questions'] as $contentKey => $heading): ?>
-                    <?php if (!empty($country[$contentKey])): ?>
-                        <section class="detail-process">
-                            <span class="eyebrow"><?= e($heading) ?></span>
-                            <?php foreach ($country[$contentKey] as $index => $item): ?>
-                                <div class="detail-step">
-                                    <strong><?= e(str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT)) ?></strong>
-                                    <div><span><?= e($value($item, 'title')) ?></span><p><?= e($value($item, 'content')) ?></p></div>
-                                </div>
-                            <?php endforeach; ?>
-                        </section>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                <?php
+                $contentOwner = $country;
+                $normalizeContent = static function (array $item) use ($value): array {
+                    return [
+                        'title' => $value($item, 'title'),
+                        'description' => $value($item, 'content'),
+                    ];
+                };
+                $normalizeFaq = static function (array $item) use ($value): array {
+                    return [
+                        'q' => $value($item, 'title'),
+                        'a' => $value($item, 'content'),
+                    ];
+                };
+                render_service_content_sections(
+                    array_map($normalizeContent, $contentOwner['features'] ?? []),
+                    array_map($normalizeContent, $contentOwner['steps'] ?? []),
+                    array_map($normalizeFaq, $contentOwner['faqs'] ?? [])
+                );
+                ?>
 
                 <div class="country-visa-cta">
                     <div>
@@ -275,30 +288,8 @@ $heroMedia = $country['media'] ?? $region['media'] ?? [];
             </main>
 
             <aside class="detail-sidebar">
-                <?php include __DIR__ . '/../components/international-visa-sticky-card.php'; ?>
-            </aside>
-        </div>
-    </section>
-<?php endif; ?>
-
-<?php $activeMedia = $heroMedia; ?>
-<?php if ($activeMedia): ?>
-    <section class="section section-soft">
-        <div class="container">
-            <h2 class="section-title"><?= e($pageTitle) ?></h2>
-            <div class="service-media-grid">
-                <?php foreach ($activeMedia as $media): ?>
-                    <?php if ($media['media_type'] === 'image'): ?>
-                        <figure class="service-media-item">
-                            <img src="<?= e(asset_url($media['file_path'])) ?>" alt="<?= e($media['alt_text'] ?: $pageTitle) ?>">
-                        </figure>
-                    <?php else: ?>
-                        <div class="service-video-item">
-                            <video controls preload="metadata" src="<?= e(asset_url($media['file_path'])) ?>"></video>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </div>
+            <?php render_service_consultation(); ?>
+        </aside>
         </div>
     </section>
 <?php endif; ?>

@@ -593,7 +593,7 @@ require __DIR__ . '/components/header.php';
 
 
                 <a
-                    href="/VietnamVisa/admin/services/create.php"
+                    href="<?= ADMIN_BASE_URL ?>/services/create.php"
                     class="admin-btn admin-btn-primary"
                 >
                     + Create Content
@@ -788,7 +788,7 @@ require __DIR__ . '/components/header.php';
 
 
                         <a
-                            href="/VietnamVisa/admin/news/index.php"
+                            href="<?= ADMIN_BASE_URL ?>/news/index.php"
                             class="panel-link"
                         >
                             View all →
@@ -914,7 +914,7 @@ require __DIR__ . '/components/header.php';
                                     <!-- ACTION -->
 
                                     <a
-                                        href="/VietnamVisa/admin/news/edit.php?id=<?= (int) $article['id'] ?>"
+                                        href="<?= ADMIN_BASE_URL ?>/news/edit.php?id=<?= (int) $article['id'] ?>"
                                         class="row-action"
                                     >
                                         Edit
@@ -938,7 +938,7 @@ require __DIR__ . '/components/header.php';
 
 
                                 <a
-                                    href="/VietnamVisa/admin/news/create.php"
+                                    href="<?= ADMIN_BASE_URL ?>/news/create.php"
                                     class="admin-btn admin-btn-secondary"
                                 >
                                     Create first article
@@ -989,7 +989,7 @@ require __DIR__ . '/components/header.php';
                         <!-- ADD SERVICE -->
 
                         <a
-                            href="/VietnamVisa/admin/services/create.php"
+                            href="<?= ADMIN_BASE_URL ?>/services/create.php"
                             class="quick-action"
                         >
 
@@ -1023,7 +1023,7 @@ require __DIR__ . '/components/header.php';
                         <!-- WRITE ARTICLE -->
 
                         <a
-                            href="/VietnamVisa/admin/news/create.php"
+                            href="<?= ADMIN_BASE_URL ?>/news/create.php"
                             class="quick-action"
                         >
 
@@ -1162,7 +1162,7 @@ require __DIR__ . '/components/header.php';
 
 
                         <a
-                            href="/VietnamVisa/admin/services/index.php"
+                            href="<?= ADMIN_BASE_URL ?>/services/index.php"
                             class="panel-link"
                         >
                             Manage →
@@ -1268,7 +1268,7 @@ require __DIR__ . '/components/header.php';
 
 
                                 <a
-                                    href="/VietnamVisa/admin/services/create.php"
+                                    href="<?= ADMIN_BASE_URL ?>/services/create.php"
                                     class="admin-btn admin-btn-secondary"
                                 >
                                     Add Service

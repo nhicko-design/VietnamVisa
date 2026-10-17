@@ -1,302 +1,78 @@
 <?php
 
-require_once __DIR__ . '/../components/media-hero.php';
+require_once __DIR__ . '/../components/service-page-hero.php';
+require_once __DIR__ . '/../components/service-consultation.php';
+require_once __DIR__ . '/../components/service-content-sections.php';
 
-$isVietnamVisaService = strtolower((string) ($service['category'] ?? '')) === 'visa';
-$serviceBackUrl = $isVietnamVisaService
-    ? url('vietnam-visa')
-    : url('services');
-$serviceBackLabel = $isVietnamVisaService
-    ? (($current_lang ?? 'en') === 'vn' ? 'Quay lại Visa Việt Nam' : 'Back to Vietnam Visa')
-    : __('back_services');
+$isVietnamese = ($current_lang ?? 'en') === 'vn';
+$serviceCategory = strtolower((string) ($service['category'] ?? ''));
+$serviceParents = [
+    'visa' => ['vietnam-visa', $isVietnamese ? 'Visa Việt Nam' : 'Vietnam Visa'],
+    'immigration' => ['temporary-resident-card', $isVietnamese ? 'Thẻ tạm trú' : 'Temporary Resident Card'],
+    'support' => ['other-services', $isVietnamese ? 'Dịch vụ khác' : 'Other Services'],
+];
+$serviceParent = $serviceParents[$serviceCategory] ?? [
+    'services',
+    $isVietnamese ? 'Dịch vụ' : 'Services',
+];
 
+if (($service['slug'] ?? '') === 'work-permit') {
+    $serviceParent = ['services', $isVietnamese ? 'Dịch vụ' : 'Services'];
+}
+
+$serviceSummary = trim(strip_tags(field($service, 'short')));
+
+if ($serviceSummary === '') {
+    $serviceSummary = mb_strimwidth(
+        trim(strip_tags(field($service, 'description'))),
+        0,
+        240,
+        '…',
+        'UTF-8'
+    );
+}
+
+render_service_page_hero([
+    'eyebrow' => $serviceParent[1],
+    'title' => field($service, 'title'),
+    'description' => $serviceSummary,
+    'image' => (string) ($service['image'] ?? ''),
+    'media' => $service['media'] ?? [],
+    'breadcrumbs' => [[
+        'label' => $serviceParent[1],
+        'url' => url($serviceParent[0]),
+    ]],
+]);
 ?>
 
-<section class="detail-hero">
-
-    <div class="container detail-hero-grid">
-
-        <div>
-
-            <a
-                class="back-link"
-                href="<?= e($serviceBackUrl) ?>"
-            >
-                ← <?= e($serviceBackLabel) ?>
+<section class="section section-white service-detail-body">
+    <div class="container detail-grid">
+        <main>
+            <a class="detail-back-link" href="<?= e(url($serviceParent[0])) ?>">
+                <span aria-hidden="true">←</span>
+                <?= e($isVietnamese ? 'Quay lại ' . $serviceParent[1] : 'Back to ' . $serviceParent[1]) ?>
             </a>
 
-
-            <span class="eyebrow">
-                <?= e($service['category']) ?>
-            </span>
-
-
-            <h1>
-                <?= e(field($service, 'title')) ?>
-            </h1>
-
-
-            <p>
-                <?= e(trim(strip_tags(field($service, 'description')))) ?>
-            </p>
-
-
-            <div class="detail-actions">
-
-                <a
-                    class="btn btn-primary"
-                    href="<?= e(url('apply')) ?>"
-                >
-                    <?= __('apply_service') ?> ↗
-                </a>
-
-                <a
-                    class="btn btn-secondary"
-                    href="<?= e(url('contact')) ?>"
-                >
-                    <?= __('contact_team') ?>
-                </a>
-
+            <div class="section-intro">
+                <span class="eyebrow"><?= e(__('detail_overview')) ?></span>
+                <h2 class="section-title"><?= e(field($service, 'title')) ?></h2>
             </div>
 
-        </div>
+            <?php if (trim(strip_tags(field($service, 'description'))) !== '' || preg_match('/<(img|video)\b/i', field($service, 'description'))): ?>
+                <div class="detail-lead rich-content">
+                    <?= rich_content_html(field($service, 'description')) ?>
+                </div>
+            <?php endif; ?>
 
-
-        <div class="detail-image">
-            <?php render_media_hero(
-                $service['media'] ?? [],
-                (string) ($service['image'] ?? ''),
-                field($service, 'title')
+            <?php render_service_content_sections(
+                field_array($service, 'features'),
+                field_array($service, 'steps'),
+                field_array($service, 'faq')
             ); ?>
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="section section-white">
-
-    <div class="container detail-grid">
-
-        <main>
-
-            <span class="eyebrow">
-                <?= __('detail_overview') ?>
-            </span>
-
-
-            <h2 class="section-title">
-                <?= e(field($service, 'title')) ?>
-            </h2>
-
-
-            <div class="detail-lead rich-content">
-                <?= rich_content_html(field($service, 'description')) ?>
-            </div>
-
-
-            <?php $serviceFeatures = field_array($service, 'features'); ?>
-
-            <?php if (!empty($serviceFeatures)): ?>
-            <div class="feature-cards">
-
-                <?php
-                foreach ($serviceFeatures as $index => $feature):
-                ?>
-
-                    <div class="mini-card">
-
-                        <span>
-                            <?= str_pad(
-                                (string) ($index + 1),
-                                2,
-                                '0',
-                                STR_PAD_LEFT
-                            ) ?>
-                        </span>
-
-
-                        <h3>
-                            <?= e($feature['title']) ?>
-                        </h3>
-
-
-                        <?php if (
-                            !empty(
-                                $feature['description']
-                            )
-                        ): ?>
-
-                            <p>
-                                <?= e(
-                                    $feature['description']
-                                ) ?>
-                            </p>
-
-                        <?php endif; ?>
-
-                    </div>
-
-                <?php endforeach; ?>
-
-            </div>
-
-            <?php endif; ?>
-
-
-            <?php $serviceSteps = field_array($service, 'steps'); ?>
-
-            <?php if (!empty($serviceSteps)): ?>
-            <div class="detail-process">
-
-                <span class="eyebrow">
-                    <?= __('detail_process') ?>
-                </span>
-
-
-                <?php
-                foreach ($serviceSteps as $index => $step):
-                ?>
-
-                    <div class="detail-step">
-
-                        <strong>
-                            <?= str_pad(
-                                (string) (
-                                    $step['step_number']
-                                    ?? ($index + 1)
-                                ),
-                                2,
-                                '0',
-                                STR_PAD_LEFT
-                            ) ?>
-                        </strong>
-
-
-                        <div>
-
-                            <span>
-                                <?= e(
-                                    $step['title']
-                                ) ?>
-                            </span>
-
-
-                            <?php if (
-                                !empty(
-                                    $step['description']
-                                )
-                            ): ?>
-
-                                <p>
-                                    <?= e(
-                                        $step['description']
-                                    ) ?>
-                                </p>
-
-                            <?php endif; ?>
-
-                        </div>
-
-                    </div>
-
-                <?php endforeach; ?>
-
-            </div>
-
-            <?php endif; ?>
-
         </main>
 
-
         <aside class="detail-sidebar">
-
-            <div class="sticky-card">
-
-                <span class="eyebrow">
-                    <?= __('detail_cta') ?>
-                </span>
-
-
-                <h3>
-                    <?= __('detail_cta_desc') ?>
-                </h3>
-
-
-                <a
-                    class="btn btn-primary btn-full"
-                    href="<?= e(url('contact')) ?>"
-                >
-                    <?= __('contact_team') ?> ↗
-                </a>
-
-
-                <a
-                    class="btn btn-secondary btn-full"
-                    href="<?= e(url('apply')) ?>"
-                >
-                    <?= __('apply_service') ?>
-                </a>
-
-            </div>
-
+            <?php render_service_consultation(); ?>
         </aside>
-
     </div>
-
 </section>
-
-
-<?php $serviceFaqs = field_array($service, 'faq'); ?>
-
-<?php if (!empty($serviceFaqs)): ?>
-<section class="section section-soft">
-
-    <div class="container narrow-grid">
-
-        <div>
-
-            <span class="eyebrow">
-                <?= __('detail_faq') ?>
-            </span>
-
-
-            <h2 class="section-title">
-                <?= __('faq_title') ?>
-            </h2>
-
-        </div>
-
-
-        <div class="faq-list">
-
-            <?php foreach ($serviceFaqs as $faq): ?>
-
-                <details class="faq-item">
-
-                    <summary>
-
-                        <?= e($faq['q']) ?>
-
-                        <span>
-                            +
-                        </span>
-
-                    </summary>
-
-
-                    <p>
-                        <?= e($faq['a']) ?>
-                    </p>
-
-                </details>
-
-            <?php endforeach; ?>
-
-        </div>
-
-    </div>
-
-</section>
-<?php endif; ?>

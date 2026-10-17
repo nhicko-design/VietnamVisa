@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/mail.php';
 
 
 function start_public_form_session(): void
@@ -134,7 +135,7 @@ function submit_public_inquiry(string $type, string $language): array
             )'
         );
 
-        $statement->execute([
+        $inquiry = [
             'inquiry_type' => $type,
             'full_name' => $fullName,
             'email' => $email,
@@ -147,7 +148,9 @@ function submit_public_inquiry(string $type, string $language): array
             'language_code' => $language === 'vn' ? 'vn' : 'en',
             'source_url' => $sourceUrl ?: null,
             'ip_hash' => $ipHash,
-        ]);
+        ];
+
+        $statement->execute($inquiry);
     } catch (Throwable $exception) {
         error_log('Unable to store public inquiry: ' . $exception->getMessage());
 
@@ -159,5 +162,13 @@ function submit_public_inquiry(string $type, string $language): array
 
     $_SESSION['public_form_last_submission'] = time();
 
-    return ['success' => true, 'errors' => []];
+    $emailSent = $type === 'application'
+        ? send_inquiry_email_notification($inquiry)
+        : false;
+
+    return [
+        'success' => true,
+        'errors' => [],
+        'email_sent' => $emailSent,
+    ];
 }

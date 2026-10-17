@@ -11,7 +11,7 @@ require_once __DIR__ . '/../common/auth.php';
 if (is_admin_logged_in()) {
 
     header(
-        'Location: /VietnamVisa/admin/dashboard.php'
+        'Location: ' . ADMIN_BASE_URL . '/dashboard.php'
     );
 
     exit;
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['success']) {
 
             header(
-                'Location: /VietnamVisa/admin/dashboard.php'
+                'Location: ' . ADMIN_BASE_URL . '/dashboard.php'
             );
 
             exit;
@@ -818,7 +818,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="login-box">
 
             <a
-                href="/VietnamVisa/en"
+                href="<?= htmlspecialchars(dirname(ADMIN_BASE_URL) . '/en', ENT_QUOTES, 'UTF-8') ?>"
                 class="brand"
             >
 
@@ -979,7 +979,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             <a
-                href="/VietnamVisa/en"
+                href="<?= htmlspecialchars(dirname(ADMIN_BASE_URL) . '/en', ENT_QUOTES, 'UTF-8') ?>"
                 class="back-link"
             >
                 ← Back to website

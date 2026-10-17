@@ -8,11 +8,37 @@ function db(): PDO
         return $pdo;
     }
 
-    $host = getenv('SUNVIET_DB_HOST') ?: '127.0.0.1';
-    $port = getenv('SUNVIET_DB_PORT') ?: '3306';
-    $database = getenv('SUNVIET_DB_NAME') ?: 'sunviet';
-    $username = getenv('SUNVIET_DB_USER') ?: 'root';
-    $password = getenv('SUNVIET_DB_PASSWORD') ?: '';
+    $credentials = [];
+    $requestHost = strtolower(
+        (string) parse_url(
+            '//' . ($_SERVER['HTTP_HOST'] ?? ''),
+            PHP_URL_HOST
+        )
+    );
+    $isLocalRequest = in_array(
+        $requestHost,
+        ['localhost', '127.0.0.1', '::1'],
+        true
+    );
+    $credentialsFile = __DIR__ . (
+        $isLocalRequest
+            ? '/database.local.php'
+            : '/database.credentials.php'
+    );
+
+    if (is_file($credentialsFile)) {
+        $loadedCredentials = require $credentialsFile;
+
+        if (is_array($loadedCredentials)) {
+            $credentials = $loadedCredentials;
+        }
+    }
+
+    $host = getenv('SUNVIET_DB_HOST') ?: ($credentials['host'] ?? '127.0.0.1');
+    $port = getenv('SUNVIET_DB_PORT') ?: ($credentials['port'] ?? '3306');
+    $database = getenv('SUNVIET_DB_NAME') ?: ($credentials['database'] ?? 'sunviet');
+    $username = getenv('SUNVIET_DB_USER') ?: ($credentials['username'] ?? 'root');
+    $password = getenv('SUNVIET_DB_PASSWORD') ?: ($credentials['password'] ?? '');
 
     if (!preg_match('/^[0-9]{1,5}$/', $port)) {
         throw new RuntimeException('Invalid database port configuration.');

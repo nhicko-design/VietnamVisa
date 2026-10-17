@@ -1,0 +1,121 @@
+/* Shared public-site motion. No content is hidden before JavaScript runs. */
+:root {
+    --motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+body .btn,
+body .sv-btn {
+    transition:
+        transform 180ms var(--motion-ease),
+        background-color 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease;
+}
+
+body .btn:active,
+body .sv-btn:active {
+    transform: translateY(1px);
+}
+
+.sv-btn > span,
+.btn > span[aria-hidden],
+.text-link > span,
+.sv-inline-link > span,
+.sv-service-card a > span,
+.sv-insight-card em {
+    display: inline-block;
+    transition: translate 180ms var(--motion-ease);
+}
+
+body .faq-item summary > span {
+    transition: transform 220ms var(--motion-ease);
+}
+
+body .faq-item[open] summary > span {
+    transform: rotate(45deg);
+}
+
+.media-hero-slide {
+    transition:
+        opacity 500ms ease,
+        visibility 500ms ease;
+}
+
+.media-hero-dots button {
+    transition:
+        width 200ms var(--motion-ease),
+        background-color 200ms ease;
+}
+
+/* The quick-contact hint stops after two pulses. */
+.svqc__toggle::before {
+    animation-iteration-count: 2;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    body .btn:hover,
+    body .sv-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn:hover > span[aria-hidden],
+    .sv-btn:hover > span,
+    .text-link:hover > span,
+    .sv-inline-link:hover > span,
+    .sv-service-card a:hover > span,
+    .sv-insight-card:hover em {
+        translate: 3px 0;
+    }
+
+    body :is(.sv-metric-card, .sv-service-card, .sv-process-card, .sv-insight-card, .news-card),
+    .service-design .service-grid .service-card:nth-child(n) {
+        transition:
+            transform 250ms var(--motion-ease),
+            box-shadow 250ms ease,
+            border-color 250ms ease;
+    }
+
+    body :is(.sv-metric-card, .sv-service-card, .sv-process-card, .sv-insight-card, .news-card):hover,
+    .service-design .service-grid .service-card:nth-child(n):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 26px rgba(10, 37, 64, .09);
+    }
+
+    .sv-insight-card img,
+    .news-card img {
+        transition: transform 450ms var(--motion-ease);
+    }
+
+    .sv-insight-card:hover img,
+    .news-card:hover img {
+        transform: scale(1.025);
+    }
+}
+
+@media (hover: none) {
+    body :is(.sv-metric-card, .sv-service-card, .sv-process-card, .sv-insight-card, .news-card, .service-card):hover {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    body :is(.btn, .sv-btn, .service-card, .news-card, .sv-metric-card, .sv-service-card, .sv-process-card, .sv-insight-card):hover,
+    body :is(.btn, .sv-btn):active,
+    .sv-insight-card:hover img,
+    .news-card:hover img {
+        transform: none !important;
+    }
+}

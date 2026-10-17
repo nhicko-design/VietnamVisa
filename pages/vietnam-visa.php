@@ -47,82 +47,21 @@ $visaPlanningDescription = $isVietnamese
 
 ?>
 
-<section class="detail-hero">
-    <div class="container detail-hero-grid">
-        <div>
-            <span class="eyebrow">
-                <?= e(page_content_value('visa', 'eyebrow', __('nav_visa'))) ?>
-            </span>
+<?php
+require_once __DIR__ . '/../components/service-page-hero.php';
+require_once __DIR__ . '/../components/service-consultation.php';
 
-            <h1>
-                <?= e(page_content_value('visa', 'title', __('visa_page_title'))) ?>
-            </h1>
-
-            <p>
-                <?= e(page_content_value('visa', 'description', __('services_desc'))) ?>
-            </p>
-
-            <div class="detail-actions">
-                <a class="btn btn-primary" href="<?= e(url('apply')) ?>">
-                    <?= e($visaApplyLabel) ?> &rarr;
-                </a>
-
-                <a class="btn btn-secondary" href="<?= e(url('contact')) ?>">
-                    <?= e($visaContactLabel) ?>
-                </a>
-            </div>
-        </div>
-
-        <div class="detail-image">
-            <img
-                src="<?= e($visaHeroVisual) ?>"
-                alt="<?= e(page_content_value('visa', 'title', __('visa_page_title'))) ?>"
-            >
-        </div>
-    </div>
-</section>
+render_service_page_hero([
+    'eyebrow' => page_content_value('visa', 'eyebrow', __('nav_visa')),
+    'title' => page_content_value('visa', 'title', __('visa_page_title')),
+    'description' => page_content_value('visa', 'description', __('services_desc')),
+    'image' => $visaHeroVisual,
+]);
+?>
 
 <section class="section section-white visa-services-section">
     <div class="container detail-grid">
         <main>
-            <span class="eyebrow">
-                <?= $isVietnamese ? 'Tổng quan dịch vụ' : 'Service overview' ?>
-            </span>
-
-            <h2 class="section-title">
-                <?= e($visaPlanningTitle) ?>
-            </h2>
-
-            <p class="detail-lead">
-                <?= e($visaPlanningDescription) ?>
-            </p>
-
-            <div class="feature-cards">
-                <div class="mini-card">
-                    <span>01</span>
-                    <h3><?= $isVietnamese ? 'Chọn dịch vụ' : 'Choose a service' ?></h3>
-                    <p><?= $isVietnamese ? 'Xem mục đích chuyến đi và chọn phương án visa phù hợp.' : 'Review your travel purpose and select the visa option that fits.' ?></p>
-                </div>
-
-                <div class="mini-card">
-                    <span>02</span>
-                    <h3><?= $isVietnamese ? 'Chuẩn bị hồ sơ' : 'Prepare documents' ?></h3>
-                    <p><?= $isVietnamese ? 'Đọc yêu cầu trên trang chi tiết trước khi gửi yêu cầu.' : 'Read the detail page requirements before you submit a request.' ?></p>
-                </div>
-
-                <div class="mini-card">
-                    <span>03</span>
-                    <h3><?= $isVietnamese ? 'Nhận tư vấn' : 'Get guidance' ?></h3>
-                    <p><?= $isVietnamese ? 'Liên hệ đội ngũ khi trường hợp của bạn cần tư vấn riêng.' : 'Contact our team when your case needs personal guidance.' ?></p>
-                </div>
-
-                <div class="mini-card">
-                    <span>04</span>
-                    <h3><?= $isVietnamese ? 'Gửi yêu cầu' : 'Send your request' ?></h3>
-                    <p><?= $isVietnamese ? 'Bắt đầu yêu cầu với thông tin rõ ràng và đầy đủ hơn.' : 'Start your request with clearer and more complete information.' ?></p>
-                </div>
-            </div>
-
             <div class="visa-services-panel">
                 <div class="section-intro">
                     <span class="eyebrow">
@@ -144,30 +83,50 @@ $visaPlanningDescription = $isVietnamese
                     <?php endforeach; ?>
                 </div>
             </div>
+
+            <section class="service-content-section service-planning-section">
+                <span class="eyebrow">
+                    <?= $isVietnamese ? 'Tổng quan dịch vụ' : 'Service overview' ?>
+                </span>
+
+                <h2 class="section-title">
+                    <?= e($visaPlanningTitle) ?>
+                </h2>
+
+                <p class="detail-lead">
+                    <?= e($visaPlanningDescription) ?>
+                </p>
+
+                <div class="feature-cards">
+                    <div class="mini-card">
+                        <span>01</span>
+                        <h3><?= $isVietnamese ? 'Chọn dịch vụ' : 'Choose a service' ?></h3>
+                        <p><?= $isVietnamese ? 'Xem mục đích chuyến đi và chọn phương án visa phù hợp.' : 'Review your travel purpose and select the visa option that fits.' ?></p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>02</span>
+                        <h3><?= $isVietnamese ? 'Chuẩn bị hồ sơ' : 'Prepare documents' ?></h3>
+                        <p><?= $isVietnamese ? 'Đọc yêu cầu trên trang chi tiết trước khi gửi yêu cầu.' : 'Read the detail page requirements before you submit a request.' ?></p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>03</span>
+                        <h3><?= $isVietnamese ? 'Nhận tư vấn' : 'Get guidance' ?></h3>
+                        <p><?= $isVietnamese ? 'Liên hệ đội ngũ khi trường hợp của bạn cần tư vấn riêng.' : 'Contact our team when your case needs personal guidance.' ?></p>
+                    </div>
+
+                    <div class="mini-card">
+                        <span>04</span>
+                        <h3><?= $isVietnamese ? 'Gửi yêu cầu' : 'Send your request' ?></h3>
+                        <p><?= $isVietnamese ? 'Bắt đầu yêu cầu với thông tin rõ ràng và đầy đủ hơn.' : 'Start your request with clearer and more complete information.' ?></p>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <aside class="detail-sidebar">
-            <div class="sticky-card">
-                <span class="eyebrow">
-                    <?= $isVietnamese ? 'Tư vấn visa' : 'Visa consultation' ?>
-                </span>
-
-                <h3>
-                    <?= e($visaConsultationTitle) ?>
-                </h3>
-
-                <p>
-                    <?= e($visaConsultationDescription) ?>
-                </p>
-
-                <a class="btn btn-primary btn-full" href="<?= e(url('contact')) ?>">
-                    <?= e($visaContactLabel) ?>
-                </a>
-
-                <a class="btn btn-secondary btn-full" href="<?= e(url('apply')) ?>">
-                    <?= e($visaApplyLabel) ?>
-                </a>
-            </div>
+            <?php render_service_consultation(); ?>
         </aside>
     </div>
 </section>

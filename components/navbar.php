@@ -1,4 +1,16 @@
-<header class="site-header" id="siteHeader">
+<header class="site-header" id="siteHeader" data-phone="<?= e(SITE_PHONE) ?>">
+    <div class="sv-utility-bar">
+        <div class="container sv-utility-inner">
+            <div>
+                <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', SITE_PHONE)) ?>">Hotline HCM: <?= e(SITE_PHONE) ?></a>
+                <span aria-hidden="true">|</span>
+                <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', SITE_PHONE)) ?>">Hotline Hanoi: <?= e(SITE_PHONE) ?></a>
+                <span aria-hidden="true">|</span>
+                <a href="mailto:<?= e(SITE_EMAIL) ?>"><?= e(SITE_EMAIL) ?></a>
+            </div>
+            <small>Official Vietnam Immigration &amp; Visa Services</small>
+        </div>
+    </div>
     <div class="container nav-wrap">
         <a class="brand" href="<?= e(url('')) ?>" aria-label="<?= e(SITE_NAME) ?> Home">
             <img

@@ -1,6 +1,4 @@
 RewriteEngine On
-RewriteBase /VietnamVisa/
-
 Options -Indexes
 
 # Allow administrators to upload high-quality hero videos and media.
