@@ -1,0 +1,71 @@
+/* Self-hosted Vietnamese typography. Font license: assets/fonts/be-vietnam-pro/OFL.txt */
+@font-face {
+    font-family: "Be Vietnam Pro";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/be-vietnam-pro/BeVietnamPro-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Be Vietnam Pro";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("../fonts/be-vietnam-pro/BeVietnamPro-Medium.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Be Vietnam Pro";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("../fonts/be-vietnam-pro/BeVietnamPro-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Be Vietnam Pro";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../fonts/be-vietnam-pro/BeVietnamPro-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Be Vietnam Pro";
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url("../fonts/be-vietnam-pro/BeVietnamPro-ExtraBold.ttf") format("truetype");
+}
+
+html:lang(vi) {
+    --font-vietnamese: "Be Vietnam Pro", "Segoe UI", Arial, sans-serif;
+}
+
+/* Explicitly override the font shorthands used by the older design layers. */
+html:lang(vi) body,
+html:lang(vi) :is(
+    h1, h2, h3, h4, h5, h6,
+    p, a, span, strong, b, em, i, small,
+    button, input, select, textarea, label,
+    summary, li, blockquote, th, td, figcaption, time,
+    .eyebrow, .brand, .lang-switch
+) {
+    font-family: var(--font-vietnamese) !important;
+}
+
+/* Stacked accents need more vertical room than the previous heading fonts. */
+html:lang(vi) body :is(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.3 !important;
+    letter-spacing: -.015em !important;
+}
+
+html:lang(vi) .nav-link,
+html:lang(vi) .nav-dropdown-link {
+    line-height: 1.65;
+}
+
+html:lang(vi) :is(input, select, textarea, button) {
+    line-height: 1.6;
+}

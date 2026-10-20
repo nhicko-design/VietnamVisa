@@ -1,0 +1,34 @@
+/* Reuse the local fonts used by the Vietnamese website. */
+@import url("../../../assets/css/sunviet-vietnamese.css");
+
+:root {
+    --admin-font: "Be Vietnam Pro", "Segoe UI", Arial, sans-serif;
+}
+
+/* Admin uses English labels alongside Vietnamese content on the same page.
+   Apply the font regardless of the document language, including legacy forms. */
+body.admin-body,
+body.admin-body :is(
+    h1, h2, h3, h4, h5, h6,
+    p, a, span, strong, b, em, small,
+    button, input, select, textarea, label,
+    summary, li, blockquote, th, td, figcaption, time,
+    .rich-editor-surface
+) {
+    font-family: var(--admin-font) !important;
+}
+
+/* Leave space for stacked Vietnamese accents in headings and input fields. */
+body.admin-body :is(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.4 !important;
+    letter-spacing: -.015em !important;
+}
+
+body.admin-body :is(input, select, textarea) {
+    line-height: 1.65 !important;
+    letter-spacing: normal;
+}
+
+body.admin-body .rich-editor-surface {
+    line-height: 1.75;
+}

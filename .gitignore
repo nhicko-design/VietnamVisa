@@ -51,3 +51,4 @@ Thumbs.db
 common/database.credentials.php
 common/database.local.php
 common/mail.credentials.php
+database/backups/

@@ -1,5 +1,13 @@
 const editorConfig = window.SunVietEditor || {};
 
+document.querySelectorAll('form').forEach(function (form) {
+    form.acceptCharset = 'UTF-8';
+});
+
+document.querySelectorAll('input[name$="_vn"], textarea[name$="_vn"]').forEach(function (field) {
+    field.lang = 'vi';
+});
+
 document.querySelectorAll('textarea[data-rich-editor]').forEach(createRichEditor);
 
 function createRichEditor(textarea) {
@@ -15,6 +23,7 @@ function createRichEditor(textarea) {
     toolbar.className = 'rich-editor-toolbar';
     toolbar.setAttribute('role', 'toolbar');
     surface.className = 'rich-editor-surface';
+    surface.lang = textarea.lang || 'en';
     surface.contentEditable = 'true';
     surface.setAttribute('role', 'textbox');
     surface.setAttribute('aria-multiline', 'true');

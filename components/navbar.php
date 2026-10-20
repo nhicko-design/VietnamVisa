@@ -1,3 +1,15 @@
+<?php
+
+require_once __DIR__ . '/../common/navigation.php';
+
+$navigationItems = public_navigation_items(
+    $SERVICES ?? [],
+    (string) ($canonical_path ?? ''),
+    $current_lang ?? 'en'
+);
+$switch_path = (string) ($canonical_path ?? '');
+?>
+
 <header class="site-header" id="siteHeader" data-phone="<?= e(SITE_PHONE) ?>">
     <div class="sv-utility-bar">
         <div class="container sv-utility-inner">
@@ -20,29 +32,73 @@
             >
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
-            <a class="nav-link <?= $route === 'home' ? 'is-active' : '' ?>" href="<?= e(url('')) ?>"><?= __('nav_home') ?></a>
-            <a class="nav-link <?= $route === 'vietnam-visa' ? 'is-active' : '' ?>" href="<?= e(url('vietnam-visa')) ?>">Vietnam Visa</a>
-            <a class="nav-link <?= $route === 'temporary-resident-card' ? 'is-active' : '' ?>" href="<?= e(url('temporary-resident-card')) ?>">Temporary Resident Card</a>
-            <a class="nav-link <?= $route === 'work-permit' ? 'is-active' : '' ?>" href="<?= e(url('work-permit')) ?>">Work Permit</a>
-            <a class="nav-link <?= $route === 'other-countries-visa' ? 'is-active' : '' ?>" href="<?= e(url('other-countries-visa')) ?>">Other Countries Visa</a>
-            <a class="nav-link <?= $route === 'other-services' ? 'is-active' : '' ?>" href="<?= e(url('other-services')) ?>">Other Services</a>
-            <a class="nav-link <?= in_array($route, ['news','news-detail']) ? 'is-active' : '' ?>" href="<?= e(url('news')) ?>"><?= __('nav_news') ?></a>
+            <?php foreach ($navigationItems as $navigationItem): ?>
+                <?php
+                $hasChildren = $navigationItem['children'] !== [];
+                $submenuId = 'desktop-submenu-' . ($navigationItem['path'] ?: 'home');
+                ?>
+                <div class="nav-item <?= $hasChildren ? 'has-dropdown' : '' ?> <?= $navigationItem['active'] ? 'is-active' : '' ?>" data-nav-item>
+                    <a
+                        class="nav-link <?= $navigationItem['active'] ? 'is-active' : '' ?>"
+                        href="<?= e(url($navigationItem['path'])) ?>"
+                        <?= $navigationItem['current'] ? 'aria-current="page"' : '' ?>
+                    >
+                        <?= e($navigationItem['label']) ?>
+                    </a>
+
+                    <?php if ($hasChildren): ?>
+                        <button
+                            class="nav-dropdown-toggle"
+                            type="button"
+                            aria-expanded="false"
+                            aria-controls="<?= e($submenuId) ?>"
+                            aria-label="<?= e(($current_lang === 'vn' ? 'Mở danh sách: ' : 'Show services: ') . $navigationItem['label']) ?>"
+                        >
+                            <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                                <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+
+                        <div class="nav-dropdown" id="<?= e($submenuId) ?>">
+                            <span class="nav-dropdown-heading"><?= e($navigationItem['label']) ?></span>
+                            <ul>
+                                <?php foreach ($navigationItem['children'] as $navigationChild): ?>
+                                    <li>
+                                        <a
+                                            class="nav-dropdown-link <?= $navigationChild['active'] ? 'is-active' : '' ?>"
+                                            href="<?= e(url($navigationChild['path'])) ?>"
+                                            <?= $navigationChild['current'] ? 'aria-current="page"' : '' ?>
+                                        >
+                                            <span><?= e($navigationChild['label']) ?></span>
+                                            <span aria-hidden="true">↗</span>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
         </nav>
-        <?php $switch_path = $route === 'service-detail' && isset($service) ? 'service/'.$service['slug'] : ($route === 'news-detail' && isset($article) ? 'article/'.$article['slug'] : ($page === 'home' ? '' : $page)); ?>
         <div class="nav-actions">
             <div class="lang-switch"><a class="<?= $current_lang==='en'?'active':'' ?>" href="<?= e(url($switch_path, 'en')) ?>">EN</a><span>/</span><a class="<?= $current_lang==='vn'?'active':'' ?>" href="<?= e(url($switch_path, 'vn')) ?>">VN</a></div>
             <a class="btn btn-primary btn-small" href="<?= e(url('apply')) ?>"><?= __('nav_apply') ?> <span>↗</span></a>
         </div>
-        <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Open menu" aria-controls="mobileNav" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-nav" id="mobileNav">
-        <a href="<?= e(url('')) ?>"><?= __('nav_home') ?></a>
-        <a href="<?= e(url('vietnam-visa')) ?>">Vietnam Visa</a>
-        <a href="<?= e(url('temporary-resident-card')) ?>">Temporary Resident Card</a>
-        <a href="<?= e(url('work-permit')) ?>">Work Permit</a>
-        <a href="<?= e(url('other-countries-visa')) ?>">Other Countries Visa</a>
-        <a href="<?= e(url('other-services')) ?>">Other Services</a>
-        <a href="<?= e(url('news')) ?>"><?= __('nav_news') ?></a>
-        <div class="mobile-nav-bottom"><a href="<?= e(url('apply')) ?>" class="btn btn-primary"><?= __('nav_apply') ?> ↗</a><div class="lang-switch"><a href="<?= e(url($page,'en')) ?>">EN</a><span>/</span><a href="<?= e(url($page,'vn')) ?>">VN</a></div></div>
+        <?php foreach ($navigationItems as $navigationItem): ?>
+            <a href="<?= e(url($navigationItem['path'])) ?>" <?= $navigationItem['current'] ? 'aria-current="page"' : '' ?>>
+                <?= e($navigationItem['label']) ?>
+            </a>
+        <?php endforeach; ?>
+        <div class="mobile-nav-bottom">
+            <a href="<?= e(url('apply')) ?>" class="btn btn-primary"><?= e(__('nav_apply')) ?> ↗</a>
+            <div class="lang-switch">
+                <a href="<?= e(url($switch_path, 'en')) ?>">EN</a>
+                <span>/</span>
+                <a href="<?= e(url($switch_path, 'vn')) ?>">VN</a>
+            </div>
+        </div>
     </div>
 </header>

@@ -26,7 +26,7 @@ $isServiceDesign = in_array($route, $serviceDesignRoutes, true);
 ?>
 
 <!doctype html>
-<html lang="<?= e($current_lang ?? 'en') ?>">
+<html lang="<?= ($current_lang ?? 'en') === 'vn' ? 'vi' : 'en' ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,6 +58,8 @@ $isServiceDesign = in_array($route, $serviceDesignRoutes, true);
         <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-services.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-services.css')) ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-motion.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-motion.css')) ?>">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-navigation.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-navigation.css')) ?>">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-vietnamese.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-vietnamese.css')) ?>">
     <script type="application/ld+json"><?= json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'Organization',
