@@ -51,6 +51,36 @@
                 <a href="<?= e(FACEBOOK_URL ?: 'https://www.facebook.com/') ?>" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V3.9a22 22 0 0 0-2.4-.1c-2.4 0-4 1.4-4 4.1V10H8v3h2.6v8h3.1Z"/></svg></a>
                 <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.3 2h9.4A5.3 5.3 0 0 1 22 7.3v9.4a5.3 5.3 0 0 1-5.3 5.3H7.3A5.3 5.3 0 0 1 2 16.7V7.3A5.3 5.3 0 0 1 7.3 2Zm-.2 2A3.1 3.1 0 0 0 4 7.1v9.8A3.1 3.1 0 0 0 7.1 20h9.8a3.1 3.1 0 0 0 3.1-3.1V7.1A3.1 3.1 0 0 0 16.9 4H7.1ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.2-3.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg></a>
             </div>
+            <div class="footer-offices" aria-label="Office addresses">
+                <address class="footer-office">
+                    <strong>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                            <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="2.5"/>
+                        </svg>
+                        <span>HO CHI MINH CITY OFFICE:</span>
+                    </strong>
+                    <p>
+                        Officetel TS1 - 03.17, Lobby OT1, The Tresor Apartment,
+                        No. 39 Ben Van Don Street, Xom Chieu Ward (District 4),
+                        Ho Chi Minh City
+                    </p>
+                </address>
+
+                <address class="footer-office">
+                    <strong>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                            <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="2.5"/>
+                        </svg>
+                        <span>HA NOI OFFICE:</span>
+                    </strong>
+                    <p>
+                        5th Floor (Office Building), 18 Yen Ninh Street,<br>
+                        Ba Dinh Ward, Ha Noi Capital
+                    </p>
+                </address>
+            </div>
         </div>
         <div>
             <h4><?= __('footer_services') ?></h4>
