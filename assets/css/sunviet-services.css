@@ -22,7 +22,8 @@
 .service-design h1,
 .service-design h2,
 .service-design h3 {
-    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-family: "SF Pro Display", "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: -0.02em;
 }
 
 .service-design .section {

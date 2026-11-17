@@ -32,7 +32,9 @@ function public_navigation_items(array $services, string $currentPath, string $l
                 }
                 break;
             case 'support':
-                $supportChildren[] = $serviceLink($item);
+                if ($item['slug'] !== 'airport-fast-track') {
+                    $supportChildren[] = $serviceLink($item);
+                }
                 break;
         }
     }
@@ -91,14 +93,19 @@ function public_navigation_items(array $services, string $currentPath, string $l
             'children' => $visaChildren,
         ],
         [
-            'label' => $isVietnamese ? 'Thẻ Tạm Trú' : 'Temporary Resident Card',
-            'path' => 'temporary-resident-card',
-            'children' => $residentChildren,
+            'label' => 'Airport Fast-Track',
+            'path' => 'airport-fast-track',
+            'children' => [],
         ],
         [
             'label' => $isVietnamese ? 'Giấy Phép Lao Động' : 'Work Permit',
             'path' => 'work-permit',
             'children' => [],
+        ],
+        [
+            'label' => $isVietnamese ? 'Thẻ Tạm Trú' : 'Temporary Resident Card',
+            'path' => 'temporary-resident-card',
+            'children' => $residentChildren,
         ],
         [
             'label' => $isVietnamese ? 'Visa Nước Ngoài' : 'Other Countries Visa',

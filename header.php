@@ -12,6 +12,7 @@ $redesignCssVersion = is_file($redesignCssPath) ? (string) filemtime($redesignCs
 $serviceDesignRoutes = [
     'services',
     'vietnam-visa',
+    'airport-fast-track',
     'temporary-resident-card',
     'work-permit',
     'other-countries-visa',
@@ -44,12 +45,14 @@ $isServiceDesign = in_array($route, $serviceDesignRoutes, true);
     <title><?= e($page_title ?? __('site_name')) ?> · <?= e(__('site_name')) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/style.css?v=<?= e($mainCssVersion) ?>">
-    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/components.css">
-    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/responsive.css">
-    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/svqc-contact.css">
-    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-theme.css">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/components.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/components.css')) ?>">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/responsive.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/responsive.css')) ?>">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/svqc-contact.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/svqc-contact.css')) ?>">
+    <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-theme.css?v=<?= e((string) filemtime(__DIR__ . '/assets/css/sunviet-theme.css')) ?>">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-v1.css?v=1">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-v2.css?v=<?= e($sunvietV2CssVersion) ?>">
     <link rel="stylesheet" href="<?= e(app_base()) ?>/assets/css/sunviet-compact.css?v=<?= e($compactCssVersion) ?>">

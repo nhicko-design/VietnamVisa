@@ -1,8 +1,6 @@
 /* =========================================================
    SUNVIET QUICK CONTACT (SVQC)
-   WhatsApp | Messenger | Zalo Contact Menu
-   
-   Scoped with .svqc to avoid conflicts with existing styles.
+   WhatsApp | Messenger | Zalo Circular Floating Buttons
    ========================================================= */
 
 .svqc,
@@ -10,292 +8,278 @@
     box-sizing: border-box;
 }
 
-/* Main Container */
+/* Main Container - pinned bottom-right */
 .svqc {
     position: fixed;
     right: 24px;
-    bottom: 24px;
+    bottom: 30px;
     z-index: 2147483000;
-    width: 58px;
+    width: auto;
     height: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
     pointer-events: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--apple-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
 }
 
-/* Menu Container */
-.svqc__menu {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-    width: 232px;
+/* =========================================================
+   CIRCULAR FLOATING BUTTONS
+   ========================================================= */
+.svqc__circle,
+.svqc__item {
+    position: relative;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+    flex: 0 0 52px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    pointer-events: auto !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
+    cursor: pointer;
+}
+
+.svqc__circle svg,
+.svqc__item svg {
+    display: block !important;
+    margin: auto !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+    transition: transform 0.22s ease !important;
+}
+
+.svqc__circle:hover,
+.svqc__item:hover {
+    transform: scale(1.12) translateY(-2px) !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32), 0 4px 10px rgba(0, 0, 0, 0.18) !important;
+}
+
+.svqc__circle:hover svg,
+.svqc__item:hover svg {
+    transform: scale(1.08) !important;
+}
+
+/* Brand Colors */
+.svqc__circle--wa {
+    background: #25D366 !important;
+}
+
+.svqc__circle--messenger {
+    background: linear-gradient(135deg, #00B2FF 0%, #006AFF 100%) !important;
+}
+
+.svqc__circle--zalo {
+    background: #0068FF !important;
+}
+
+/* Tooltip on Hover (Desktop) */
+.svqc__tooltip {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    background: rgba(11, 26, 48, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translate3d(0, 12px, 0) scale(0.96);
-    transform-origin: right bottom;
-    transition: 
-        opacity 0.22s ease, 
-        transform 0.22s ease, 
-        visibility 0.22s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    font-family: var(--apple-font, sans-serif);
 }
 
-/* Menu Active State */
-.svqc.is-open .svqc__menu {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translate3d(0, 0, 0) scale(1);
-}
-
-/* Contact Item */
-.svqc__item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 232px;
-    min-height: 64px;
-    padding: 9px 12px;
-    gap: 12px;
-    border: 1px solid rgba(17, 17, 20, 0.08);
-    border-radius: 17px;
-    background: #fff;
-    color: #17171a;
-    text-decoration: none;
-    box-shadow: 0 14px 35px rgba(17, 17, 20, 0.14);
-    transition: 
-        transform 0.2s ease, 
-        box-shadow 0.2s ease, 
-        border-color 0.2s ease;
-}
-
-.svqc__item:hover {
-    transform: translateX(-5px);
-    box-shadow: 0 18px 42px rgba(17, 17, 20, 0.18);
-    border-color: rgba(103, 61, 230, 0.18);
-}
-
-/* Icon Container */
-.svqc__icon {
-    flex: 0 0 43px;
-    width: 43px;
-    height: 43px;
-    border-radius: 13px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-}
-
-.svqc__icon span {
-    display: grid;
-    place-items: center;
-    line-height: 1;
-    font-weight: 800;
-}
-
-/* WhatsApp Icon Styling */
-.svqc__icon--wa {
-    background: #25D366;
-}
-
-.svqc__icon--wa span {
-    font-size: 10px;
-    letter-spacing: -0.5px;
-}
-
-/* Messenger Icon Styling */
-.svqc__icon--messenger {
-    background: linear-gradient(135deg, #00B2FF, #006AFF);
-}
-
-.svqc__icon--messenger span {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #fff;
-    color: #087CFF;
-    font-size: 13px;
-}
-
-/* Zalo Icon Styling */
-.svqc__icon--zalo {
-    background: #0068FF;
-}
-
-.svqc__icon--zalo span {
-    width: 27px;
-    height: 27px;
-    border: 2px solid #fff;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-/* Copy Text Container */
-.svqc__copy {
-    min-width: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.svqc__copy strong,
-.svqc__copy small {
-    margin: 0;
-    padding: 0;
-    display: block;
-}
-
-.svqc__copy strong {
-    font-size: 14px;
-    line-height: 1.2;
-    font-weight: 800;
-}
-
-.svqc__copy small {
-    font-size: 11px;
-    line-height: 1.25;
-    color: #888890;
-}
-
-/* Arrow Icon */
-.svqc__arrow {
-    flex: 0 0 auto;
-    color: #aaaab2;
-    font-size: 16px;
-    line-height: 1;
-    transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.svqc__item:hover .svqc__arrow {
-    color: #673DE6;
-    transform: translate(2px, -2px);
-}
-
-/* Toggle Button */
-.svqc__toggle {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 58px;
-    height: 58px;
-    padding: 0;
-    margin: 0;
-    border: 0;
-    border-radius: 50%;
-    background: #673DE6;
-    color: #fff;
-    cursor: pointer;
-    pointer-events: auto;
-    appearance: none;
-    -webkit-appearance: none;
-    box-shadow: 0 12px 32px rgba(103, 61, 230, 0.36);
-    transition: 
-        transform 0.2s ease, 
-        box-shadow 0.2s ease, 
-        background 0.2s ease;
-}
-
-.svqc__toggle:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 38px rgba(103, 61, 230, 0.45);
-}
-
-/* Pulse Animation on Toggle */
-.svqc__toggle::before {
+.svqc__tooltip::after {
     content: '';
     position: absolute;
-    inset: 0;
-    border: 2px solid rgba(103, 61, 230, 0.35);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: svqcPulse 2.6s ease-out infinite;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-left-color: rgba(11, 26, 48, 0.94);
 }
 
-/* Phone and Close Icons */
-.svqc__phone,
-.svqc__close {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    font-size: 23px;
-    line-height: 1;
-    transition: opacity 0.18s ease, transform 0.18s ease;
-}
-
-.svqc__phone {
+.svqc__circle:hover .svqc__tooltip,
+.svqc__item:hover .svqc__tooltip {
     opacity: 1;
-    transform: scale(1) rotate(0);
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
 }
 
-.svqc__close {
-    opacity: 0;
-    transform: scale(0.5) rotate(-90deg);
-    font-size: 31px;
-}
-
-/* Open State - Phone to Close Icon Transition */
-.svqc.is-open .svqc__phone {
-    opacity: 0;
-    transform: scale(0.5) rotate(90deg);
-}
-
-.svqc.is-open .svqc__close {
-    opacity: 1;
-    transform: scale(1) rotate(0);
-}
-
-/* Pulse Animation */
-@keyframes svqcPulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.75;
+/* =========================================================
+   DESKTOP / LAPTOP (Screens >= 769px):
+   ALWAYS VISIBLE in right column, no toggle button needed
+   ========================================================= */
+@media (min-width: 769px) {
+    .svqc {
+        right: 24px;
+        bottom: 30px;
+        pointer-events: none;
     }
-    70% {
-        transform: scale(1.42);
-        opacity: 0;
+
+    .svqc__menu {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        gap: 12px !important;
+        width: auto !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        transform: none !important;
     }
-    100% {
-        transform: scale(1.42);
-        opacity: 0;
+
+    /* Toggle button hidden on laptop/desktop */
+    .svqc__toggle {
+        display: none !important;
     }
 }
 
 /* =========================================================
-   RESPONSIVE STYLES
+   MOBILE / TABLET (Screens <= 768px):
+   COLLAPSED into 1 floating action button
    ========================================================= */
-
 @media (max-width: 768px) {
     .svqc {
         right: 16px;
-        bottom: 16px;
-        width: 54px;
+        bottom: 18px;
+        gap: 12px;
     }
-    
-    .svqc__toggle {
-        width: 54px;
-        height: 54px;
+
+    /* Hide tooltips on touch devices */
+    .svqc__tooltip {
+        display: none !important;
     }
-    
-    .svqc__menu,
+
+    .svqc__circle,
     .svqc__item {
-        width: 210px;
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        flex: 0 0 48px !important;
+    }
+
+    .svqc__circle svg,
+    .svqc__item svg {
+        width: 25px !important;
+        height: 25px !important;
+    }
+
+    /* Menu is hidden by default on mobile */
+    .svqc__menu {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        gap: 10px !important;
+        width: auto !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transform: translate3d(0, 16px, 0) scale(0.9) !important;
+        transform-origin: right bottom;
+        transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease !important;
+    }
+
+    /* Active open state on mobile */
+    .svqc.is-open .svqc__menu {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        transform: translate3d(0, 0, 0) scale(1) !important;
+    }
+
+    /* Toggle button is visible on mobile */
+    .svqc__toggle {
+        position: relative;
+        display: grid !important;
+        place-items: center !important;
+        width: 54px !important;
+        height: 54px !important;
+        padding: 0;
+        margin: 0;
+        border: 2px solid #d4af37 !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #0b2545 0%, #071a30 100%) !important;
+        color: #f5b721 !important;
+        cursor: pointer;
+        pointer-events: auto !important;
+        appearance: none;
+        -webkit-appearance: none;
+        box-shadow: 0 10px 28px rgba(7, 26, 48, 0.45) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+
+    .svqc__toggle:active {
+        transform: scale(0.94);
+    }
+
+    /* Pulse animation around toggle */
+    .svqc__toggle::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border: 2px solid rgba(212, 175, 55, 0.45);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: svqcPulse 2.4s ease-out infinite;
+    }
+
+    /* Phone and Close Icons inside Toggle */
+    .svqc__phone,
+    .svqc__close {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .svqc__phone {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+        color: #f5b721;
+    }
+
+    .svqc__close {
+        opacity: 0;
+        transform: scale(0.5) rotate(-90deg);
+        color: #ffffff;
+    }
+
+    /* Open State - Phone to Close Transition */
+    .svqc.is-open .svqc__phone {
+        opacity: 0;
+        transform: scale(0.5) rotate(90deg);
+    }
+
+    .svqc.is-open .svqc__close {
+        opacity: 1;
+        transform: scale(1) rotate(0);
     }
 }
 
-@media (max-width: 420px) {
-    .svqc {
-        right: 12px;
-        bottom: 12px;
-    }
-    
-    .svqc__menu,
-    .svqc__item {
-        width: 195px;
-    }
+@keyframes svqcPulse {
+    0% { transform: scale(1); opacity: 0.75; }
+    70% { transform: scale(1.35); opacity: 0; }
+    100% { transform: scale(1.35); opacity: 0; }
 }

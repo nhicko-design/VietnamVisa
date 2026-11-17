@@ -40,19 +40,27 @@
 }
 
 html:lang(vi) {
-    --font-vietnamese: "Be Vietnam Pro", "Segoe UI", Arial, sans-serif;
+    --font-vietnamese: "SF Pro Display", "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Be Vietnam Pro", Arial, sans-serif;
 }
 
 /* Explicitly override the font shorthands used by the older design layers. */
+html:lang(vi) body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 html:lang(vi) body,
 html:lang(vi) :is(
     h1, h2, h3, h4, h5, h6,
-    p, a, span, strong, b, em, i, small,
+    p, a, span, strong, b, em, small,
     button, input, select, textarea, label,
     summary, li, blockquote, th, td, figcaption, time,
     .eyebrow, .brand, .lang-switch
 ) {
     font-family: var(--font-vietnamese) !important;
+}
+
+html:lang(vi) :is(.fa, .fas, .far, .fal, .fab, .fa-solid, .fa-regular, .fa-brands, [class*="fa-"], [class^="fa-"]) {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "FontAwesome" !important;
 }
 
 /* Stacked accents need more vertical room than the previous heading fonts. */

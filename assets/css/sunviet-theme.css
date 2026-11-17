@@ -74,27 +74,6 @@
     background: #eaf5fc;
 }
 
-.svqc__item:hover {
-    border-color: rgba(7, 92, 168, .24);
-}
-
-.svqc__item:hover .svqc__arrow {
-    color: #075ca8;
-}
-
-.svqc__toggle {
-    background: #075ca8;
-    box-shadow: 0 12px 32px rgba(7, 92, 168, .36);
-}
-
-.svqc__toggle:hover {
-    background: #044a8c;
-    box-shadow: 0 16px 38px rgba(7, 92, 168, .45);
-}
-
-.svqc__toggle::before {
-    border-color: rgba(255, 204, 26, .7);
-}
 
 @media (max-width: 820px) {
     .brand-logo {

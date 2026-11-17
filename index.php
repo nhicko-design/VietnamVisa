@@ -56,6 +56,22 @@ switch ($page) {
         $page_description = 'Long-term residence guidance for eligible spouses, investors and foreign employees in Vietnam.';
         $canonical_path = 'temporary-resident-card';
         break;
+    case 'airport-fast-track':
+        $route = 'airport-fast-track';
+        $template = __DIR__ . '/pages/service-detail.php';
+        $service = find_service('airport-fast-track');
+
+        if (!$service) {
+            http_response_code(404);
+            $route = '404';
+            $template = __DIR__ . '/pages/404.php';
+            $page_title = __('not_found');
+        } else {
+            $page_title = field($service, 'title');
+            $page_description = field($service, 'short');
+            $canonical_path = 'airport-fast-track';
+        }
+        break;
     case 'work-permit':
         $route = 'work-permit';
         $template = __DIR__ . '/pages/service-detail.php';
@@ -113,6 +129,15 @@ switch ($page) {
         $page_title = __('about_page_title');
         $canonical_path = 'about';
         break;
+    case 'case-studies':
+        $route = 'case-studies';
+        $template = __DIR__ . '/pages/case-studies.php';
+        $page_title = ($current_lang ?? 'en') === 'vn' ? 'Thư Viện Case Study Thực Tế' : 'Real-World Case Studies';
+        $page_description = ($current_lang ?? 'en') === 'vn'
+            ? 'Khám phá toàn bộ tình huống xuất nhập cảnh, visa, giấy phép lao động và thẻ tạm trú thực tế đã được SunViet xử lý.'
+            : 'Explore real-world Vietnam immigration, visa, work permit and residency case studies handled by SunViet.';
+        $canonical_path = 'case-studies';
+        break;
     case 'news':
         $route = 'news';
         $template = __DIR__ . '/pages/news.php';
@@ -159,6 +184,7 @@ if ($route !== 'home' && $route !== 'service-detail') {
     $page_faq_key = match ($route) {
         'vietnam-visa' => 'vietnam-visa',
         'temporary-resident-card' => 'temporary-resident-card',
+        'airport-fast-track' => 'airport-fast-track',
         'work-permit' => 'work-permit',
         'other-countries-visa' => 'other-countries-visa',
         'other-services' => 'other-services',

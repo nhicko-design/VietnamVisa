@@ -81,7 +81,7 @@ $LANG = [
         'Xây dựng trên sự rõ ràng và tin cậy',
 
     'stat_1' =>
-        'Năm kinh nghiệm',
+        'Kể từ 2009',
 
     'stat_2' =>
         'Hỗ trợ khách hàng',

@@ -1,0 +1,1014 @@
+/*
+ * SunViet V2
+ * Modern premium-service direction. Loaded after V1 for a reversible visual layer.
+ */
+
+:root {
+    --v2-navy: #062f5d;
+    --v2-blue: #086bb9;
+    --v2-sky: #dff2ff;
+    --v2-gold: #ffd12e;
+    --v2-ink: #0b3158;
+    --v2-muted: #5d748b;
+    --v2-line: rgba(8, 107, 185, .16);
+}
+
+/* Footer social icon alignment: loaded after all base theme rules. */
+.site-footer .footer-socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    line-height: 0;
+}
+
+.site-footer .footer-socials a svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+    flex: 0 0 15px;
+    margin: 0;
+}
+
+body {
+    color: var(--v2-ink);
+    background: #fbfdff;
+}
+
+.site-header {
+    background: rgba(255, 255, 255, .78);
+    border-bottom: 1px solid rgba(8, 107, 185, .1);
+    backdrop-filter: blur(20px) saturate(150%);
+}
+
+.site-header.scrolled {
+    box-shadow: 0 12px 32px rgba(3, 47, 93, .09);
+}
+
+.nav-wrap {
+    height: 84px;
+}
+
+.brand-logo {
+    width: 98px;
+    height: 62px;
+}
+
+.desktop-nav {
+    gap: 24px;
+}
+
+.nav-link {
+    padding: 30px 0;
+    font-size: 12px;
+    letter-spacing: .055em;
+    text-transform: uppercase;
+}
+
+.nav-actions .btn-primary {
+    padding: 11px 18px;
+    border: 1px solid rgba(255, 209, 46, .7);
+    border-radius: 12px;
+}
+
+.btn {
+    min-height: 50px;
+    border-radius: 12px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #086bb9, #075ca8);
+    box-shadow: 0 12px 26px rgba(8, 107, 185, .22);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #075ca8, #04548f);
+}
+
+.hero {
+    min-height: 720px;
+    padding-top: 134px;
+    background:
+        linear-gradient(90deg, rgba(6, 47, 93, .96) 0%, rgba(6, 47, 93, .88) 48%, rgba(5, 89, 159, .76) 100%),
+        linear-gradient(125deg, #052b55, #0875c9);
+}
+
+.hero::after {
+    position: absolute;
+    right: 4%;
+    bottom: 11%;
+    width: 116px;
+    height: 116px;
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 28px;
+    content: '';
+    transform: rotate(18deg);
+}
+
+.hero-glow-one {
+    top: -220px;
+    right: 9%;
+    width: 600px;
+    height: 600px;
+    opacity: .34;
+}
+
+.hero-glow-two {
+    bottom: -360px;
+    left: -160px;
+    opacity: .2;
+}
+
+.hero-grid {
+    gap: 82px;
+}
+
+.hero-copy h1 {
+    max-width: 670px;
+    font-size: clamp(54px, 6.1vw, 86px);
+    letter-spacing: -.072em;
+}
+
+.hero-copy h1::after {
+    display: block;
+    width: 74px;
+    height: 6px;
+    margin-top: 28px;
+    border-radius: 99px;
+    content: '';
+    background: var(--v2-gold);
+}
+
+.hero-copy > p {
+    max-width: 530px;
+    font-size: 18px;
+    line-height: 1.75;
+}
+
+.hero .btn-primary {
+    color: var(--v2-navy);
+    border-color: transparent;
+    background: var(--v2-gold);
+    box-shadow: 0 14px 32px rgba(0, 20, 46, .25);
+}
+
+.hero .btn-primary:hover {
+    background: #ffe57b;
+}
+
+.hero .btn-ghost-white {
+    border-color: rgba(255, 255, 255, .38);
+    background: rgba(255, 255, 255, .08);
+    backdrop-filter: blur(10px);
+}
+
+.hero-image-wrap {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .42);
+    border-radius: 28px;
+    box-shadow: 0 30px 64px rgba(0, 18, 43, .34);
+}
+
+.hero-image-wrap::before {
+    position: absolute;
+    z-index: 2;
+    top: 18px;
+    right: 18px;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(255, 255, 255, .6);
+    border-radius: 50%;
+    content: '';
+}
+
+.hero-image-wrap img,
+.hero-image-wrap video {
+    border-radius: 27px;
+    filter: saturate(1.04) contrast(1.03);
+}
+
+.hero-floating-card {
+    right: 18px;
+    bottom: 18px;
+    left: 18px;
+    border: 1px solid rgba(255, 255, 255, .64);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .91);
+    backdrop-filter: blur(16px);
+}
+
+.hero-bottom {
+    gap: 0;
+    padding: 22px 0 0;
+}
+
+.hero-bottom span {
+    position: relative;
+    flex: 1;
+    padding-left: 17px;
+}
+
+.hero-bottom span::before {
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    content: '';
+    background: var(--v2-gold);
+}
+
+.section {
+    padding: 118px 0;
+}
+
+.section-intro {
+    max-width: 760px;
+}
+
+.section-title {
+    max-width: 760px;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -.06em;
+}
+
+.section-intro p,
+.detail-lead {
+    color: var(--v2-muted);
+    line-height: 1.75;
+}
+
+.stats-section {
+    margin-top: -1px;
+    background: #fff;
+}
+
+.stats-grid {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.stat-item {
+    min-height: 178px;
+    padding: 34px 28px;
+    border: 1px solid var(--v2-line);
+    border-right: 0;
+    background: #fff;
+}
+
+.stat-item:last-child {
+    border-right: 1px solid var(--v2-line);
+}
+
+.stat-item:first-child {
+    background: linear-gradient(145deg, var(--v2-navy), #075ca8);
+}
+
+.stat-item:first-child::after {
+    width: 6px;
+    background: var(--v2-gold);
+}
+
+.stat-item strong {
+    font-size: 52px;
+}
+
+.section-soft {
+    background:
+        linear-gradient(rgba(248, 252, 255, .92), rgba(248, 252, 255, .92)),
+        linear-gradient(90deg, transparent 49%, rgba(8, 107, 185, .05) 50%, transparent 51%);
+}
+
+.service-grid,
+.news-grid {
+    gap: 22px;
+}
+
+.service-card,
+.news-card {
+    border: 1px solid var(--v2-line);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(3, 47, 93, .045);
+}
+
+.service-card {
+    min-height: 360px;
+    padding: 30px;
+}
+
+.service-card::before {
+    display: block;
+    width: 38px;
+    height: 3px;
+    border-radius: 99px;
+    content: '';
+    background: var(--v2-gold);
+}
+
+.service-card:hover,
+.news-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(8, 107, 185, .42);
+    box-shadow: 0 24px 48px rgba(3, 47, 93, .14);
+}
+
+.service-icon {
+    margin-top: 25px;
+    border-radius: 12px;
+}
+
+.pill {
+    color: #805e00;
+    background: var(--v2-gold-light);
+}
+
+.news-card img {
+    height: 250px;
+}
+
+.news-card-body {
+    padding: 26px;
+}
+
+.page-hero,
+.detail-hero {
+    padding: 132px 0 108px;
+    background:
+        radial-gradient(circle at 85% 30%, rgba(255, 209, 46, .3), transparent 15%),
+        linear-gradient(130deg, #edf7fd, #fff 70%);
+}
+
+.page-hero::after,
+.detail-hero::after {
+    top: -115px;
+    right: 5%;
+    width: 330px;
+    height: 330px;
+    border-width: 26px;
+    border-color: rgba(8, 107, 185, .11);
+}
+
+.page-hero h1,
+.detail-hero h1 {
+    max-width: 800px;
+}
+
+.page-hero p,
+.detail-hero p {
+    max-width: 620px;
+    line-height: 1.75;
+}
+
+.detail-hero.page-hero-image {
+    color: #fff;
+    background-image:
+        linear-gradient(100deg, rgba(3, 39, 79, .94), rgba(3, 76, 136, .64)),
+        var(--page-hero-image);
+    background-position: center;
+    background-size: cover;
+}
+
+.detail-hero.page-hero-image h1 {
+    color: #fff;
+}
+
+.detail-hero.page-hero-image > .container > div > p {
+    color: rgba(255, 255, 255, .82);
+}
+
+.detail-hero.page-hero-image .sticky-card {
+    border-color: rgba(255, 255, 255, .56);
+    background: rgba(255, 255, 255, .94);
+}
+
+.why-section,
+.article-hero,
+.quote-result {
+    background:
+        radial-gradient(circle at 80% 20%, rgba(8, 107, 185, .55), transparent 28%),
+        var(--v2-navy);
+}
+
+.why-visual img,
+.rounded-image,
+.detail-image img {
+    border-radius: 22px;
+}
+
+.feature-row {
+    border-top-color: rgba(8, 107, 185, .16);
+}
+
+.process-card,
+.mini-card,
+.contact-items a {
+    border-color: var(--v2-line);
+    border-radius: 16px;
+}
+
+.visa-services-section .detail-grid {
+    align-items: stretch;
+}
+
+.visa-services-section .detail-sidebar {
+    align-self: stretch;
+}
+
+.resident-card-services-section .detail-grid {
+    align-items: stretch;
+}
+
+.resident-card-services-section .detail-sidebar {
+    align-self: stretch;
+}
+
+.international-visa-section .detail-grid {
+    align-items: stretch;
+}
+
+.international-visa-section .detail-sidebar {
+    align-self: stretch;
+}
+
+.visa-services-panel {
+    margin-top: 12px;
+    padding: 34px;
+    border: 1px solid var(--v2-line);
+    border-radius: 20px;
+    background: #f4f9fc;
+}
+
+.visa-services-panel .section-intro {
+    margin-bottom: 30px;
+}
+
+.visa-services-panel .section-title {
+    font-size: clamp(31px, 3.4vw, 46px);
+}
+
+.visa-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.visa-service-grid .service-card {
+    min-height: 278px;
+    padding: 21px;
+    border-radius: 14px;
+}
+
+.visa-service-grid .service-card::before {
+    width: 28px;
+}
+
+.visa-service-grid .service-icon {
+    width: 38px;
+    height: 38px;
+    margin-top: 18px;
+    border-radius: 10px;
+}
+
+.visa-service-grid .service-card h3 {
+    margin: 14px 0 8px;
+    font-size: 20px;
+}
+
+.visa-service-grid .service-card p {
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.resident-card-services-panel {
+    padding: 36px;
+    border: 1px solid rgba(8, 107, 185, .14);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f4faff, #fffdf3);
+}
+
+.resident-card-service-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.resident-card-service-grid .service-card {
+    min-height: 292px;
+    padding: 22px;
+    border-radius: 14px;
+}
+
+.resident-card-service-grid .service-card::before {
+    width: 28px;
+}
+
+.resident-card-service-grid .service-icon {
+    width: 38px;
+    height: 38px;
+    margin-top: 18px;
+    border-radius: 10px;
+}
+
+.resident-card-service-grid .service-card h3 {
+    margin: 14px 0 8px;
+    font-size: 20px;
+}
+
+.resident-card-service-grid .service-card p {
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 1) {
+    color: #fff;
+    border-color: #075ca8;
+    background: linear-gradient(145deg, #06386e, #0875c9);
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 1)::before {
+    background: var(--v2-gold);
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 1) h3,
+.resident-card-service-grid .service-card:nth-child(3n + 1) p,
+.resident-card-service-grid .service-card:nth-child(3n + 1) .service-number {
+    color: #fff;
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 1) .service-icon {
+    color: var(--v2-navy);
+    background: var(--v2-gold);
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 1) .text-link {
+    color: #ffe57b;
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 2) {
+    border-top: 4px solid #ffcb1f;
+    background: #fff9df;
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 2)::before {
+    background: #ffcb1f;
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 3) {
+    border-top: 4px solid #00a6b8;
+    background: #e9fbfc;
+}
+
+.resident-card-service-grid .service-card:nth-child(3n + 3)::before {
+    background: #00a6b8;
+}
+
+.international-visa-panel {
+    padding: 36px;
+    border: 1px solid rgba(8, 107, 185, .14);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f4faff, #fffdf3);
+}
+
+.international-region-grid,
+.international-country-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.international-region-grid .service-card,
+.international-country-grid .service-card {
+    min-height: 280px;
+    padding: 22px;
+    border-radius: 14px;
+}
+
+.international-region-grid .service-icon,
+.international-country-grid .service-icon {
+    width: 38px;
+    height: 38px;
+    margin-top: 18px;
+    border-radius: 10px;
+}
+
+.international-region-grid .service-card h3,
+.international-country-grid .service-card h3 {
+    margin: 14px 0 8px;
+    font-size: 20px;
+}
+
+.international-region-grid .service-card p,
+.international-country-grid .service-card p {
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.international-region-grid .service-card:nth-child(4n + 1),
+.international-country-grid .service-card:nth-child(4n + 1) {
+    color: #fff;
+    border-color: #075ca8;
+    background: linear-gradient(145deg, #06386e, #0875c9);
+}
+
+.international-region-grid .service-card:nth-child(4n + 1)::before,
+.international-country-grid .service-card:nth-child(4n + 1)::before {
+    background: var(--v2-gold);
+}
+
+.international-region-grid .service-card:nth-child(4n + 1) h3,
+.international-region-grid .service-card:nth-child(4n + 1) p,
+.international-region-grid .service-card:nth-child(4n + 1) .service-number,
+.international-country-grid .service-card:nth-child(4n + 1) h3,
+.international-country-grid .service-card:nth-child(4n + 1) p,
+.international-country-grid .service-card:nth-child(4n + 1) .service-number {
+    color: #fff;
+}
+
+.international-region-grid .service-card:nth-child(4n + 1) .service-icon,
+.international-country-grid .service-card:nth-child(4n + 1) .service-icon {
+    color: var(--v2-navy);
+    background: var(--v2-gold);
+}
+
+.international-region-grid .service-card:nth-child(4n + 1) .text-link,
+.international-country-grid .service-card:nth-child(4n + 1) .text-link {
+    color: #ffe57b;
+}
+
+.international-region-grid .service-card:nth-child(4n + 2),
+.international-country-grid .service-card:nth-child(4n + 2) {
+    border-top: 4px solid #ffcb1f;
+    background: #fff9df;
+}
+
+.international-region-grid .service-card:nth-child(4n + 2)::before,
+.international-country-grid .service-card:nth-child(4n + 2)::before {
+    background: #ffcb1f;
+}
+
+.international-region-grid .service-card:nth-child(4n + 3),
+.international-country-grid .service-card:nth-child(4n + 3) {
+    border-top: 4px solid #00a6b8;
+    background: #e9fbfc;
+}
+
+.international-region-grid .service-card:nth-child(4n + 3)::before,
+.international-country-grid .service-card:nth-child(4n + 3)::before {
+    background: #00a6b8;
+}
+
+.international-region-grid .service-card:nth-child(4n + 4),
+.international-country-grid .service-card:nth-child(4n + 4) {
+    border-top: 4px solid #0a5da7;
+    background: #fff;
+}
+
+.international-region-grid .service-card:nth-child(4n + 4)::before,
+.international-country-grid .service-card:nth-child(4n + 4)::before {
+    background: #0a5da7;
+}
+
+.detail-back-link {
+    display: inline-flex;
+    margin-bottom: 26px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--v2-blue);
+}
+
+.empty-services-message {
+    margin-top: 22px;
+    padding: 24px;
+    border: 1px dashed rgba(8, 107, 185, .32);
+    border-radius: 16px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.empty-services-message p {
+    margin: 0;
+}
+
+.country-visa-information {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 38px;
+}
+
+.country-info-card {
+    padding: 24px;
+    border: 1px solid var(--v2-line);
+    border-radius: 16px;
+    background: #fff;
+}
+
+.country-info-card span {
+    color: var(--v2-blue);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.country-info-card h3 {
+    margin: 20px 0 8px;
+    font-size: 18px;
+}
+
+.country-info-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.country-visa-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 22px;
+    padding: 28px;
+    border-radius: 18px;
+    background: var(--v2-navy);
+    color: #fff;
+}
+
+.country-visa-cta h3 {
+    margin: 8px 0 0;
+    font-size: 22px;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 1) {
+    color: #fff;
+    border-color: #075ca8;
+    background: linear-gradient(145deg, #06386e, #0875c9);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 1)::before {
+    background: var(--v2-gold);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 1) h3,
+.visa-service-grid .service-card:nth-child(8n + 1) p,
+.visa-service-grid .service-card:nth-child(8n + 1) .service-number {
+    color: #fff;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 1) .service-icon {
+    color: var(--v2-navy);
+    background: var(--v2-gold);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 1) .text-link {
+    color: #ffe57b;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 2) {
+    border-top: 4px solid #ffcb1f;
+    background: #fff9df;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 2)::before {
+    background: #ffcb1f;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 3) {
+    border-top: 4px solid #1683c8;
+    background: #eef8fe;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 3)::before {
+    background: #1683c8;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 4) {
+    border-top: 4px solid #0a5da7;
+    background: #fff;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 4)::before {
+    background: #0a5da7;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 5) {
+    border-top: 4px solid #ffbf00;
+    background: linear-gradient(145deg, #fffef8, #fff4bc);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 5)::before {
+    background: #ffbf00;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 6) {
+    color: #fff;
+    border-color: #06386e;
+    background: linear-gradient(145deg, #04376b, #075ca8);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 6)::before {
+    background: var(--v2-gold);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 6) h3,
+.visa-service-grid .service-card:nth-child(8n + 6) p,
+.visa-service-grid .service-card:nth-child(8n + 6) .service-number {
+    color: #fff;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 6) .service-icon {
+    color: var(--v2-navy);
+    background: var(--v2-gold);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 6) .text-link {
+    color: #ffe57b;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 7) {
+    border-top: 4px solid #00a6b8;
+    background: #e9fbfc;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 7)::before {
+    background: #00a6b8;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 8) {
+    color: #fff;
+    border-color: #0c6675;
+    background: linear-gradient(145deg, #075c70, #0b8397);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 8)::before {
+    background: var(--v2-gold);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 8) h3,
+.visa-service-grid .service-card:nth-child(8n + 8) p,
+.visa-service-grid .service-card:nth-child(8n + 8) .service-number {
+    color: #fff;
+}
+
+.visa-service-grid .service-card:nth-child(8n + 8) .service-icon {
+    color: #075c70;
+    background: var(--v2-gold);
+}
+
+.visa-service-grid .service-card:nth-child(8n + 8) .text-link {
+    color: #ffe57b;
+}
+
+.process-card {
+    border-top: 3px solid var(--v2-blue);
+}
+
+.contact-form,
+.quote-form,
+.application-form {
+    padding: 38px;
+    border: 1px solid var(--v2-line);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(3, 47, 93, .09);
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select,
+.quote-form input,
+.quote-form select,
+.application-form input,
+.application-form textarea {
+    border-color: #cbdeec;
+    border-radius: 10px;
+}
+
+.cta-band {
+    padding: 94px 0;
+    background:
+        radial-gradient(circle at 85% 45%, rgba(255, 209, 46, .28), transparent 23%),
+        linear-gradient(125deg, #062f5d, #086bb9);
+}
+
+.cta-band::after {
+    right: 6%;
+    bottom: -130px;
+    width: 400px;
+    height: 400px;
+    border-width: 34px;
+}
+
+.cta-band .btn-white {
+    border-radius: 12px;
+}
+
+.site-footer {
+    padding-top: 88px;
+    background: #03294f;
+}
+
+@media (max-width: 1050px) {
+    .hero-grid {
+        gap: 48px;
+    }
+
+    .desktop-nav {
+        gap: 15px;
+    }
+
+    .resident-card-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 820px) {
+    .nav-wrap {
+        height: 76px;
+    }
+
+    .hero {
+        min-height: auto;
+        padding-top: 94px;
+    }
+
+    .hero-grid {
+        gap: 46px;
+    }
+
+    .hero-bottom {
+        gap: 12px 22px;
+    }
+
+    .hero-bottom span {
+        flex: 0 0 auto;
+    }
+
+    .resident-card-service-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .international-region-grid,
+    .international-country-grid,
+    .country-visa-information {
+        grid-template-columns: 1fr;
+    }
+
+    .country-visa-cta {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .section {
+        padding: 84px 0;
+    }
+
+    .page-hero,
+    .detail-hero {
+        padding: 94px 0 76px;
+    }
+
+    .stat-item {
+        border-right: 1px solid var(--v2-line);
+    }
+
+    .visa-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .hero-copy h1::after {
+        width: 56px;
+        height: 5px;
+        margin-top: 20px;
+    }
+
+    .hero-floating-card {
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+    }
+
+    .contact-form,
+    .quote-form,
+    .application-form {
+        padding: 24px;
+    }
+
+    .visa-services-panel {
+        padding: 22px;
+    }
+
+    .resident-card-services-panel,
+    .international-visa-panel {
+        padding: 22px;
+    }
+
+    .visa-service-grid {
+        grid-template-columns: 1fr;
+    }
+}

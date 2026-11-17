@@ -80,7 +80,7 @@ $LANG = [
         'Built around clarity and trust',
 
     'stat_1' =>
-        'Years of experience',
+        'Since 2009',
 
     'stat_2' =>
         'Support available',

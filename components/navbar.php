@@ -82,7 +82,6 @@ $switch_path = (string) ($canonical_path ?? '');
         </nav>
         <div class="nav-actions">
             <div class="lang-switch"><a class="<?= $current_lang==='en'?'active':'' ?>" href="<?= e(url($switch_path, 'en')) ?>">EN</a><span>/</span><a class="<?= $current_lang==='vn'?'active':'' ?>" href="<?= e(url($switch_path, 'vn')) ?>">VN</a></div>
-            <a class="btn btn-primary btn-small" href="<?= e(url('apply')) ?>"><?= __('nav_apply') ?> <span>↗</span></a>
         </div>
         <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Open menu" aria-controls="mobileNav" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
@@ -93,7 +92,6 @@ $switch_path = (string) ($canonical_path ?? '');
             </a>
         <?php endforeach; ?>
         <div class="mobile-nav-bottom">
-            <a href="<?= e(url('apply')) ?>" class="btn btn-primary"><?= e(__('nav_apply')) ?> ↗</a>
             <div class="lang-switch">
                 <a href="<?= e(url($switch_path, 'en')) ?>">EN</a>
                 <span>/</span>
